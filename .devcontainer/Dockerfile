@@ -8,7 +8,7 @@ RUN echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https:
 RUN sudo apt-get update && sudo apt-get install -y cmake
 
 # Install pre-commit
-RUN sudo apt-get install -y python3-pip && pip3 install pre-commit
+RUN sudo apt-get install -y pipx && pipx install pre-commit
 
 # Avoid ASAN Stalling
 # See: https://github.com/google/sanitizers/issues/1614
