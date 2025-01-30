@@ -10,8 +10,6 @@ RUN sudo apt-get update && sudo apt-get install -y cmake
 # Install pre-commit
 RUN sudo apt-get install -y pipx && pipx install pre-commit
 
-# Avoid ASAN Stalling
+# Newer gcc/ llvm is needed to avoid ASAN Stalling
 # See: https://github.com/google/sanitizers/issues/1614
-# Alternative is to update to above clang-18 and gcc-13.2
-# Maybe crashing codespace???
-RUN sudo sysctl -w vm.mmap_rnd_bits=28
+RUN sudo apt-get install -y gcc-14
