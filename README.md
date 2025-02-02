@@ -24,7 +24,7 @@ Its direct usage is usually not needed.
 
 ### Usage: default projection in constrained algorithms
 
- The following code snippet illustrates how we can achieve a default projection using `beman::exemplar::identity`:
+The following code snippet illustrates how we can achieve a default projection using `beman::exemplar::identity`:
 
 ```cpp
 #include <beman/exemplar/identity.hpp>
@@ -83,57 +83,38 @@ Full runnable examples can be found in `examples/` (e.g., [./examples/identity_a
 
 ## Building beman.exemplar
 
-### Dependencies
-<!-- TODO Darius: rewrite section!-->
+### Build Environment
 
-This project has no C or C++ dependencies.
+This project requires minimal **C++17** and **CMake 3.25** to build.
 
-Build-time dependencies:
+However,
+some examples and tests will not be compiled
+unless provided compiler support **C++20**.
 
-- `cmake`
-- `ninja`, `make`, or another CMake-supported build system
-  - CMake defaults to "Unix Makefiles" on POSIX systems
+This project pulls [Google Test](https://github.com/google/googletest)
+from GitHub as a development dependency,
+you can disable this behavior by setting `BEMAN_EXEMPLAR_BUILD_TESTS` to `OFF`.
 
-#### How to install dependencies
+#### Install Environment on Ubuntu 24.04
 
-<!-- TODO Darius: rewrite section!-->
+The latest CMake build tool can be installed from [cmake.org](https://cmake.org/download/).
+A supported compiler (listed below) should be available from your package manager.
 
-<details>
-<summary>Dependencies install exemplar on Ubuntu 24.04  </summary>
-
-<!-- TODO Darius: rewrite section!-->
-
-```shell
-# Install tools:
-apt-get install -y cmake make ninja-build
-
-# Toolchains:
-apt-get install                           \
-  g++-14 gcc-14 gcc-13 g++-14             \
-  clang-18 clang++-18 clang-17 clang++-17
+```bash
+sudo apt update
+sudo apt install gcc-14
 ```
 
-</details>
+### Supported Platforms
 
-<details>
-<summary>Dependencies install exemplar on MAC OS $VERSION </summary>
+This project officially support development using:
 
-<!-- TODO Darius: rewrite section!-->
-```shell
-# TODO
-```
+- GNU GCC Compiler version 12+
+- LLVM Clang++ Compiler version 17+
+- AppleClang compiler on Mac OS
+- MSVC compiler on Windows
 
-</details>
-
-<details>
-<summary>Dependencies install exemplar on Windows $VERSION  </summary>
-<!-- TODO Darius: rewrite section!-->
-
-```shell
-# TODO
-```
-
-</details>
+These development environments are varified using our CI system.
 
 ### How to build beman.exemplar
 
