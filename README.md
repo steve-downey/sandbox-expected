@@ -97,7 +97,7 @@ you can disable this behavior by setting `BEMAN_EXEMPLAR_BUILD_TESTS` to `OFF`.
 
 #### Install Environment on Ubuntu 24.04
 
-The latest CMake build tool can be installed from [cmake.org](https://cmake.org/download/).
+The latest CMake can be installed from [cmake.org](https://cmake.org/download/).
 A supported compiler (listed below) should be available from your package manager.
 
 ```bash
@@ -107,14 +107,14 @@ sudo apt install gcc-14
 
 ### Supported Platforms
 
-This project officially support development using:
+This project officially supports:
 
 - GNU GCC Compiler version 12+
 - LLVM Clang++ Compiler version 17+
 - AppleClang compiler on Mac OS
 - MSVC compiler on Windows
 
-These development environments are varified using our CI system.
+These development environments are verified using our CI configuration.
 
 ### How to build beman.exemplar
 
