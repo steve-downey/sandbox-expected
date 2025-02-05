@@ -87,6 +87,11 @@ Full runnable examples can be found in [`examples/`](examples/).
 
 This project requires minimal **C++17** and **CMake 3.25** to build.
 
+This project pulls [Google Test](https://github.com/google/googletest)
+from GitHub as a development dependency for its testing framework,
+thus requiring an active internet connection to configure,
+you can disable this behavior by setting `BEMAN_EXEMPLAR_BUILD_TESTS` to `OFF`.
+
 However,
 some examples and tests will not be compiled
 unless provided compiler support **C++20**.
@@ -107,10 +112,6 @@ unless provided compiler support **C++20**.
 >
 > Examples to be built: identity_direct_usage
 > ```
-
-This project pulls [Google Test](https://github.com/google/googletest)
-from GitHub as a development dependency for its testing framework,
-you can disable this behavior by setting `BEMAN_EXEMPLAR_BUILD_TESTS` to `OFF`.
 
 #### Install Environment on Ubuntu 24.04
 
