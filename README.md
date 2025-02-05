@@ -79,7 +79,7 @@ int main()
 
 ```
 
-Full runnable examples can be found in `examples/` (e.g., [./examples/identity_as_default_projection.cpp](./examples/identity_as_default_projection.cpp)).
+Full runnable examples can be found in [`examples/`](examples/).
 
 ## Building beman.exemplar
 
@@ -91,8 +91,25 @@ However,
 some examples and tests will not be compiled
 unless provided compiler support **C++20**.
 
+> [!TIP]
+>
+> You will be able to see if there's any examples that isn't enabled due to
+> compiler capabilities or minimum C++ version it is configured to in the logs.
+>
+> Below is an example:
+>
+> ```txt
+> -- Looking for __cpp_lib_ranges
+> -- Looking for __cpp_lib_ranges - not found
+> CMake Warning at examples/CMakeLists.txt:12 (message):
+>   Missing range support! Skip: identity_as_default_projection
+>
+>
+> Examples to be built: identity_direct_usage
+> ```
+
 This project pulls [Google Test](https://github.com/google/googletest)
-from GitHub as a development dependency,
+from GitHub as a development dependency for its testing framework,
 you can disable this behavior by setting `BEMAN_EXEMPLAR_BUILD_TESTS` to `OFF`.
 
 #### Install Environment on Ubuntu 24.04
