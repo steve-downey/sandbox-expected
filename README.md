@@ -81,7 +81,7 @@ int main()
 
 Full runnable examples can be found in [`examples/`](examples/).
 
-## Building beman.exemplar
+## Dependency
 
 ### Build Environment
 
@@ -94,7 +94,7 @@ you can disable this behavior by setting `BEMAN_EXEMPLAR_BUILD_TESTS` to `OFF`.
 
 However,
 some examples and tests will not be compiled
-unless provided compiler support **C++20**.
+unless provided compiler support **C++20** or ranges capabilities enabled.
 
 > [!TIP]
 >
@@ -127,18 +127,70 @@ sudo apt install gcc-14
 
 This project officially supports:
 
-- GNU GCC Compiler version 12+
-- LLVM Clang++ Compiler version 17+
+- GNU GCC Compiler \[version 12-14\]
+- LLVM Clang++ Compiler \[version 17-20\]
 - AppleClang compiler on Mac OS
 - MSVC compiler on Windows
 
-These development environments are verified using our CI configuration.
+> [!NOTE]
+>
+> These development environments are verified using our CI configuration.
 
-### How to build beman.exemplar
+## Development
 
-This project strives to be as normal and simple a CMake project as possible.
-This build workflow in particular will work,
-producing a static `libbeman.exemplar.a` library, ready to package with its headers:
+### Develop using GitHub Codespace
+
+This project supports [GitHub Codespace](https://github.com/features/codespaces)
+via [Development Containers](https://containers.dev/),
+which allows rapid development and instant hacking in your browser.
+
+You can open create a codespace for this project by clicking this badge:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bemanproject/exemplar)
+
+For more detailed documentation regarding creating and developing inside of
+GitHub codespaces, please reference [this doc](https://docs.github.com/en/codespaces/).
+
+> [!NOTE]
+>
+> The codespace container may take up to 5 minutes to build and spin-up,
+> this is normal as we need to build a custom docker container to setup
+> an environment appropriate for beman projects.
+
+### Configure and Build the project using CMake Preset
+
+This project recommands using [CMake Preset](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html)
+to configure, build and test the project.
+Appropriate presets for major compilers has been included by default.
+You can use `cmake --list-presets` to see all available presets.
+
+Here is an example to invoke the `gcc-debug` preset.
+
+```shell
+cmake --workflow --preset gcc-debug
+```
+
+Generally, there's two kinds of presets, `debug` and `release`.
+
+The `debug` presets are designed to aid development,
+thus it has as much sanitizers turned on as possible.
+
+> [!NOTE]
+>
+> The set of sanitizer supports are different across compilers,
+> you can checout the exact set compiler arguments by looking at the toolchain
+> files under the [`cmake`](cmake/) directory.
+
+The `release` presets are designed for use in production environments,
+thus it has the highest optimization turned on (e.g. `O3`).
+
+### Produce a static library
+
+<!--
+TODO
+-->
+
+Producing a static `libbeman.exemplar.a` library, ready to package with its headers:
 
 ```shell
 cmake --workflow --preset gcc-debug
