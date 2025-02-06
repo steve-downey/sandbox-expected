@@ -126,16 +126,6 @@ This project officially supports:
 >
 > These development environments are verified using our CI configuration.
 
-### Install Environment on Ubuntu 24.04
-
-The latest CMake can be installed from [cmake.org](https://cmake.org/download/).
-A supported compiler (listed below) should be available from your package manager.
-
-```bash
-sudo apt update
-sudo apt install gcc-14
-```
-
 ## Development
 
 ### Develop using GitHub Codespace
@@ -156,6 +146,22 @@ GitHub codespaces, please reference [this doc](https://docs.github.com/en/codesp
 > The codespace container may take up to 5 minutes to build and spin-up,
 > this is normal as we need to build a custom docker container to setup
 > an environment appropriate for beman projects.
+
+
+### Develop locally on Ubuntu
+
+Beman projects requires [recent versions of CMake](#build-environment),
+we advice you download CMake directly from [CMake's website](https://cmake.org/download/)
+or install via the [Kitware apt library](https://apt.kitware.com/).
+
+A [supported compiler](#supported-platforms) should be available from your package manager.
+Alternatively you could use an install script from official compiler venders.
+
+Here is an example of how to install the latest stable version of clang
+as per [the official LLVM install guide](https://apt.llvm.org/).
+```bash
+bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+```
 
 ### Configure and Build the project using CMake Preset
 
