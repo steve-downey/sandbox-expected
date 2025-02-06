@@ -89,8 +89,10 @@ This project requires minimal **C++17** and **CMake 3.25** to build.
 
 This project pulls [Google Test](https://github.com/google/googletest)
 from GitHub as a development dependency for its testing framework,
-thus requiring an active internet connection to configure,
-you can disable this behavior by setting `BEMAN_EXEMPLAR_BUILD_TESTS` to `OFF`.
+thus requiring an active internet connection to configure.
+You can disable this behavior by setting cmake option
+[`BEMAN_EXEMPLAR_BUILD_TESTS`](#beman_exemplar_build_tests) to `OFF`
+when configuring the project.
 
 However,
 some examples and tests will not be compiled
@@ -221,10 +223,23 @@ ctest --test-dir build
 When configuring the project manually,
 you can pass an array of project specific CMake configs to customize your build.
 
+Project specific options are prefixed with `BEMAN_EXEMPLAR`.
+You can see the list of available options with:
+
+```bash
+cmake -L | grep "BEMAN_EXEMPLAR"
+```
+
 #### `BEMAN_EXEMPLAR_BUILD_TESTS`
 
 Enable building tests and test infrastructure. Default: ON.
 Values: { ON, OFF }.
+
+You can configure the project to have this option turned off via:
+
+```bash
+cmake -B build -S . -DCMAKE_CXX_STANDARD=20 -DBEMAN_EXEMPLAR_BUILD_TESTS=OFF
+```
 
 > [!TIP]
 > Because this project requires Google Tests as part of its development
