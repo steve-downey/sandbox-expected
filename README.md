@@ -124,6 +124,9 @@ This project officially supports:
 
 > [!NOTE]
 >
+> Versions outside of this range would likely work as well,
+> especially if you're using a version above the given range
+> (e.g. HEAD/ nightly).
 > These development environments are verified using our CI configuration.
 
 ## Development
@@ -134,7 +137,7 @@ This project supports [GitHub Codespace](https://github.com/features/codespaces)
 via [Development Containers](https://containers.dev/),
 which allows rapid development and instant hacking in your browser.
 
-You can open create a codespace for this project by clicking this badge:
+You can create a codespace for this project by clicking this badge:
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bemanproject/exemplar)
 
@@ -147,7 +150,6 @@ GitHub codespaces, please reference [this doc](https://docs.github.com/en/codesp
 > this is normal as we need to build a custom docker container to setup
 > an environment appropriate for beman projects.
 
-
 ### Develop locally on Ubuntu
 
 Beman projects requires [recent versions of CMake](#build-environment),
@@ -159,6 +161,7 @@ Alternatively you could use an install script from official compiler venders.
 
 Here is an example of how to install the latest stable version of clang
 as per [the official LLVM install guide](https://apt.llvm.org/).
+
 ```bash
 bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 ```
