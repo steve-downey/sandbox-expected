@@ -227,7 +227,7 @@ Project specific options are prefixed with `BEMAN_EXEMPLAR`.
 You can see the list of available options with:
 
 ```bash
-cmake -L | grep "BEMAN_EXEMPLAR"
+cmake -LH | grep "BEMAN_EXEMPLAR" -C 2
 ```
 
 #### `BEMAN_EXEMPLAR_BUILD_TESTS`
