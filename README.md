@@ -193,6 +193,49 @@ thus it has as much sanitizers turned on as possible.
 The `release` presets are designed for use in production environments,
 thus it has the highest optimization turned on (e.g. `O3`).
 
+### Configure and Build the project manually
+
+While [CMake Preset](#configure-and-build-the-project-using-cmake-preset) is
+convient,
+you might want to pass extra config/ compiler arguments for configuration.
+
+To configure, build and test the project with no extra arguments,
+you can run this sets of command.
+
+```bash
+cmake -B build -S . -DCMAKE_CXX_STANDARD=20
+cmake --build build
+ctest --test-dir build
+```
+
+> [!IMPORTANT]
+>
+> Beman projects are
+> [passive projects](https://github.com/bemanproject/beman/blob/main/docs/BEMAN_STANDARD.md#cmake),
+> therefore,
+> you will need to manually specify C++ version via `CMAKE_CXX_STANDARD`
+> when manually configuring the project.
+
+### Project specific configure arguments
+
+When configuring the project manually,
+you can pass an array of project specific CMake configs to customize your build.
+
+#### `BEMAN_EXEMPLAR_BUILD_TESTS`
+
+Enable building tests and test infrastructure. Default: ON.
+Values: { ON, OFF }.
+
+> [!TIP]
+> Because this project requires Google Tests as part of its development
+> dependency,
+> disable building tests avoids the project from pulling Google Tests from
+> GitHub.
+
+#### `BEMAN_EXEMPLAR_BUILD_EXAMPLES`
+
+Enable building examples. Default: ON. Values: { ON, OFF }.
+
 ### Produce a static library
 
 <!--
