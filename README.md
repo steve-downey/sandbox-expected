@@ -113,16 +113,6 @@ unless provided compiler support **C++20** or ranges capabilities enabled.
 > Examples to be built: identity_direct_usage
 > ```
 
-#### Install Environment on Ubuntu 24.04
-
-The latest CMake can be installed from [cmake.org](https://cmake.org/download/).
-A supported compiler (listed below) should be available from your package manager.
-
-```bash
-sudo apt update
-sudo apt install gcc-14
-```
-
 ### Supported Platforms
 
 This project officially supports:
@@ -135,6 +125,16 @@ This project officially supports:
 > [!NOTE]
 >
 > These development environments are verified using our CI configuration.
+
+### Install Environment on Ubuntu 24.04
+
+The latest CMake can be installed from [cmake.org](https://cmake.org/download/).
+A supported compiler (listed below) should be available from your package manager.
+
+```bash
+sudo apt update
+sudo apt install gcc-14
+```
 
 ## Development
 
