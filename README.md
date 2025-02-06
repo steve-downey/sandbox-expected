@@ -213,7 +213,7 @@ ctest --test-dir build
 > Beman projects are
 > [passive projects](https://github.com/bemanproject/beman/blob/main/docs/BEMAN_STANDARD.md#cmake),
 > therefore,
-> you will need to manually specify C++ version via `CMAKE_CXX_STANDARD`
+> you will need to specify C++ version via `CMAKE_CXX_STANDARD`
 > when manually configuring the project.
 
 ### Project specific configure arguments
