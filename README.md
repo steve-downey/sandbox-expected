@@ -201,11 +201,11 @@ While [CMake Preset](#configure-and-build-the-project-using-cmake-preset) is
 convient,
 you might want to pass extra config/ compiler arguments for configuration.
 
-To configure, build and test the project with no extra arguments,
+To configure, build and test the project with extra arguments,
 you can run this sets of command.
 
 ```bash
-cmake -B build -S . -DCMAKE_CXX_STANDARD=20
+cmake -B build -S . -DCMAKE_CXX_STANDARD=20 # Your extra arguments here.
 cmake --build build
 ctest --test-dir build
 ```
