@@ -44,5 +44,5 @@ if(BEMAN_EXEMPLAR_INSTALL_CONFIG_FILE_PACKAGE)
     COMPONENT development
   )
 
-  install(EXPORT beman.exemplar DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}" NAMESPACE beman FILE ${PROJECT_NAME}-targets.cmake COMPONENT development)
+  install(EXPORT beman.exemplar DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}" NAMESPACE beman:: FILE ${PROJECT_NAME}-targets.cmake COMPONENT development)
 endif()
