@@ -138,6 +138,8 @@ This project officially supports:
 This project supports [GitHub Codespace](https://github.com/features/codespaces)
 via [Development Containers](https://containers.dev/),
 which allows rapid development and instant hacking in your browser.
+We recommand you using GitHub codespace to explore this project as this
+requires minimal setup.
 
 You can create a codespace for this project by clicking this badge:
 
