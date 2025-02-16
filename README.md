@@ -257,6 +257,10 @@ You can see the list of available options with:
 cmake -LH | grep "BEMAN_EXEMPLAR" -C 2
 ```
 
+<details>
+
+<summary> Details of our CMake configs. </summary>
+
 #### `BEMAN_EXEMPLAR_BUILD_TESTS`
 
 Enable building tests and test infrastructure. Default: ON.
@@ -277,6 +281,8 @@ cmake -B build -S . -DCMAKE_CXX_STANDARD=20 -DBEMAN_EXEMPLAR_BUILD_TESTS=OFF
 #### `BEMAN_EXEMPLAR_BUILD_EXAMPLES`
 
 Enable building examples. Default: ON. Values: { ON, OFF }.
+
+</details>
 
 ### Produce a static library
 
