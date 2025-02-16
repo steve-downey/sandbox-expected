@@ -259,7 +259,7 @@ cmake -LH | grep "BEMAN_EXEMPLAR" -C 2
 
 <details>
 
-<summary> Details of our CMake configs. </summary>
+<summary> Details of CMake arguments. </summary>
 
 #### `BEMAN_EXEMPLAR_BUILD_TESTS`
 
