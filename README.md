@@ -138,7 +138,7 @@ This project officially supports:
 This project supports [GitHub Codespace](https://github.com/features/codespaces)
 via [Development Containers](https://containers.dev/),
 which allows rapid development and instant hacking in your browser.
-We recommand you using GitHub codespace to explore this project as this
+We recommend you using GitHub codespace to explore this project as this
 requires minimal setup.
 
 You can create a codespace for this project by clicking this badge:
@@ -164,7 +164,7 @@ we advice you download CMake directly from [CMake's website](https://cmake.org/d
 or install via the [Kitware apt library](https://apt.kitware.com/).
 
 A [supported compiler](#supported-platforms) should be available from your package manager.
-Alternatively you could use an install script from official compiler venders.
+Alternatively you could use an install script from official compiler vendors.
 
 Here is an example of how to install the latest stable version of clang
 as per [the official LLVM install guide](https://apt.llvm.org/).
@@ -197,7 +197,7 @@ brew install llvm
 
 ### Configure and Build the project using CMake Preset
 
-This project recommands using [CMake Preset](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html)
+This project recommends using [CMake Preset](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html)
 to configure, build and test the project.
 Appropriate presets for major compilers has been included by default.
 You can use `cmake --list-presets` to see all available presets.
@@ -216,7 +216,7 @@ thus it has as much sanitizers turned on as possible.
 > [!NOTE]
 >
 > The set of sanitizer supports are different across compilers,
-> you can checout the exact set compiler arguments by looking at the toolchain
+> you can checkout the exact set compiler arguments by looking at the toolchain
 > files under the [`cmake`](cmake/) directory.
 
 The `release` presets are designed for use in production environments,
@@ -225,7 +225,7 @@ thus it has the highest optimization turned on (e.g. `O3`).
 ### Configure and Build the project manually
 
 While [CMake Preset](#configure-and-build-the-project-using-cmake-preset) is
-convient,
+convenient,
 you might want to pass extra config/ compiler arguments for configuration.
 
 To configure, build and test the project with extra arguments,
@@ -287,7 +287,7 @@ Enable building examples. Default: ON. Values: { ON, OFF }.
 ## Integrate beman.exemplar into your project
 
 To use `beman.exemplar` in your C++ project,
-you should include relavent headers from `beman.exemplar` in your source files.
+you should include relevant headers from `beman.exemplar` in your source files.
 
 ```c++
 #include <beman/exemplar/identity.hpp>
