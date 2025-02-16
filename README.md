@@ -152,9 +152,12 @@ GitHub codespaces, please reference [this doc](https://docs.github.com/en/codesp
 > this is normal as we need to build a custom docker container to setup
 > an environment appropriate for beman projects.
 
-### Develop locally on Ubuntu
+### Develop locally on your machines
 
-Beman projects requires [recent versions of CMake](#build-environment),
+<details>
+<summary> For Linux based systems </summary>
+
+Beman libraries requires [recent versions of CMake](#build-environment),
 we advice you download CMake directly from [CMake's website](https://cmake.org/download/)
 or install via the [Kitware apt library](https://apt.kitware.com/).
 
@@ -167,6 +170,28 @@ as per [the official LLVM install guide](https://apt.llvm.org/).
 ```bash
 bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 ```
+
+</details>
+
+<details>
+<summary> For MacOS based systems </summary>
+
+Beman libraries requires [recent versions of CMake](#build-environment),
+you can use `Homebrew` to install the latest major version of CMake.
+
+```bash
+brew install cmake
+```
+
+A [supported compiler](#supported-platforms) is also available from brew.
+
+For example, you can install latest major release of Clang++ compiler as:
+
+```bash
+brew install llvm
+```
+
+</details>
 
 ### Configure and Build the project using CMake Preset
 
