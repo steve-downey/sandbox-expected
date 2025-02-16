@@ -346,4 +346,6 @@ c++ -I/opt/beman.exemplar/include \
 
 ## Contributing
 
-Please do! Issues and pull requests are appreciated.
+Please do!
+You encourage you to checkout our [contributor's guide](docs/README.md).
+Issues and pull requests are appreciated.
