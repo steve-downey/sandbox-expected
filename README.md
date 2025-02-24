@@ -305,28 +305,6 @@ include an appropriate `beman.exemplar` header from your source code.
 How you will link your project against `beman.exemplar` will depend on your build system.
 CMake instructions are provided in following sections.
 
-### Produce beman.exemplar static library locally
-
-You can include exemplar's headers locally
-by producing a static `libbeman.exemplar.a` library.
-
-```bash
-cmake --workflow --preset gcc-release
-cmake --install build/gcc-release --prefix /opt/beman.exemplar
-```
-
-This will generate such project structure at `/opt/beman.exemplar`.
-
-```txt
-/opt/beman.exemplar
-├── include
-│   └── beman
-│       └── exemplar
-│           └── identity.hpp
-└── lib
-    └── libbeman.exemplar.a
-```
-
 ### Linking your project to beman.exemplar with CMake
 
 For CMake based projects,
@@ -342,6 +320,28 @@ any libraries or executables that include beman.exemplar's header file.
 
 ```cmake
 target_link_libraries(yourlib PUBLIC beman::exemplar)
+```
+
+### Produce beman.exemplar static library locally
+
+You can include exemplar's headers locally
+by producing a static `libbeman.exemplar.a` library.
+
+```bash
+cmake --workflow --preset gcc-release
+cmake --install build/gcc-release --prefix /opt/beman.exemplar
+```
+
+This will generate such directory structure at `/opt/beman.exemplar`.
+
+```txt
+/opt/beman.exemplar
+├── include
+│   └── beman
+│       └── exemplar
+│           └── identity.hpp
+└── lib
+    └── libbeman.exemplar.a
 ```
 
 ## Contributing
