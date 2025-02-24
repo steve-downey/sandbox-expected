@@ -296,6 +296,12 @@ include an appropriate `beman.exemplar` header from your source code.
 #include <beman/exemplar/identity.hpp>
 ```
 
+> [!NOTE]
+>
+> `beman.exemplar` headers are to be included with the `beman/exemplar/` directories prefixed.
+> It is not supported to alter include search paths to spell the include target another way. For instance,
+> `#include <identity.hpp>` is not a supported interface.
+
 How you will link your project against `beman.exemplar` will depend on your build system.
 CMake instructions are provided in following sections.
 
@@ -336,16 +342,6 @@ any libraries or executables that include beman.exemplar's header file.
 
 ```cmake
 target_link_libraries(yourlib PUBLIC beman::exemplar)
-```
-
-### Linking your project to beman.exemplar with compiler options
-
-Compile your project so that it links to the header and library correctly.
-
-```bash
-c++ -I/opt/beman.exemplar/include \
-    -L/opt/beman.exemplar/lib -lbeman.exemplar \
-    your_project.cpp -o your_project
 ```
 
 ## Contributing
