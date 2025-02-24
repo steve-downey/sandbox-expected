@@ -81,11 +81,14 @@ int main()
 
 Full runnable examples can be found in [`examples/`](examples/).
 
-## Dependency
+## Dependencies
 
 ### Build Environment
 
-This project requires minimal **C++17** and **CMake 3.25** to build.
+This project requires at least the following to build:
+
+* C++17
+* CMake 3.25
 
 This project pulls [Google Test](https://github.com/google/googletest)
 from GitHub as a development dependency for its testing framework,
@@ -100,8 +103,8 @@ unless provided compiler support **C++20** or ranges capabilities enabled.
 
 > [!TIP]
 >
-> You will be able to see if there's any examples that isn't enabled due to
-> compiler capabilities or minimum C++ version it is configured to in the logs.
+> In the logs you will be able to see if there are any examples that aren't enabled
+> due to compiler capabilities or the configured C++ version.
 >
 > Below is an example:
 >
@@ -178,8 +181,8 @@ bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 <details>
 <summary> For MacOS based systems </summary>
 
-Beman libraries requires [recent versions of CMake](#build-environment),
-you can use `Homebrew` to install the latest major version of CMake.
+Beman libraries require [recent versions of CMake](#build-environment).
+You can use `Homebrew` to install the latest major version of CMake.
 
 ```bash
 brew install cmake
@@ -195,11 +198,11 @@ brew install llvm
 
 </details>
 
-### Configure and Build the project using CMake Preset
+### Configure and Build the Project Using CMake Presets
 
-This project recommends using [CMake Preset](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html)
+This project recommends using [CMake Presets](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html)
 to configure, build and test the project.
-Appropriate presets for major compilers has been included by default.
+Appropriate presets for major compilers have been included by default.
 You can use `cmake --list-presets` to see all available presets.
 
 Here is an example to invoke the `gcc-debug` preset.
@@ -210,23 +213,23 @@ cmake --workflow --preset gcc-debug
 
 Generally, there's two kinds of presets, `debug` and `release`.
 
-The `debug` presets are designed to aid development,
-thus it has as much sanitizers turned on as possible.
+The `debug` presets are designed to aid development, so it has debugging
+instrumentation enabled and as many sanitizers turned on as possible.
 
 > [!NOTE]
 >
-> The set of sanitizer supports are different across compilers,
-> you can checkout the exact set compiler arguments by looking at the toolchain
+> The set of sanitizer supports are different across compilers.
+> You can checkout the exact set compiler arguments by looking at the toolchain
 > files under the [`cmake`](cmake/) directory.
 
 The `release` presets are designed for use in production environments,
 thus it has the highest optimization turned on (e.g. `O3`).
 
-### Configure and Build the project manually
+### Configure and Build Manually
 
-While [CMake Preset](#configure-and-build-the-project-using-cmake-preset) is
-convenient,
-you might want to pass extra config/ compiler arguments for configuration.
+While [CMake Presets](#configure-and-build-the-project-using-cmake-preset) are
+convenient, you might want to set different configuration or compiler arguments
+than any provided preset supports.
 
 To configure, build and test the project with extra arguments,
 you can run this sets of command.
@@ -287,13 +290,14 @@ Enable building examples. Default: ON. Values: { ON, OFF }.
 ## Integrate beman.exemplar into your project
 
 To use `beman.exemplar` in your C++ project,
-you should include relevant headers from `beman.exemplar` in your source files.
+include an appropriate `beman.exemplar` header from your source code.
 
 ```c++
 #include <beman/exemplar/identity.hpp>
 ```
 
-You will then link your project to `beman.exemplar`.
+How you will link your project against `beman.exemplar` will depend on your build system.
+CMake instructions are provided in following sections.
 
 ### Produce beman.exemplar static library locally
 
