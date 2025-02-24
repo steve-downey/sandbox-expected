@@ -122,10 +122,10 @@ unless provided compiler support **C++20** or ranges capabilities enabled.
 
 This project officially supports:
 
-- GNU GCC Compiler \[version 12-14\]
-- LLVM Clang++ Compiler \[version 17-20\]
-- AppleClang compiler on Mac OS
-- MSVC compiler on Windows
+* GNU GCC Compiler \[version 12-14\]
+* LLVM Clang++ Compiler \[version 17-20\]
+* AppleClang compiler on Mac OS
+* MSVC compiler on Windows
 
 > [!NOTE]
 >
@@ -227,7 +227,7 @@ thus it has the highest optimization turned on (e.g. `O3`).
 
 ### Configure and Build Manually
 
-While [CMake Presets](#configure-and-build-the-project-using-cmake-preset) are
+While [CMake Presets](#configure-and-build-the-project-using-cmake-presets) are
 convenient, you might want to set different configuration or compiler arguments
 than any provided preset supports.
 
