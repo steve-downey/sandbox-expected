@@ -182,7 +182,7 @@ bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 <summary> For MacOS based systems </summary>
 
 Beman libraries require [recent versions of CMake](#build-environment).
-You can use `Homebrew` to install the latest major version of CMake.
+You can use [`Homebrew`](https://brew.sh/) to install the latest major version of CMake.
 
 ```bash
 brew install cmake
