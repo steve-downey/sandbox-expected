@@ -12,5 +12,5 @@ RUN sudo apt-get install -y pipx && pipx install pre-commit
 
 # Newer gcc/ llvm is needed to avoid ASAN Stalling
 # See: https://github.com/google/sanitizers/issues/1614
-# Minimal vesion: clang-18.1.3, gcc-13.2
+# Minimal version: clang-18.1.3, gcc-13.2
 RUN sudo apt-get install -y gcc-14
