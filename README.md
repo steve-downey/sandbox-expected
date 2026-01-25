@@ -7,11 +7,9 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 <!-- markdownlint-disable-next-line line-length -->
 ![Library Status](https://raw.githubusercontent.com/bemanproject/beman/refs/heads/main/images/badges/beman_badge-beman_library_under_development.svg) ![Continuous Integration Tests](https://github.com/steve-downey/expected/actions/workflows/ci_tests.yml/badge.svg) ![Lint Check (pre-commit)](https://github.com/steve-downey/expected/actions/workflows/pre-commit-check.yml/badge.svg) [![Coverage](https://coveralls.io/repos/github/steve-downey/expected/badge.svg?branch=main)](https://coveralls.io/github/steve-downey/expected?branch=main) ![Standard Target](https://github.com/bemanproject/beman/blob/main/images/badges/cpp29.svg) [![Compiler Explorer Example](https://img.shields.io/badge/Try%20it%20on%20Compiler%20Explorer-grey?logo=compilerexplorer&logoColor=67c52a)](https://www.example.com)
 
-`beman.expected` is a minimal C++ library conforming to [The Beman Standard](https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md).
-This can be used as a template for those intending to write Beman libraries.
-It may also find use as a minimal and modern  C++ project structure.
+`beman.expected` is a C++ library implementing the std::expected specification conforming to [The Beman Standard](https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md).
 
-**Implements**: `std::identity` proposed in [Standard Library Concepts (PnnnnRr)](https://wg21.link/PnnnnRr).
+**Implements**: `std::expected` proposed in [Expected over References (PnnnnRr)](https://wg21.link/PnnnnRr).
 
 **Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#under-development-and-not-yet-ready-for-production-use)
 
@@ -21,66 +19,6 @@ It may also find use as a minimal and modern  C++ project structure.
 
 ## Usage
 
-`std::identity` is a function object type whose `operator()` returns its argument unchanged.
-`std::identity` serves as the default projection in constrained algorithms.
-Its direct usage is usually not needed.
-
-### Usage: default projection in constrained algorithms
-
-The following code snippet illustrates how we can achieve a default projection using `beman::expected::identity`:
-
-```cpp
-#include <beman/expected/identity.hpp>
-
-namespace exe = beman::expected;
-
-// Class with a pair of values.
-struct Pair
-{
-    int n;
-    std::string s;
-
-    // Output the pair in the form {n, s}.
-    // Used by the range-printer if no custom projection is provided (default: identity projection).
-    friend std::ostream &operator<<(std::ostream &os, const Pair &p)
-    {
-        return os << "Pair" << '{' << p.n << ", " << p.s << '}';
-    }
-};
-
-// A range-printer that can print projected (modified) elements of a range.
-// All the elements of the range are printed in the form {element1, element2, ...}.
-// e.g., pairs with identity: Pair{1, one}, Pair{2, two}, Pair{3, three}
-// e.g., pairs with custom projection: {1:one, 2:two, 3:three}
-template <std::ranges::input_range R,
-          typename Projection>
-void print(const std::string_view rem, R &&range, Projection projection = exe::identity>)
-{
-    std::cout << rem << '{';
-    std::ranges::for_each(
-        range,
-        [O = 0](const auto &o) mutable
-        { std::cout << (O++ ? ", " : "") << o; },
-        projection);
-    std::cout << "}\n";
-};
-
-int main()
-{
-    // A vector of pairs to print.
-    const std::vector<Pair> pairs = {
-        {1, "one"},
-        {2, "two"},
-        {3, "three"},
-    };
-
-    // Print the pairs using the default projection.
-    print("\tpairs with beman: ", pairs);
-
-    return 0;
-}
-
-```
 
 Full runnable examples can be found in [`examples/`](examples/).
 
@@ -159,9 +97,11 @@ For more documentation on GitHub codespaces, please see
 <details>
 <summary> For Linux </summary>
 
-Beman libraries require [recent versions of CMake](#build-environment),
-we recommend downloading CMake directly from [CMake's website](https://cmake.org/download/)
-or installing it with the [Kitware apt library](https://apt.kitware.com/).
+Beman libraries require [recent versions of CMake](#build-environment).
+We recommend one of:
+  - downloading CMake directly from [CMake's website](https://cmake.org/download/)
+  - installing it with the [Kitware apt library](https://apt.kitware.com/).
+  - installing for the project using [Astral's uv](https://docs.astral.sh/uv/) and PyPI.
 
 A [supported compiler](#supported-platforms) should be available from your package manager.
 
@@ -328,7 +268,7 @@ To use `beman.expected` in your C++ project,
 include an appropriate `beman.expected` header from your source code.
 
 ```c++
-#include <beman/expected/identity.hpp>
+#include <beman/expected/expected.hpp>
 ```
 
 > [!NOTE]
@@ -371,13 +311,14 @@ This will generate the following directory structure at `/opt/beman`.
 ```txt
 /opt/beman
 ├── include
-│   └── beman
-│       └── expected
-│           └── identity.hpp
+│   └── beman
+│       └── expected
+│           ├── bad_expected_access.hpp
+│           ├── expected.hpp
+│           └── unexpected.hpp
 └── lib
     └── cmake
         └── beman.expected
-            ├── beman.expected-config-version.cmake
             ├── beman.expected-config.cmake
-            └── beman.expected-targets.cmake
-```
+            ├── beman.expected-config-version.cmake
+            └── beman.expected-targets.cmake```
