@@ -13,3 +13,6 @@ dev = [
     "gcovr>=7.2",
     "pre-commit>=3.7.1",
 ]
+
+[tool.codespell]
+ignore-words-list = 'unexpect'
