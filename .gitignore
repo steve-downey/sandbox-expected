@@ -10,3 +10,8 @@
 
 # ignore vscode settings
 .vscode
+/.build/
+/.install/
+/.update-submodules
+/uv.lock
+.build

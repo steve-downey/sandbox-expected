@@ -1,3 +1,4 @@
+# CMakeLists.txt                                                    -*-cmake-*-
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 cmake_minimum_required(VERSION 3.28...4.2)
@@ -40,6 +41,10 @@ set_target_properties(beman.expected PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
 add_subdirectory(include/beman/expected)
 
 beman_install_library(beman.expected)
+
+if(BEMAN_EXPECTED_BUILD_TESTS)
+    find_package(GTest CONFIG REQUIRED)
+endif()
 
 if(BEMAN_EXPECTED_BUILD_TESTS)
     enable_testing()
