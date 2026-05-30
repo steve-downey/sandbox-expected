@@ -1,10 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-cmake_minimum_required(VERSION 3.28...4.2)
+cmake_minimum_required(VERSION 3.30...4.3)
+
+include(infra/cmake/enable-experimental-import-std.cmake)
 
 project(
-    beman.expected # CMake Project Name, which is also the name of the top-level
-    # targets (e.g., library, executable, etc.).
+    beman.expected
     DESCRIPTION "Expected Over References"
     LANGUAGES CXX
     VERSION 0.1.0
@@ -24,22 +25,60 @@ option(
     ${PROJECT_IS_TOP_LEVEL}
 )
 
-# for find of beman-install-library
-include(infra/cmake/beman-install-library-config.cmake)
+option(BEMAN_EXPECTED_USE_MODULES "Provide beman.expected as a C++ module" OFF)
 
-add_library(beman.expected INTERFACE)
-add_library(beman::expected ALIAS beman.expected)
+if(BEMAN_EXPECTED_USE_MODULES)
+    set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+endif()
 
-target_sources(
-    beman.expected
-    PUBLIC FILE_SET HEADERS BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
+configure_file(
+    "${PROJECT_SOURCE_DIR}/include/beman/expected/config_generated.hpp.in"
+    "${PROJECT_BINARY_DIR}/include/beman/expected/config_generated.hpp"
+    @ONLY
 )
 
-set_target_properties(beman.expected PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
+# for find of beman_install_library and configure_build_telemetry
+include(infra/cmake/beman-install-library.cmake)
+include(infra/cmake/BuildTelemetryConfig.cmake)
+
+if(BEMAN_EXPECTED_USE_MODULES)
+    add_library(beman.expected STATIC)
+else()
+    add_library(beman.expected INTERFACE)
+endif()
+add_library(beman::expected ALIAS beman.expected)
+
+if(BEMAN_EXPECTED_USE_MODULES)
+    target_sources(
+        beman.expected
+        PUBLIC
+            FILE_SET CXX_MODULES
+            FILE_SET HEADERS
+                BASE_DIRS
+                    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+                    "${CMAKE_CURRENT_BINARY_DIR}/include"
+    )
+    set_target_properties(beman.expected PROPERTIES CXX_MODULE_STD ON)
+    target_compile_features(beman.expected PUBLIC cxx_std_23)
+else()
+    target_sources(
+        beman.expected
+        PUBLIC
+            FILE_SET HEADERS
+                BASE_DIRS
+                    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+                    "${CMAKE_CURRENT_BINARY_DIR}/include"
+    )
+    set_target_properties(
+        beman.expected
+        PROPERTIES VERIFY_INTERFACE_HEADER_SETS ${PROJECT_IS_TOP_LEVEL}
+    )
+endif()
 
 add_subdirectory(include/beman/expected)
 
-beman_install_library(beman.expected)
+beman_install_library(beman.expected TARGETS beman.expected)
+configure_build_telemetry()
 
 if(BEMAN_EXPECTED_BUILD_TESTS)
     enable_testing()
