@@ -1,5 +1,6 @@
 infra/** linguist-vendored
-cookiecutter/** linguist-vendored
+template/** linguist-vendored
+copier/** linguist-vendored
 *.bib -linguist-detectable
 *.tex -linguist-detectable
 papers/* linguist-documentation

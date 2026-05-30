@@ -1,0 +1,14 @@
+# Standard answers and internal state managed by Copier
+_commit: 2.0.0-322-gc3c230c
+_src_path: https://github.com/steve-downey/exemplar.git
+description: Expected Over References
+maintainer: steve-downey
+minimum_cpp_build_version: '20'
+paper: PnnnnRr
+project_name: expected
+unit_test_library: gtest
+# Hidden variables manually tracked because 'when: false' omits them from _copier_answers
+generating_exemplar: false
+owner: "bemanproject"
+ci_tests_cron: "15 12 * * 2"
+pre_commit_update_cron: "50 7 * * 4"

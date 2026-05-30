@@ -3,6 +3,7 @@
 
 set(ALL_EXAMPLES expected)
 
+
 message("Examples to be built: ${ALL_EXAMPLES}")
 
 foreach(example ${ALL_EXAMPLES})
@@ -12,4 +13,10 @@ foreach(example ${ALL_EXAMPLES})
         beman.expected.examples.${example}
         PRIVATE beman::expected
     )
+    if(BEMAN_EXPECTED_USE_MODULES)
+        set_target_properties(
+            beman.expected.examples.${example}
+            PROPERTIES CXX_MODULE_STD ON
+        )
+    endif()
 endforeach()
