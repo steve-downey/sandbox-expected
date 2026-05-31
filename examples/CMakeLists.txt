@@ -3,7 +3,6 @@
 
 set(ALL_EXAMPLES expected)
 
-
 message("Examples to be built: ${ALL_EXAMPLES}")
 
 foreach(example ${ALL_EXAMPLES})
