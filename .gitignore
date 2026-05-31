@@ -21,3 +21,4 @@
 /.update-submodules
 /uv.lock
 .build
+/.claude/
