@@ -1,45 +1,51 @@
-# Handoff: After Fix 3
+# Handoff: After Fix 4
 
 ## What Was Done
 
-Fix 3 is complete. SFINAE-friendly `requires` clauses added to all monadic
-operations per standard Constraints. Branch `fix3-monadic-constraints` merged
-(--no-ff) into `expected-over-references`.
+Fix 4 is complete. `static_assert` Mandates added to observers and monadic
+operations per standard wording. Branch `fix4-mandates` merged (--no-ff) into
+`expected-over-references`.
 
 ### Changes in `include/beman/expected/expected.hpp`
 
-**Primary template (16 overloads — 4 operations × 4 ref-qualifiers):**
-- `and_then` / `transform`: `requires std::is_constructible_v<E, E-ref>`
-  (E& for &, E&& for &&, const E& for const&, const E&& for const&&)
-- `or_else` / `transform_error`: `requires std::is_constructible_v<T, T-ref>`
-  (same ref-qualifier pattern)
+**Primary template class-level:**
+- `static_assert(!detail::is_unexpected_specialization<remove_cv_t<T>>::value, ...)`
 
-**Void specialization (8 of 16 overloads):**
-- `and_then` / `transform`: same E-constructibility constraints as primary
-- `or_else` / `transform_error`: NO constraints (standard specifies none)
+**Primary template `value()` (4 overloads):**
+- `const&` / `&`: `is_copy_constructible_v<E>`
+- `&&` / `const&&`: `is_copy_constructible_v<E> && is_constructible_v<E, decltype(std::move(error()))>`
 
-Both in-class declarations and out-of-line definitions updated.
+**Primary template `value_or()` (2 overloads):**
+- `const&`: `is_copy_constructible_v<T>`, `is_convertible_v<U, T>`
+- `&&`: `is_move_constructible_v<T>`, `is_convertible_v<U, T>`
+
+**`error_or()` (4 overloads — both primary and void):**
+- `const&`: `is_copy_constructible_v<E>`, `is_convertible_v<G, E>`
+- `&&`: `is_move_constructible_v<E>`, `is_convertible_v<G, E>`
+
+**Void specialization `value()` (2 overloads):**
+- `const&`: `is_copy_constructible_v<E>`
+- `&&`: `is_copy_constructible_v<E> && is_move_constructible_v<E>`
+
+**`transform()` (8 overloads — both primary and void):**
+- In `if constexpr (!is_void_v<U>)` block: U not array, not in_place_t, not unexpect_t, not unexpected<>
+
+**`transform_error()` (8 overloads — both primary and void):**
+- G is object, not array, not cv-qualified, not unexpected<>
 
 ### Tests added
 
-- `tests/beman/expected/expected_monadic_constraints.test.cpp` — beman-only:
-  - Concept detectors using `std::declval<X>()` to preserve value category
-  - MoveOnly type (deleted copy ctor) as E: verifies `and_then`/`transform`
-    lvalue overloads are SFINAE-removed, rvalue overloads remain available
-  - MoveOnly type as T: verifies `or_else`/`transform_error` same pattern
-  - Void specialization: same E-constructibility tests for `and_then`/`transform`
-  - Void specialization: `or_else`/`transform_error` unconstrained (always available)
-  - Normal types: all operations remain available on all overloads
-  - 6 Catch2 runtime tests exercising rvalue monadic chains with move-only types
+- `tests/beman/expected/expected_unexpected_value_type_fail.cpp` — negative compile
+  test verifying `expected<unexpected<int>, int>` is ill-formed
 
 ### Test count
 
-247 tests total, all passing.
+248 tests total, all passing.
 
 ## Build Commands
 
 ```bash
-make TOOLCHAIN=gcc-16 test   # 247 tests, all passing
+make TOOLCHAIN=gcc-16 test   # 248 tests, all passing
 make lint                    # all linters pass (beman-tidy crash is pre-existing)
 ```
 
@@ -47,16 +53,14 @@ make lint                    # all linters pass (beman-tidy crash is pre-existin
 
 - [x] Fix 1: Constructor/assignment/equality constraints
 - [x] Fix 2: Trivial special member functions
-- [x] Fix 3: Monadic operation constraints  ← just done
-- [ ] Fix 4: Mandates static_asserts
+- [x] Fix 3: Monadic operation constraints
+- [x] Fix 4: Mandates static_asserts  ← just done
 - [ ] Fix 5: Hardened preconditions and minor fixes
 
-## Next Step: Fix 4
+## Next Step: Fix 5
 
-Fix 4 adds `static_assert` Mandates to observers and monadic operations.
-These go on the same functions that just received requires clauses (Fix 3),
-plus `value()`, `value_or()`, and `error_or()` observers.
+Fix 5 adds hardened precondition checks to observers (`operator->`, `operator*`,
+`error()`) and miscellaneous minor fixes (friend swap constraint on
+`unexpected<E>`, etc.).
 
-The Mandates are compile-time checks that produce clear diagnostics when
-violated, as opposed to Constraints which affect overload resolution.
-See `docs/conformance-fixes/fix4-mandates.md`.
+See `docs/conformance-fixes/fix5-preconditions-and-minor.md`.
