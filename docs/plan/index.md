@@ -66,7 +66,7 @@ Steps 7-10 are the reference specializations (the novel work in this proposal).
 - [x] Step 1: `unexpected<E>` — constructors, error() observers, swap, equality, deduction guide
 - [x] Step 2: `bad_expected_access<E>` and `bad_expected_access<void>` base
 - [x] Step 3: `expected<T, E>` primary — constructors, destructor, assignment, emplace, swap, observers, value_or, error_or, equality
-- [ ] Step 4: `expected<void, E>` — constructors, destructor, assignment, emplace, swap, observers, error_or, equality
+- [x] Step 4: `expected<void, E>` — constructors, destructor, assignment, emplace, swap, observers, error_or, equality
 - [ ] Step 5: `expected<T, E>` monadic — and_then, or_else, transform, transform_error (4 ref-qualified overloads each)
 - [ ] Step 6: `expected<void, E>` monadic — and_then, or_else, transform, transform_error
 - [ ] Step 7: `expected<T&, E>` — pointer storage, rebind assignment, observers returning T&, value_or, monadic ops, dangling prevention
