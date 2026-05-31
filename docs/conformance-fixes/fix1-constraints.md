@@ -39,13 +39,26 @@ In the `requires` clause of both `expected(const expected<U, G>&)` and
 `!is_constructible/!is_convertible` block with:
 
 ```
-(!std::is_same_v<bool, std::remove_cv_t<T>> ||
+(std::is_same_v<bool, std::remove_cv_t<T>> ||
  !detail::converts_from_any_cvref<T, expected<U, G>>)
 ```
 
 This is constraint (18.3): "if T is not cv bool, converts-from-any-cvref
-is false". When T IS cv bool, the constraint is skipped (the `||` makes
-the whole sub-expression true).
+is false". The English conditional "if T is not cv bool, X is false"
+translates to C++ as `(T IS cv bool) || (X is false)`, i.e.
+`(is_same_v<bool, remove_cv_t<T>> || !converts_from_any_cvref<...>)`.
+When T IS cv bool the first operand is `true`, short-circuiting the whole
+expression to `true` (constraint satisfied, converting ctor enabled).
+When T is not cv bool the first operand is `false`, so the second operand
+must be `true` (i.e. converts-from-any-cvref must be false).
+
+Note: an earlier draft of this document incorrectly wrote
+`!is_same_v<bool, remove_cv_t<T>>` (with a leading `!`), which would
+invert the short-circuit and re-introduce the bug. The standard wording
+at [expected.object.cons] para 18.3 is correct; only this local spec
+document had the error. Cross-checked against both
+`docs/standard/expected.txt` (line 663) and
+`~/src/steve-downey/draft/draft/source/utilities.tex` (line 8749).
 
 Keep the four `!is_constructible_v<unexpected<E>, ...>` lines unchanged
 (constraints 18.4-18.7).
