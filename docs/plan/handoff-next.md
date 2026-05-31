@@ -1,78 +1,66 @@
-# Handoff: After Step 5
+# Handoff: After Step 6
 
 ## What Was Done
 
-Step 5 is complete. Monadic operations for `expected<T, E>` primary template
-are implemented and tested on branch `step5-expected-primary-monadic`, then
-merged (--no-ff) into `expected-over-references`.
+Step 6 is complete. Monadic operations for `expected<void, E>` partial
+specialization are implemented and tested on branch `step6-expected-void-monadic`,
+then merged (--no-ff) into `expected-over-references`.
 
 ### Files changed
 
 - `include/beman/expected/expected.hpp`
-  - Added `#include <functional>` for `std::invoke`
-  - Added `detail::is_expected_specialization<T>` trait (primary false_type +
-    specialization for `expected<T,E>` : true_type) in the detail namespace
-  - Added 16 monadic method declarations inside the primary template class body:
-    `and_then`, `or_else`, `transform`, `transform_error`, each with 4
-    ref-qualified overloads (`&`, `&&`, `const&`, `const&&`)
-  - Implemented all 16 out-of-line after the `error_or` implementations, before
-    the void specialization
-  - Mandates (callable return type requirements) enforced via `static_assert`,
-    not SFINAE — these are "ill-formed, no diagnostic required" per the standard
+  - Added 16 monadic method declarations inside the void specialization class
+    body (after `error_or`, before `[expected.void.eq]`)
+  - Added 16 out-of-line implementations after the void `error_or`
+    implementations, before the closing `} // namespace expected`
+  - Key difference from primary: `and_then`/`transform` call `invoke(f)` with
+    **no arguments** (void has no stored value). `or_else`/`transform_error`
+    call `invoke(f, error())` as in the primary template.
+  - `or_else` has value path returns `G()` (not `G(in_place, val_)` — T is void)
+  - `transform_error` has value path returns `expected<void, G>()` (not
+    `expected<T, G>(in_place, val_)`)
+  - `or_else` static_assert checks `is_void_v<typename G::value_type>` (not
+    `is_same_v<typename G::value_type, T>`) — the void-specialization mandates
+    that G's value_type is void, and `is_void_v` is the cleaner check
 
-- `tests/beman/expected/expected_monadic.test.cpp` — 27 new Catch2 test cases:
-  - All four monadic operations, each with all 4 ref-qualified overloads
-  - Value-passes and error-propagation paths
-  - `transform` with void return type (returns `expected<void, E>`)
-  - Type changes (transform to different type)
-  - Chaining combinations (and_then → transform, or_else recovery, etc.)
+- `tests/beman/expected/expected_void_monadic.test.cpp` — 15 Catch2 test cases:
+  - `and_then`: value (F called with no args), error short-circuit, rvalue, void
+    result, chaining void→value
+  - `or_else`: error recovery, value short-circuit, error propagation through lambda
+  - `transform`: value→int, error propagation, void-returning F, rvalue overload
+  - `transform_error`: error transform, value pass-through
+  - Chaining: and_then → transform_error, error-path end-to-end
+  - All 4 ref-qualifications compile test for `and_then`
 
-- Negative compile test files (4 new):
-  - `and_then_wrong_error_type_fail.cpp` — F returns wrong E type
-  - `and_then_not_expected_fail.cpp` — F returns non-expected type
-  - `or_else_wrong_value_type_fail.cpp` — F returns wrong T type
-  - `transform_error_ref_result_fail.cpp` — F returns reference (triggers
-    expected<T,int&> static_assert)
+- Negative compile test files (2 new):
+  - `void_and_then_wrong_error_type_fail.cpp` — F returns wrong E type
+  - `void_or_else_wrong_value_type_fail.cpp` — F returns non-void value_type
 
-- `tests/beman/expected/CMakeLists.txt` — added `expected_monadic.test.cpp` to
-  the main test executable; registered all 4 negative compile tests
-
-### Implementation notes
-
-- `transform` with void-returning F: the `if constexpr (std::is_void_v<U>)`
-  branch calls `invoke(f, val_)` and then returns `expected<void, E>()` (or
-  `expected<void, E>(unexpect, ...)` on error). The invoke call must appear
-  before the return branch check to guarantee evaluation order.
-- `is_expected_specialization` is declared as primary false_type in the detail
-  namespace, then specialized after the `expected<T,E>` forward declaration. The
-  partial specialization must come after the forward declaration but before any
-  use (the monadic implementations come later, so this is satisfied).
-- All 16 monadic operations access private `val_` and `unex_` directly (they
-  are member functions of expected<T,E>).
+- `tests/beman/expected/CMakeLists.txt` — added `expected_void_monadic.test.cpp`
+  to the main test executable; registered 2 negative compile tests
 
 ### Test count
 
-- 212 tests total, all passing (was 175 before this step; 37 new tests including
-  the 4 negative compile tests)
+231 tests total, all passing (was 212 before this step; 19 new tests including
+the 2 negative compile tests).
 
 ### Known pre-existing issue
 
 `beman-tidy` crashes with a Python `TypeError`. Pre-existing on `main` and
-unrelated to our changes. All other linters pass (clang-format was applied by
-the pre-commit hook and its changes are included in the commit).
+unrelated to our changes. All other linters pass.
 
 ## Build Commands
 
 ```bash
-make TOOLCHAIN=gcc-16 test   # 212 tests, all passing
+make TOOLCHAIN=gcc-16 test   # 231 tests, all passing
 make lint                    # all linters (beman-tidy crash is pre-existing)
 ```
 
 ## Current Branch State
 
 - Feature branch: `expected-over-references`
-- Worktree `../step5-expected-primary-monadic/` may be deleted:
-  `git worktree remove ../step5-expected-primary-monadic`
+- Worktree `../step6-expected-void-monadic/` may be deleted:
+  `git worktree remove ../step6-expected-void-monadic`
 - All work accumulates on `expected-over-references`; this branch will be
   merged to `main` when all steps complete
 
@@ -82,61 +70,94 @@ make lint                    # all linters (beman-tidy crash is pre-existing)
 - [x] Step 2: `bad_expected_access<E>`
 - [x] Step 3: `expected<T, E>` primary template
 - [x] Step 4: `expected<void, E>` specialization
-- [x] Step 5: `expected<T, E>` monadic ops  ← just done
-- [ ] Step 6: `expected<void, E>` monadic ops
+- [x] Step 5: `expected<T, E>` monadic ops
+- [x] Step 6: `expected<void, E>` monadic ops  ← just done
 - [ ] Step 7: `expected<T&, E>` reference specialization
 - [ ] Step 8: `expected<T, E&>` error-reference specialization
 - [ ] Step 9: `expected<T&, E&>` both-reference specialization
 - [ ] Step 10: `expected<void, E&>` void+error-ref specialization
 
-## Next Step: Step 6
+## Next Step: Step 7
 
-**Step 6**: Monadic operations for `expected<void, E>`:
-Same four operations but adapted for void value semantics.
-See `docs/plan/step6-expected-void-monadic.md` and `docs/plan/tests-step6.md`.
+**Step 7**: `expected<T&, E>` — a new partial specialization where the value
+type is a reference. This is the core novel work of the proposal (P2988 design).
+See `docs/plan/step7-expected-ref-t.md` and `docs/plan/tests-step7.md`.
 
-### Key differences from Step 5 (critical to get right)
+### Critical design decisions for Step 7
 
-The void specialization differs because T is void — there is no stored value
-to pass to the callable:
+**Storage** — mirror the primary template's union pattern but store a pointer:
+```cpp
+private:
+    bool has_val_;
+    union {
+        T* val_;   // pointer to referred object when has_val_ == true
+        E unex_;   // error when has_val_ == false
+    };
+```
 
-| Operation | Primary `expected<T,E>` | Void `expected<void,E>` |
-|-----------|-------------------------|-------------------------|
-| `and_then` has value | `invoke(f, val_)` | `invoke(f)` — no arg |
-| `or_else` has value | `G(in_place, val_)` | `G()` — no value to copy |
-| `transform` has value | `invoke(f, val_)` | `invoke(f)` — no arg |
-| `transform_error` has value | `expected<T,G>(in_place, val_)` | `expected<void,G>()` |
+**Rebind semantics** — assignment changes what `T*` points to, never assigns
+through the reference. This is the key difference from a plain reference member:
+```cpp
+// Assign from lvalue: rebind (do not assign-through)
+template <class U>
+constexpr expected& operator=(U&& u) {
+    T& r(std::forward<U>(u));      // form the reference
+    val_ = std::addressof(r);       // store the address
+    ...
+}
+```
 
-The `or_else` constraint on the void specialization is also different: no
-`is_constructible_v<T, ...>` check is needed (T is void, nothing to construct).
+**Shallow const** — `const expected<T&, E>` still allows mutation of T.
+`operator*()` on const returns `T&` (not `const T&`).
 
-### Where to add the code
+**No default constructor** — T& cannot be null; there is no "empty" state.
 
-The void specialization is the second class body in `expected.hpp`, after the
-line ~760 (`// [expected.void] Partial specialization for void value type`).
-Add the 16 monadic declarations inside the class body (after `error_or`),
-and the out-of-line implementations after the void `error_or` implementations.
-The void out-of-line functions require `requires std::is_void_v<T>` on each
-template prefix, as all other void-specialization out-of-line functions do.
+**Dangling prevention** — delete constructors that would bind temporaries:
+```cpp
+template <class U>
+    requires reference_constructs_from_temporary_v<T&, U&&>
+constexpr expected(U&&) = delete;
+```
 
-### Reuse from Step 5
+**`reference_constructs_from_temporary_v`** — use the compiler built-in if
+available (GCC 13+, Clang 16+), else the portable fallback from
+`~/src/steve-downey/optional/main/include/beman/optional/optional.hpp`
+lines ~1480-1511. See that file — it uses `is_convertible_v` checks.
 
-The `detail::is_expected_specialization` trait already exists (added in Step 5).
-The same static_assert pattern for Mandates applies. The ref-qualification
-structure is identical to Step 5.
+### Reference implementation to study
 
-### Test file for Step 6
+`~/src/steve-downey/optional/main/include/beman/optional/optional.hpp`
+lines 1515-2119 implements `optional<T&>` with identical design. Read it before
+writing `expected<T&, E>`. The class structure, storage, assignment, and
+observer patterns transfer directly — just replace the `optional` aspects with
+`expected` (add error storage/handling, no `nullopt` constructor, has `or_else`
+and `transform_error` instead of just `and_then` / `transform`).
 
-Create `tests/beman/expected/expected_void_monadic.test.cpp`.
-The `tests-step6.md` file has a complete test outline and negative compile
-test templates. Follow Catch2 + double-include pattern from existing tests.
+### What does NOT exist yet in the codebase
 
-### Negative compile tests for Step 6
+- `reference_constructs_from_temporary_v` — needs to be added in `detail` namespace
+- `expected<T&, E>` specialization — does not exist; the primary template has a
+  `static_assert(!is_reference_v<T>)` that would fire if attempted
+- Any reference-specialization tests
 
-- `void_and_then_wrong_error_type_fail.cpp`
-- `void_or_else_wrong_value_type_fail.cpp`
+### Monadic ops for expected<T&, E>
 
-(Templates in `tests-step6.md`)
+Same 16 declarations + implementations as primary template, but:
+- `and_then(F)`: pass `*(*this)` which is `T&` (dereference the pointer via operator*)
+- `transform(F)`: same — `invoke(f, **this)` 
+- `or_else(F)` / `transform_error(F)`: unchanged (operate on error)
+
+The `or_else` value-path returns `G(std::in_place, **this)` — but wait, T is a
+reference type. `G` is `expected<T&, G_err>` or similar. Check what makes sense:
+the value path of `or_else` just returns the current object wrapped in G. Since
+G::value_type must equal T (which is T&), `G(std::in_place, *this->val_)` or
+just `G(**this)` works.
+
+### Negative compile tests for Step 7
+
+- `expected_ref_temporary_fail.cpp` — construct from rvalue/temporary
+- `expected_ref_no_default_fail.cpp` — default construction
+- `expected_ref_inplace_value_fail.cpp` — `in_place_t` value construction
 
 ### After step is done
 
