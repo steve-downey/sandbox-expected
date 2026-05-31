@@ -1,10 +1,14 @@
-# Handoff: After Step 3
+# Handoff: After Step 3 + Test Backfill
 
 ## What Was Done
 
 Step 3 is complete. `expected<T, E>` primary template is fully implemented
 and tested on branch `step3-expected-primary`, then merged (--no-ff) into
 `expected-over-references`.
+
+After Step 3, all missing tests from the test plan (`docs/plan/tests-step1.md`,
+`tests-step2.md`, `tests-step3.md`) were backfilled on `expected-over-references`
+directly. See **Additional Test Plan Documents** below.
 
 ### What step3 included (beyond step3 itself)
 
@@ -56,6 +60,37 @@ so those test files were converted to Catch2 format during the merge.
 - `tests/beman/expected/expected.test.cpp` — comprehensive Catch2 tests:
   117 total test cases covering all of the above
 
+### Test backfill (committed on expected-over-references after Step 3)
+
+- `include/beman/expected/unexpected.hpp` — added static_asserts inside `unexpected<E>`
+  for [expected.un.general] para 2 ill-formed instantiation constraints:
+  `is_object_v<E>`, `!is_array_v<E>`, `is_same_v<E, remove_cv_t<E>>`,
+  `!is_unexpected_specialization<E>` (uses a `detail::is_unexpected_specialization`
+  trait forward-declared before the class). These make the negative compile tests work.
+
+- `tests/beman/expected/unexpected.test.cpp` — added: constructibility static_asserts,
+  `error()` ref-qualification static_asserts, `!=` operator test, ilist constraint check.
+
+- `tests/beman/expected/bad_expected_access.test.cpp` — added: inheritance chain
+  static_asserts (`exception → bad_expected_access<void> → bad_expected_access<E>`),
+  `error()` ref-qualification static_asserts, move-only E test, base-ref access test.
+
+- `tests/beman/expected/expected.test.cpp` — added: namespace-scope helper types
+  (`NoDefault`, `NoCopy`, `ThrowingMove`, `MightThrow`), type-trait static_asserts
+  (default ctor constraint, copy ctor constraint, trivially destructible, nothrow move
+  constructible/assignable, `operator*` and `error()` ref-qual return types), destructor
+  tests (value and error state), `emplace` with initializer_list, `operator->` address
+  equality, `value()` ref-qual static_asserts.
+
+- `tests/beman/expected/expected_*_fail.cpp` and `unexpected_*_fail.cpp` (7 new files):
+  negative compile tests for ill-formed `unexpected<E>` and `expected<T,E>` instantiations
+  and the `emplace` nothrow Mandates.
+
+- `tests/beman/expected/CMakeLists.txt` — registered all 7 negative compile targets as
+  WILL_FAIL ctest entries using a `add_fail_test` macro.
+
+Total tests now: 134 (was 117: 17 new Catch2 cases + 7 negative compile tests).
+
 ### Known pre-existing issue
 
 `beman-tidy` crashes with a Python `TypeError` in the tool itself. This is
@@ -76,6 +111,29 @@ make lint                    # all linters (beman-tidy crash is pre-existing)
   `../step3-expected-primary/` but can be deleted
 - All work accumulates on `expected-over-references`; this branch will be
   merged to `main` when all steps complete
+
+## Additional Test Plan Documents
+
+The full test plan lives alongside this handoff under `docs/plan/`:
+
+| File | Covers |
+|------|--------|
+| `tests-overview.md` | Framework, conventions, negative compile pattern, CMakeLists structure |
+| `tests-step1.md` | `unexpected<E>` — all testable statements from [expected.un.*] |
+| `tests-step2.md` | `bad_expected_access<E>` — [expected.bad] and [expected.bad.void] |
+| `tests-step3.md` | `expected<T,E>` primary template — [expected.object.*] excluding monadic |
+| `tests-step4.md` | `expected<void,E>` partial specialization |
+| `tests-step5.md` | `expected<T,E>` monadic operations |
+| `tests-step6.md` | `expected<void,E>` monadic operations |
+| `tests-step7.md` | `expected<T&,E>` reference-value specialization (P2988) |
+| `tests-step8.md` | `expected<T,E&>` reference-error specialization (P2988) |
+| `tests-step9.md` | `expected<T&,E&>` both-reference specialization (P2988) |
+| `tests-step10.md`| `expected<void,E&>` void+reference-error specialization (P2988) |
+
+**When starting a new step**, read `tests-overview.md` and the corresponding
+`tests-stepN.md` before writing tests. The test plan is the authoritative
+description of what needs to be tested; not everything in it may have been
+implemented yet in earlier steps.
 
 ## Next Step: Step 4
 

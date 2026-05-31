@@ -56,6 +56,27 @@ For `optional<T&>` patterns, see `~/src/steve-downey/optional/main`:
 See `docs/plan/index.md` for the full plan with step index, checklist,
 and links to individual step files.
 
+## Test Plan Documents
+
+Each implementation step has a corresponding test plan:
+
+| File | Covers |
+|------|--------|
+| `tests-overview.md` | Framework, conventions, negative compile pattern, CMakeLists structure |
+| `tests-step1.md` | `unexpected<E>` — all testable statements from [expected.un.*] |
+| `tests-step2.md` | `bad_expected_access<E>` — [expected.bad] and [expected.bad.void] |
+| `tests-step3.md` | `expected<T,E>` primary template — [expected.object.*] excluding monadic |
+| `tests-step4.md` | `expected<void,E>` partial specialization |
+| `tests-step5.md` | `expected<T,E>` monadic operations |
+| `tests-step6.md` | `expected<void,E>` monadic operations |
+| `tests-step7.md` | `expected<T&,E>` reference-value specialization (P2988) |
+| `tests-step8.md` | `expected<T,E&>` reference-error specialization (P2988) |
+| `tests-step9.md` | `expected<T&,E&>` both-reference specialization (P2988) |
+| `tests-step10.md`| `expected<void,E&>` void+reference-error specialization (P2988) |
+
+Read `tests-overview.md` first, then the `tests-stepN.md` for the step being
+worked before writing any tests.
+
 ## What Comes Next
 
 Step 1: Implement `unexpected<E>` — see `docs/plan/step1-unexpected.md`.
