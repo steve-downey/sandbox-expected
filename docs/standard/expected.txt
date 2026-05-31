@@ -132,7 +132,7 @@ cv-qualified type is ill-formed.
 
 🔗
 
-template<class Err = E> constexpr explicit unexpected(Err&& e); 
+template<class Err = E> constexpr explicit unexpected(Err&& e);
 
 1
 
@@ -166,7 +166,7 @@ Throws: Any exception thrown by the initialization of unex.
 
 🔗
 
-template<class... Args> constexpr explicit unexpected(in_place_t, Args&&... args); 
+template<class... Args> constexpr explicit unexpected(in_place_t, Args&&... args);
 
 4
 
@@ -189,7 +189,7 @@ Throws: Any exception thrown by the initialization of unex.
 
 🔗
 
-template<class U, class... Args> constexpr explicit unexpected(in_place_t, initializer_list<U> il, Args&&... args); 
+template<class U, class... Args> constexpr explicit unexpected(in_place_t, initializer_list<U> il, Args&&... args);
 
 7
 
@@ -215,7 +215,7 @@ Throws: Any exception thrown by the initialization of unex.
 
 🔗
 
-constexpr const E& error() const & noexcept; constexpr E& error() & noexcept; 
+constexpr const E& error() const & noexcept; constexpr E& error() & noexcept;
 
 1
 
@@ -225,7 +225,7 @@ Returns: unex.
 
 🔗
 
-constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept; 
+constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept;
 
 2
 
@@ -237,7 +237,7 @@ Returns: std​::​move(unex).
 
 🔗
 
-constexpr void swap(unexpected& other) noexcept(is_nothrow_swappable_v<E>); 
+constexpr void swap(unexpected& other) noexcept(is_nothrow_swappable_v<E>);
 
 1
 
@@ -253,7 +253,7 @@ Effects: Equivalent to: using std​::​swap; swap(unex, other.unex);
 
 🔗
 
-friend constexpr void swap(unexpected& x, unexpected& y) noexcept(noexcept(x.swap(y))); 
+friend constexpr void swap(unexpected& x, unexpected& y) noexcept(noexcept(x.swap(y)));
 
 3
 
@@ -271,7 +271,7 @@ Effects: Equivalent to x.swap(y).
 
 🔗
 
-template<class E2> friend constexpr bool operator==(const unexpected& x, const unexpected<E2>& y); 
+template<class E2> friend constexpr bool operator==(const unexpected& x, const unexpected<E2>& y);
 
 1
 
@@ -308,7 +308,7 @@ false.
 
 🔗
 
-constexpr explicit bad_expected_access(E e); 
+constexpr explicit bad_expected_access(E e);
 
 2
 
@@ -318,7 +318,7 @@ Effects: Initializes unex with std​::​move(e).
 
 🔗
 
-constexpr const E& error() const & noexcept; constexpr E& error() & noexcept; 
+constexpr const E& error() const & noexcept; constexpr E& error() & noexcept;
 
 3
 
@@ -328,7 +328,7 @@ Returns: unex.
 
 🔗
 
-constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept; 
+constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept;
 
 4
 
@@ -338,7 +338,7 @@ Returns: std​::​move(unex).
 
 🔗
 
-constexpr const char* what() const noexcept override; 
+constexpr const char* what() const noexcept override;
 
 5
 
@@ -360,7 +360,7 @@ char* what() const noexcept override; }; }
 
 🔗
 
-constexpr const char* what() const noexcept override; 
+constexpr const char* what() const noexcept override;
 
 1
 
@@ -485,7 +485,7 @@ The exposition-only variable template converts-from-any-cvref defined in
 
 🔗
 
-constexpr expected(); 
+constexpr expected();
 
 2
 
@@ -513,7 +513,7 @@ Throws: Any exception thrown by the initialization of val.
 
 🔗
 
-constexpr expected(const expected& rhs); 
+constexpr expected(const expected& rhs);
 
 6
 
@@ -566,7 +566,7 @@ This constructor is trivial if
 
 🔗
 
-constexpr expected(expected&& rhs) noexcept(see below); 
+constexpr expected(expected&& rhs) noexcept(see below);
 
 11
 
@@ -628,7 +628,7 @@ This constructor is trivial if
 
 🔗
 
-template<class U, class G> constexpr explicit(see below) expected(const expected<U, G>& rhs); template<class U, class G> constexpr explicit(see below) expected(expected<U, G>&& rhs); 
+template<class U, class G> constexpr explicit(see below) expected(const expected<U, G>& rhs); template<class U, class G> constexpr explicit(see below) expected(expected<U, G>&& rhs);
 
 17
 
@@ -712,7 +712,7 @@ Remarks: The expression inside explicit is equivalent to
 
 🔗
 
-template<class U = remove_cv_t<T>> constexpr explicit(!is_convertible_v<U, T>) expected(U&& v); 
+template<class U = remove_cv_t<T>> constexpr explicit(!is_convertible_v<U, T>) expected(U&& v);
 
 23
 
@@ -765,7 +765,7 @@ Throws: Any exception thrown by the initialization of val.
 
 🔗
 
-template<class G> constexpr explicit(!is_convertible_v<const G&, E>) expected(const unexpected<G>& e); template<class G> constexpr explicit(!is_convertible_v<G, E>) expected(unexpected<G>&& e); 
+template<class G> constexpr explicit(!is_convertible_v<const G&, E>) expected(const unexpected<G>& e); template<class G> constexpr explicit(!is_convertible_v<G, E>) expected(unexpected<G>&& e);
 
 27
 
@@ -800,7 +800,7 @@ Throws: Any exception thrown by the initialization of unex.
 
 🔗
 
-template<class... Args> constexpr explicit expected(in_place_t, Args&&... args); 
+template<class... Args> constexpr explicit expected(in_place_t, Args&&... args);
 
 32
 
@@ -829,7 +829,7 @@ Throws: Any exception thrown by the initialization of val.
 
 🔗
 
-template<class U, class... Args> constexpr explicit expected(in_place_t, initializer_list<U> il, Args&&... args); 
+template<class U, class... Args> constexpr explicit expected(in_place_t, initializer_list<U> il, Args&&... args);
 
 36
 
@@ -859,7 +859,7 @@ Throws: Any exception thrown by the initialization of val.
 
 🔗
 
-template<class... Args> constexpr explicit expected(unexpect_t, Args&&... args); 
+template<class... Args> constexpr explicit expected(unexpect_t, Args&&... args);
 
 40
 
@@ -888,7 +888,7 @@ Throws: Any exception thrown by the initialization of unex.
 
 🔗
 
-template<class U, class... Args> constexpr explicit expected(unexpect_t, initializer_list<U> il, Args&&... args); 
+template<class U, class... Args> constexpr explicit expected(unexpect_t, initializer_list<U> il, Args&&... args);
 
 44
 
@@ -920,7 +920,7 @@ Throws: Any exception thrown by the initialization of unex.
 
 🔗
 
-constexpr ~expected(); 
+constexpr ~expected();
 
 1
 
@@ -957,7 +957,7 @@ construct_at(addressof(newval), std::forward<Args>(args)...); } catch
 
 🔗
 
-constexpr expected& operator=(const expected& rhs); 
+constexpr expected& operator=(const expected& rhs);
 
 2
 
@@ -1052,7 +1052,7 @@ This operator is trivial if:
 
 🔗
 
-constexpr expected& operator=(expected&& rhs) noexcept(see below); 
+constexpr expected& operator=(expected&& rhs) noexcept(see below);
 
 6
 
@@ -1155,7 +1155,7 @@ This operator is trivial if:
 
 🔗
 
-template<class U = remove_cv_t<T>> constexpr expected& operator=(U&& v); 
+template<class U = remove_cv_t<T>> constexpr expected& operator=(U&& v);
 
 11
 
@@ -1208,7 +1208,7 @@ Returns: *this.
 
 🔗
 
-template<class G> constexpr expected& operator=(const unexpected<G>& e); template<class G> constexpr expected& operator=(unexpected<G>&& e); 
+template<class G> constexpr expected& operator=(const unexpected<G>& e); template<class G> constexpr expected& operator=(unexpected<G>&& e);
 
 14
 
@@ -1259,7 +1259,7 @@ Returns: *this.
 
 🔗
 
-template<class... Args> constexpr T& emplace(Args&&... args) noexcept; 
+template<class... Args> constexpr T& emplace(Args&&... args) noexcept;
 
 18
 
@@ -1277,7 +1277,7 @@ else { destroy_at(addressof(unex)); has_val = true; } return
 
 🔗
 
-template<class U, class... Args> constexpr T& emplace(initializer_list<U> il, Args&&... args) noexcept; 
+template<class U, class... Args> constexpr T& emplace(initializer_list<U> il, Args&&... args) noexcept;
 
 20
 
@@ -1298,7 +1298,7 @@ else { destroy_at(addressof(unex)); has_val = true; } return
 
 🔗
 
-constexpr void swap(expected& rhs) noexcept(see below); 
+constexpr void swap(expected& rhs) noexcept(see below);
 
 1
 
@@ -1373,7 +1373,7 @@ is_nothrow_move_constructible_v<E> && is_nothrow_swappable_v<E>
 
 🔗
 
-friend constexpr void swap(expected& x, expected& y) noexcept(noexcept(x.swap(y))); 
+friend constexpr void swap(expected& x, expected& y) noexcept(noexcept(x.swap(y)));
 
 5
 
@@ -1385,7 +1385,7 @@ Effects: Equivalent to x.swap(y).
 
 🔗
 
-constexpr const T* operator->() const noexcept; constexpr T* operator->() noexcept; 
+constexpr const T* operator->() const noexcept; constexpr T* operator->() noexcept;
 
 1
 
@@ -1401,7 +1401,7 @@ Returns: addressof(val).
 
 🔗
 
-constexpr const T& operator*() const & noexcept; constexpr T& operator*() & noexcept; 
+constexpr const T& operator*() const & noexcept; constexpr T& operator*() & noexcept;
 
 3
 
@@ -1417,7 +1417,7 @@ Returns: val.
 
 🔗
 
-constexpr T&& operator*() && noexcept; constexpr const T&& operator*() const && noexcept; 
+constexpr T&& operator*() && noexcept; constexpr const T&& operator*() const && noexcept;
 
 5
 
@@ -1433,7 +1433,7 @@ Returns: std​::​move(val).
 
 🔗
 
-constexpr explicit operator bool() const noexcept; constexpr bool has_value() const noexcept; 
+constexpr explicit operator bool() const noexcept; constexpr bool has_value() const noexcept;
 
 7
 
@@ -1443,7 +1443,7 @@ Returns: has_val.
 
 🔗
 
-constexpr const T& value() const &; constexpr T& value() &; 
+constexpr const T& value() const &; constexpr T& value() &;
 
 8
 
@@ -1465,7 +1465,7 @@ Throws: bad_expected_access(as_const(error())) if has_value() is false.
 
 🔗
 
-constexpr T&& value() &&; constexpr const T&& value() const &&; 
+constexpr T&& value() &&; constexpr const T&& value() const &&;
 
 11
 
@@ -1488,7 +1488,7 @@ Throws: bad_expected_access(std​::​move(error())) if has_value() is false.
 
 🔗
 
-constexpr const E& error() const & noexcept; constexpr E& error() & noexcept; 
+constexpr const E& error() const & noexcept; constexpr E& error() & noexcept;
 
 14
 
@@ -1504,7 +1504,7 @@ Returns: unex.
 
 🔗
 
-constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept; 
+constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept;
 
 16
 
@@ -1520,7 +1520,7 @@ Returns: std​::​move(unex).
 
 🔗
 
-template<class U = remove_cv_t<T>> constexpr T value_or(U&& v) const &; 
+template<class U = remove_cv_t<T>> constexpr T value_or(U&& v) const &;
 
 18
 
@@ -1537,7 +1537,7 @@ Returns: has_value() ? **this : static_cast<T>(std​::​forward<U>(v)).
 
 🔗
 
-template<class U = remove_cv_t<T>> constexpr T value_or(U&& v) &&; 
+template<class U = remove_cv_t<T>> constexpr T value_or(U&& v) &&;
 
 20
 
@@ -1555,7 +1555,7 @@ static_cast<T>(std​::​forward<U>(v)).
 
 🔗
 
-template<class G = E> constexpr E error_or(G&& e) const &; 
+template<class G = E> constexpr E error_or(G&& e) const &;
 
 22
 
@@ -1572,7 +1572,7 @@ Returns: std​::​forward<G>(e) if has_value() is true, error() otherwise.
 
 🔗
 
-template<class G = E> constexpr E error_or(G&& e) &&; 
+template<class G = E> constexpr E error_or(G&& e) &&;
 
 24
 
@@ -1592,7 +1592,7 @@ otherwise.
 
 🔗
 
-template<class F> constexpr auto and_then(F&& f) &; template<class F> constexpr auto and_then(F&& f) const &; 
+template<class F> constexpr auto and_then(F&& f) &; template<class F> constexpr auto and_then(F&& f) const &;
 
 1
 
@@ -1622,7 +1622,7 @@ invoke(std::forward<F>(f), val); else return U(unexpect, error());
 
 🔗
 
-template<class F> constexpr auto and_then(F&& f) &&; template<class F> constexpr auto and_then(F&& f) const &&; 
+template<class F> constexpr auto and_then(F&& f) &&; template<class F> constexpr auto and_then(F&& f) const &&;
 
 5
 
@@ -1654,7 +1654,7 @@ std::move(error()));
 
 🔗
 
-template<class F> constexpr auto or_else(F&& f) &; template<class F> constexpr auto or_else(F&& f) const &; 
+template<class F> constexpr auto or_else(F&& f) &; template<class F> constexpr auto or_else(F&& f) const &;
 
 9
 
@@ -1684,7 +1684,7 @@ return invoke(std::forward<F>(f), error());
 
 🔗
 
-template<class F> constexpr auto or_else(F&& f) &&; template<class F> constexpr auto or_else(F&& f) const &&; 
+template<class F> constexpr auto or_else(F&& f) &&; template<class F> constexpr auto or_else(F&& f) const &&;
 
 13
 
@@ -1716,7 +1716,7 @@ std::move(error()));
 
 🔗
 
-template<class F> constexpr auto transform(F&& f) &; template<class F> constexpr auto transform(F&& f) const &; 
+template<class F> constexpr auto transform(F&& f) &; template<class F> constexpr auto transform(F&& f) const &;
 
 17
 
@@ -1762,7 +1762,7 @@ Effects:
 
 🔗
 
-template<class F> constexpr auto transform(F&& f) &&; template<class F> constexpr auto transform(F&& f) const &&; 
+template<class F> constexpr auto transform(F&& f) &&; template<class F> constexpr auto transform(F&& f) const &&;
 
 21
 
@@ -1811,7 +1811,7 @@ Effects:
 
 🔗
 
-template<class F> constexpr auto transform_error(F&& f) &; template<class F> constexpr auto transform_error(F&& f) const &; 
+template<class F> constexpr auto transform_error(F&& f) &; template<class F> constexpr auto transform_error(F&& f) const &;
 
 25
 
@@ -1844,7 +1844,7 @@ invoke(std​::​forward<F>(f), error()).
 
 🔗
 
-template<class F> constexpr auto transform_error(F&& f) &&; template<class F> constexpr auto transform_error(F&& f) const &&; 
+template<class F> constexpr auto transform_error(F&& f) &&; template<class F> constexpr auto transform_error(F&& f) const &&;
 
 29
 
@@ -1879,7 +1879,7 @@ invoke(std​::​forward<F>(f), std​::​move(error())).
 
 🔗
 
-template<class T2, class E2> requires (!is_void_v<T2>) friend constexpr bool operator==(const expected& x, const expected<T2, E2>& y); 
+template<class T2, class E2> requires (!is_void_v<T2>) friend constexpr bool operator==(const expected& x, const expected<T2, E2>& y);
 
 1
 
@@ -1897,7 +1897,7 @@ if x.has_value() is true, *x == *y; otherwise x.error() == y.error().
 
 🔗
 
-template<class T2> friend constexpr bool operator==(const expected& x, const T2& v); 
+template<class T2> friend constexpr bool operator==(const expected& x, const T2& v);
 
 3
 
@@ -1922,7 +1922,7 @@ Returns: If x.has_value() is true, *x == v; otherwise false.
 
 🔗
 
-template<class E2> friend constexpr bool operator==(const expected& x, const unexpected<E2>& e); 
+template<class E2> friend constexpr bool operator==(const expected& x, const unexpected<E2>& e);
 
 5
 
@@ -2021,7 +2021,7 @@ E shall meet the requirements of Cpp17Destructible (Table 35).
 
 🔗
 
-constexpr expected() noexcept; 
+constexpr expected() noexcept;
 
 1
 
@@ -2031,7 +2031,7 @@ Postconditions: has_value() is true.
 
 🔗
 
-constexpr expected(const expected& rhs); 
+constexpr expected(const expected& rhs);
 
 2
 
@@ -2068,7 +2068,7 @@ true.
 
 🔗
 
-constexpr expected(expected&& rhs) noexcept(is_nothrow_move_constructible_v<E>); 
+constexpr expected(expected&& rhs) noexcept(is_nothrow_move_constructible_v<E>);
 
 7
 
@@ -2105,7 +2105,7 @@ is_trivially_move_constructible_v<E> is true.
 
 🔗
 
-template<class U, class G> constexpr explicit(!is_convertible_v<const G&, E>) expected(const expected<U, G>& rhs); template<class U, class G> constexpr explicit(!is_convertible_v<G, E>) expected(expected<U, G>&& rhs); 
+template<class U, class G> constexpr explicit(!is_convertible_v<const G&, E>) expected(const expected<U, G>& rhs); template<class U, class G> constexpr explicit(!is_convertible_v<G, E>) expected(expected<U, G>&& rhs);
 
 12
 
@@ -2166,7 +2166,7 @@ Throws: Any exception thrown by the initialization of unex.
 
 🔗
 
-template<class G> constexpr explicit(!is_convertible_v<const G&, E>) expected(const unexpected<G>& e); template<class G> constexpr explicit(!is_convertible_v<G, E>) expected(unexpected<G>&& e); 
+template<class G> constexpr explicit(!is_convertible_v<const G&, E>) expected(const unexpected<G>& e); template<class G> constexpr explicit(!is_convertible_v<G, E>) expected(unexpected<G>&& e);
 
 17
 
@@ -2201,7 +2201,7 @@ Throws: Any exception thrown by the initialization of unex.
 
 🔗
 
-constexpr explicit expected(in_place_t) noexcept; 
+constexpr explicit expected(in_place_t) noexcept;
 
 22
 
@@ -2211,7 +2211,7 @@ Postconditions: has_value() is true.
 
 🔗
 
-template<class... Args> constexpr explicit expected(unexpect_t, Args&&... args); 
+template<class... Args> constexpr explicit expected(unexpect_t, Args&&... args);
 
 23
 
@@ -2240,7 +2240,7 @@ Throws: Any exception thrown by the initialization of unex.
 
 🔗
 
-template<class U, class... Args> constexpr explicit expected(unexpect_t, initializer_list<U> il, Args&&... args); 
+template<class U, class... Args> constexpr explicit expected(unexpect_t, initializer_list<U> il, Args&&... args);
 
 27
 
@@ -2272,7 +2272,7 @@ Throws: Any exception thrown by the initialization of unex.
 
 🔗
 
-constexpr ~expected(); 
+constexpr ~expected();
 
 1
 
@@ -2291,7 +2291,7 @@ is a trivial destructor.
 
 🔗
 
-constexpr expected& operator=(const expected& rhs); 
+constexpr expected& operator=(const expected& rhs);
 
 1
 
@@ -2340,7 +2340,7 @@ are all true.
 
 🔗
 
-constexpr expected& operator=(expected&& rhs) noexcept(see below); 
+constexpr expected& operator=(expected&& rhs) noexcept(see below);
 
 5
 
@@ -2396,7 +2396,7 @@ are all true.
 
 🔗
 
-template<class G> constexpr expected& operator=(const unexpected<G>& e); template<class G> constexpr expected& operator=(unexpected<G>&& e); 
+template<class G> constexpr expected& operator=(const unexpected<G>& e); template<class G> constexpr expected& operator=(unexpected<G>&& e);
 
 10
 
@@ -2434,7 +2434,7 @@ Returns: *this.
 
 🔗
 
-constexpr void emplace() noexcept; 
+constexpr void emplace() noexcept;
 
 14
 
@@ -2447,7 +2447,7 @@ true.
 
 🔗
 
-constexpr void swap(expected& rhs) noexcept(see below); 
+constexpr void swap(expected& rhs) noexcept(see below);
 
 1
 
@@ -2495,7 +2495,7 @@ is_nothrow_move_constructible_v<E> && is_nothrow_swappable_v<E>.
 
 🔗
 
-friend constexpr void swap(expected& x, expected& y) noexcept(noexcept(x.swap(y))); 
+friend constexpr void swap(expected& x, expected& y) noexcept(noexcept(x.swap(y)));
 
 5
 
@@ -2507,7 +2507,7 @@ Effects: Equivalent to x.swap(y).
 
 🔗
 
-constexpr explicit operator bool() const noexcept; constexpr bool has_value() const noexcept; 
+constexpr explicit operator bool() const noexcept; constexpr bool has_value() const noexcept;
 
 1
 
@@ -2517,7 +2517,7 @@ Returns: has_val.
 
 🔗
 
-constexpr void operator*() const noexcept; 
+constexpr void operator*() const noexcept;
 
 2
 
@@ -2527,7 +2527,7 @@ Hardened preconditions: has_value() is true.
 
 🔗
 
-constexpr void value() const &; 
+constexpr void value() const &;
 
 3
 
@@ -2543,7 +2543,7 @@ Throws: bad_expected_access(error()) if has_value() is false.
 
 🔗
 
-constexpr void value() &&; 
+constexpr void value() &&;
 
 5
 
@@ -2560,7 +2560,7 @@ Throws: bad_expected_access(std​::​move(error())) if has_value() is false.
 
 🔗
 
-constexpr const E& error() const & noexcept; constexpr E& error() & noexcept; 
+constexpr const E& error() const & noexcept; constexpr E& error() & noexcept;
 
 7
 
@@ -2576,7 +2576,7 @@ Returns: unex.
 
 🔗
 
-constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept; 
+constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept;
 
 9
 
@@ -2592,7 +2592,7 @@ Returns: std​::​move(unex).
 
 🔗
 
-template<class G = E> constexpr E error_or(G&& e) const &; 
+template<class G = E> constexpr E error_or(G&& e) const &;
 
 11
 
@@ -2609,7 +2609,7 @@ Returns: std​::​forward<G>(e) if has_value() is true, error() otherwise.
 
 🔗
 
-template<class G = E> constexpr E error_or(G&& e) &&; 
+template<class G = E> constexpr E error_or(G&& e) &&;
 
 13
 
@@ -2629,7 +2629,7 @@ otherwise.
 
 🔗
 
-template<class F> constexpr auto and_then(F&& f) &; template<class F> constexpr auto and_then(F&& f) const &; 
+template<class F> constexpr auto and_then(F&& f) &; template<class F> constexpr auto and_then(F&& f) const &;
 
 1
 
@@ -2659,7 +2659,7 @@ invoke(std::forward<F>(f)); else return U(unexpect, error());
 
 🔗
 
-template<class F> constexpr auto and_then(F&& f) &&; template<class F> constexpr auto and_then(F&& f) const &&; 
+template<class F> constexpr auto and_then(F&& f) &&; template<class F> constexpr auto and_then(F&& f) const &&;
 
 5
 
@@ -2690,7 +2690,7 @@ invoke(std::forward<F>(f)); else return U(unexpect, std::move(error()));
 
 🔗
 
-template<class F> constexpr auto or_else(F&& f) &; template<class F> constexpr auto or_else(F&& f) const &; 
+template<class F> constexpr auto or_else(F&& f) &; template<class F> constexpr auto or_else(F&& f) const &;
 
 9
 
@@ -2714,7 +2714,7 @@ invoke(std::forward<F>(f), error());
 
 🔗
 
-template<class F> constexpr auto or_else(F&& f) &&; template<class F> constexpr auto or_else(F&& f) const &&; 
+template<class F> constexpr auto or_else(F&& f) &&; template<class F> constexpr auto or_else(F&& f) const &&;
 
 12
 
@@ -2739,7 +2739,7 @@ invoke(std::forward<F>(f), std::move(error()));
 
 🔗
 
-template<class F> constexpr auto transform(F&& f) &; template<class F> constexpr auto transform(F&& f) const &; 
+template<class F> constexpr auto transform(F&& f) &; template<class F> constexpr auto transform(F&& f) const &;
 
 15
 
@@ -2785,7 +2785,7 @@ Effects:
 
 🔗
 
-template<class F> constexpr auto transform(F&& f) &&; template<class F> constexpr auto transform(F&& f) const &&; 
+template<class F> constexpr auto transform(F&& f) &&; template<class F> constexpr auto transform(F&& f) const &&;
 
 19
 
@@ -2833,7 +2833,7 @@ Effects:
 
 🔗
 
-template<class F> constexpr auto transform_error(F&& f) &; template<class F> constexpr auto transform_error(F&& f) const &; 
+template<class F> constexpr auto transform_error(F&& f) &; template<class F> constexpr auto transform_error(F&& f) const &;
 
 23
 
@@ -2859,7 +2859,7 @@ direct-non-list-initialized with invoke(std​::​forward<F>(f), error()).
 
 🔗
 
-template<class F> constexpr auto transform_error(F&& f) &&; template<class F> constexpr auto transform_error(F&& f) const &&; 
+template<class F> constexpr auto transform_error(F&& f) &&; template<class F> constexpr auto transform_error(F&& f) const &&;
 
 26
 
@@ -2888,7 +2888,7 @@ std​::​move(error())).
 
 🔗
 
-template<class T2, class E2> requires is_void_v<T2> friend constexpr bool operator==(const expected& x, const expected<T2, E2>& y); 
+template<class T2, class E2> requires is_void_v<T2> friend constexpr bool operator==(const expected& x, const expected<T2, E2>& y);
 
 1
 
@@ -2906,7 +2906,7 @@ if x.has_value() is true, true; otherwise x.error() == y.error().
 
 🔗
 
-template<class E2> friend constexpr bool operator==(const expected& x, const unexpected<E2>& e); 
+template<class E2> friend constexpr bool operator==(const expected& x, const unexpected<E2>& e);
 
 3
 
