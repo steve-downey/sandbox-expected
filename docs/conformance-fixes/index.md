@@ -60,7 +60,7 @@ constraint that libstdc++ doesn't enforce, put it in the beman-only target.
 
 ## Checklist
 
-- [ ] Fix 1: Constructor/assignment/equality constraints
+- [x] Fix 1: Constructor/assignment/equality constraints
 - [ ] Fix 2: Trivial special member functions
 - [ ] Fix 3: Monadic operation constraints
 - [ ] Fix 4: Mandates static_asserts
