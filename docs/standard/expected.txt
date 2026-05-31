@@ -1,0 +1,2923 @@
+22 General utilities library [utilities]
+
+22.8 Expected objects [expected]
+
+------------------------------------------------------------------------
+
+22.8.1 General [expected.general]
+
+22.8.2 Header <expected> synopsis [expected.syn]
+
+22.8.3 Class template unexpected [expected.unexpected]
+
+22.8.3.1 General [expected.un.general]
+
+22.8.3.2 Constructors [expected.un.cons]
+
+22.8.3.3 Observers [expected.un.obs]
+
+22.8.3.4 Swap [expected.un.swap]
+
+22.8.3.5 Equality operator [expected.un.eq]
+
+22.8.4 Class template bad_expected_access [expected.bad]
+
+22.8.5 Class template specialization bad_expected_access<void> [expected.bad.void]
+
+22.8.6 Class template expected [expected.expected]
+
+22.8.6.1 General [expected.object.general]
+
+22.8.6.2 Constructors [expected.object.cons]
+
+22.8.6.3 Destructor [expected.object.dtor]
+
+22.8.6.4 Assignment [expected.object.assign]
+
+22.8.6.5 Swap [expected.object.swap]
+
+22.8.6.6 Observers [expected.object.obs]
+
+22.8.6.7 Monadic operations [expected.object.monadic]
+
+22.8.6.8 Equality operators [expected.object.eq]
+
+22.8.7 Partial specialization of expected for void types [expected.void]
+
+22.8.7.1 General [expected.void.general]
+
+22.8.7.2 Constructors [expected.void.cons]
+
+22.8.7.3 Destructor [expected.void.dtor]
+
+22.8.7.4 Assignment [expected.void.assign]
+
+22.8.7.5 Swap [expected.void.swap]
+
+22.8.7.6 Observers [expected.void.obs]
+
+22.8.7.7 Monadic operations [expected.void.monadic]
+
+22.8.7.8 Equality operators [expected.void.eq]
+
+------------------------------------------------------------------------
+
+22.8.1 General [expected.general]
+
+1
+
+#
+
+Subclause [expected] describes the class template expected that
+represents expected objects.
+
+An expected<T, E> object holds an object of type T or an object of type
+E and manages the lifetime of the contained objects.
+
+22.8.2 Header <expected> synopsis [expected.syn]
+
+🔗
+
+// mostly freestanding namespace std { // [expected.unexpected], class
+template unexpected template<class E> class unexpected; //
+[expected.bad], class template bad_expected_access template<class E>
+class bad_expected_access; // [expected.bad.void], specialization for
+void template<> class bad_expected_access<void>; // in-place
+construction of unexpected values struct unexpect_t { explicit
+unexpect_t() = default; }; inline constexpr unexpect_t unexpect{}; //
+[expected.expected], class template expected template<class T, class E>
+class expected; // partially freestanding // [expected.void], partial
+specialization of expected for void types template<class T, class E>
+requires is_void_v<T> class expected<T, E>; // partially freestanding }
+
+22.8.3 Class template unexpected [expected.unexpected]
+
+22.8.3.1 General [expected.un.general]
+
+1
+
+#
+
+Subclause [expected.unexpected] describes the class template unexpected
+that represents unexpected objects stored in expected objects.
+
+🔗
+
+namespace std { template<class E> class unexpected { public: //
+[expected.un.cons], constructors constexpr unexpected(const unexpected&)
+= default; constexpr unexpected(unexpected&&) = default; template<class
+Err = E> constexpr explicit unexpected(Err&&); template<class... Args>
+constexpr explicit unexpected(in_place_t, Args&&...); template<class U,
+class... Args> constexpr explicit unexpected(in_place_t,
+initializer_list<U>, Args&&...); constexpr unexpected& operator=(const
+unexpected&) = default; constexpr unexpected& operator=(unexpected&&) =
+default; constexpr const E& error() const & noexcept; constexpr E&
+error() & noexcept; constexpr const E&& error() const && noexcept;
+constexpr E&& error() && noexcept; constexpr void swap(unexpected&
+other) noexcept(see below); template<class E2> friend constexpr bool
+operator==(const unexpected&, const unexpected<E2>&); friend constexpr
+void swap(unexpected& x, unexpected& y) noexcept(noexcept(x.swap(y)));
+private: E unex; // exposition only }; template<class E> unexpected(E)
+-> unexpected<E>; }
+
+2
+
+#
+
+A program that instantiates the definition of unexpected for a
+non-object type, an array type, a specialization of unexpected, or a
+cv-qualified type is ill-formed.
+
+22.8.3.2 Constructors [expected.un.cons]
+
+🔗
+
+template<class Err = E> constexpr explicit unexpected(Err&& e); 
+
+1
+
+#
+
+Constraints:
+
+-   (1.1)
+
+    is_same_v<remove_cvref_t<Err>, unexpected> is false; and
+
+-   (1.2)
+
+    is_same_v<remove_cvref_t<Err>, in_place_t> is false; and
+
+-   (1.3)
+
+    is_constructible_v<E, Err> is true.
+
+2
+
+#
+
+Effects: Direct-non-list-initializes unex with std​::​forward<Err>(e).
+
+3
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+🔗
+
+template<class... Args> constexpr explicit unexpected(in_place_t, Args&&... args); 
+
+4
+
+#
+
+Constraints: is_constructible_v<E, Args...> is true.
+
+5
+
+#
+
+Effects: Direct-non-list-initializes unex with
+std​::​forward<Args>(args)....
+
+6
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+🔗
+
+template<class U, class... Args> constexpr explicit unexpected(in_place_t, initializer_list<U> il, Args&&... args); 
+
+7
+
+#
+
+Constraints: is_constructible_v<E, initializer_list<U>&, Args...> is
+true.
+
+8
+
+#
+
+Effects: Direct-non-list-initializes unex with il,
+std​::​forward<Args>(args)....
+
+9
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+22.8.3.3 Observers [expected.un.obs]
+
+🔗
+
+constexpr const E& error() const & noexcept; constexpr E& error() & noexcept; 
+
+1
+
+#
+
+Returns: unex.
+
+🔗
+
+constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept; 
+
+2
+
+#
+
+Returns: std​::​move(unex).
+
+22.8.3.4 Swap [expected.un.swap]
+
+🔗
+
+constexpr void swap(unexpected& other) noexcept(is_nothrow_swappable_v<E>); 
+
+1
+
+#
+
+Mandates: is_swappable_v<E> is true.
+
+2
+
+#
+
+Effects: Equivalent to: using std​::​swap; swap(unex, other.unex);
+
+🔗
+
+friend constexpr void swap(unexpected& x, unexpected& y) noexcept(noexcept(x.swap(y))); 
+
+3
+
+#
+
+Constraints: is_swappable_v<E> is true.
+
+4
+
+#
+
+Effects: Equivalent to x.swap(y).
+
+22.8.3.5 Equality operator [expected.un.eq]
+
+🔗
+
+template<class E2> friend constexpr bool operator==(const unexpected& x, const unexpected<E2>& y); 
+
+1
+
+#
+
+Mandates: The expression x.error() == y.error() is well-formed and its
+result is convertible to bool.
+
+2
+
+#
+
+Returns: x.error() == y.error().
+
+22.8.4 Class template bad_expected_access [expected.bad]
+
+🔗
+
+namespace std { template<class E> class bad_expected_access : public
+bad_expected_access<void> { public: constexpr explicit
+bad_expected_access(E); constexpr const char* what() const noexcept
+override; constexpr E& error() & noexcept; constexpr const E& error()
+const & noexcept; constexpr E&& error() && noexcept; constexpr const E&&
+error() const && noexcept; private: E unex; // exposition only }; }
+
+1
+
+#
+
+The class template bad_expected_access defines the type of objects
+thrown as exceptions to report the situation where an attempt is made to
+access the value of an expected<T, E> object for which has_value() is
+false.
+
+🔗
+
+constexpr explicit bad_expected_access(E e); 
+
+2
+
+#
+
+Effects: Initializes unex with std​::​move(e).
+
+🔗
+
+constexpr const E& error() const & noexcept; constexpr E& error() & noexcept; 
+
+3
+
+#
+
+Returns: unex.
+
+🔗
+
+constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept; 
+
+4
+
+#
+
+Returns: std​::​move(unex).
+
+🔗
+
+constexpr const char* what() const noexcept override; 
+
+5
+
+#
+
+Returns: An implementation-defined ntbs, which during constant
+evaluation is encoded with the ordinary literal encoding ([lex.ccon]).
+
+22.8.5 Class template specialization bad_expected_access<void> [expected.bad.void]
+
+namespace std { template<> class bad_expected_access<void> : public
+exception { protected: constexpr bad_expected_access() noexcept;
+constexpr bad_expected_access(const bad_expected_access&) noexcept;
+constexpr bad_expected_access(bad_expected_access&&) noexcept; constexpr
+bad_expected_access& operator=(const bad_expected_access&) noexcept;
+constexpr bad_expected_access& operator=(bad_expected_access&&)
+noexcept; constexpr ~bad_expected_access(); public: constexpr const
+char* what() const noexcept override; }; }
+
+🔗
+
+constexpr const char* what() const noexcept override; 
+
+1
+
+#
+
+Returns: An implementation-defined ntbs, which during constant
+evaluation is encoded with the ordinary literal encoding ([lex.ccon]).
+
+22.8.6 Class template expected [expected.expected]
+
+22.8.6.1 General [expected.object.general]
+
+namespace std { template<class T, class E> class expected { public:
+using value_type = T; using error_type = E; using unexpected_type =
+unexpected<E>; template<class U> using rebind = expected<U, error_type>;
+// [expected.object.cons], constructors constexpr expected(); constexpr
+expected(const expected&); constexpr expected(expected&&) noexcept(see
+below); template<class U, class G> constexpr explicit(see below)
+expected(const expected<U, G>&); template<class U, class G> constexpr
+explicit(see below) expected(expected<U, G>&&); template<class U =
+remove_cv_t<T>> constexpr explicit(see below) expected(U&& v);
+template<class G> constexpr explicit(see below) expected(const
+unexpected<G>&); template<class G> constexpr explicit(see below)
+expected(unexpected<G>&&); template<class... Args> constexpr explicit
+expected(in_place_t, Args&&...); template<class U, class... Args>
+constexpr explicit expected(in_place_t, initializer_list<U>, Args&&...);
+template<class... Args> constexpr explicit expected(unexpect_t,
+Args&&...); template<class U, class... Args> constexpr explicit
+expected(unexpect_t, initializer_list<U>, Args&&...); //
+[expected.object.dtor], destructor constexpr ~expected(); //
+[expected.object.assign], assignment constexpr expected& operator=(const
+expected&); constexpr expected& operator=(expected&&) noexcept(see
+below); template<class U = remove_cv_t<T>> constexpr expected&
+operator=(U&&); template<class G> constexpr expected& operator=(const
+unexpected<G>&); template<class G> constexpr expected&
+operator=(unexpected<G>&&); template<class... Args> constexpr T&
+emplace(Args&&...) noexcept; template<class U, class... Args> constexpr
+T& emplace(initializer_list<U>, Args&&...) noexcept; //
+[expected.object.swap], swap constexpr void swap(expected&) noexcept(see
+below); friend constexpr void swap(expected& x, expected& y)
+noexcept(noexcept(x.swap(y))); // [expected.object.obs], observers
+constexpr const T* operator->() const noexcept; constexpr T*
+operator->() noexcept; constexpr const T& operator*() const & noexcept;
+constexpr T& operator*() & noexcept; constexpr const T&& operator*()
+const && noexcept; constexpr T&& operator*() && noexcept; constexpr
+explicit operator bool() const noexcept; constexpr bool has_value()
+const noexcept; constexpr const T& value() const &; //
+freestanding-deleted constexpr T& value() &; // freestanding-deleted
+constexpr const T&& value() const &&; // freestanding-deleted constexpr
+T&& value() &&; // freestanding-deleted constexpr const E& error() const
+& noexcept; constexpr E& error() & noexcept; constexpr const E&& error()
+const && noexcept; constexpr E&& error() && noexcept; template<class U =
+remove_cv_t<T>> constexpr T value_or(U&&) const &; template<class U =
+remove_cv_t<T>> constexpr T value_or(U&&) &&; template<class G = E>
+constexpr E error_or(G&&) const &; template<class G = E> constexpr E
+error_or(G&&) &&; // [expected.object.monadic], monadic operations
+template<class F> constexpr auto and_then(F&& f) &; template<class F>
+constexpr auto and_then(F&& f) &&; template<class F> constexpr auto
+and_then(F&& f) const &; template<class F> constexpr auto and_then(F&&
+f) const &&; template<class F> constexpr auto or_else(F&& f) &;
+template<class F> constexpr auto or_else(F&& f) &&; template<class F>
+constexpr auto or_else(F&& f) const &; template<class F> constexpr auto
+or_else(F&& f) const &&; template<class F> constexpr auto transform(F&&
+f) &; template<class F> constexpr auto transform(F&& f) &&;
+template<class F> constexpr auto transform(F&& f) const &;
+template<class F> constexpr auto transform(F&& f) const &&;
+template<class F> constexpr auto transform_error(F&& f) &;
+template<class F> constexpr auto transform_error(F&& f) &&;
+template<class F> constexpr auto transform_error(F&& f) const &;
+template<class F> constexpr auto transform_error(F&& f) const &&; //
+[expected.object.eq], equality operators template<class T2, class E2>
+requires (!is_void_v<T2>) friend constexpr bool operator==(const
+expected& x, const expected<T2, E2>& y); template<class T2> friend
+constexpr bool operator==(const expected&, const T2&); template<class
+E2> friend constexpr bool operator==(const expected&, const
+unexpected<E2>&); private: bool has_val; // exposition only union {
+remove_cv_t<T> val; // exposition only E unex; // exposition only }; };
+}
+
+1
+
+#
+
+Any object of type expected<T, E> either contains a value of type T or a
+value of type E nested within ([intro.object]) it.
+
+Member has_val indicates whether the expected<T, E> object contains an
+object of type T.
+
+2
+
+#
+
+A type T is a valid value type for expected, if remove_cv_t<T> is void
+or a complete non-array object type that is not in_place_t, unexpect_t,
+or a specialization of unexpected.
+
+A program which instantiates class template expected<T, E> with an
+argument T that is not a valid value type for expected is ill-formed.
+
+A program that instantiates the definition of the template expected<T,
+E> with a type for the E parameter that is not a valid template argument
+for unexpected is ill-formed.
+
+3
+
+#
+
+When T is not cv void, it shall meet the Cpp17Destructible requirements
+(Table 35).
+
+E shall meet the Cpp17Destructible requirements.
+
+22.8.6.2 Constructors [expected.object.cons]
+
+1
+
+#
+
+The exposition-only variable template converts-from-any-cvref defined in
+[optional.ctor] is used by some constructors for expected.
+
+🔗
+
+constexpr expected(); 
+
+2
+
+#
+
+Constraints: is_default_constructible_v<T> is true.
+
+3
+
+#
+
+Effects: Value-initializes val.
+
+4
+
+#
+
+Postconditions: has_value() is true.
+
+5
+
+#
+
+Throws: Any exception thrown by the initialization of val.
+
+🔗
+
+constexpr expected(const expected& rhs); 
+
+6
+
+#
+
+Effects: If rhs.has_value() is true, direct-non-list-initializes val
+with *rhs.
+
+Otherwise, direct-non-list-initializes unex with rhs.error().
+
+7
+
+#
+
+Postconditions: rhs.has_value() == this->has_value().
+
+8
+
+#
+
+Throws: Any exception thrown by the initialization of val or unex.
+
+9
+
+#
+
+Remarks: This constructor is defined as deleted unless
+
+-   (9.1)
+
+    is_copy_constructible_v<T> is true and
+
+-   (9.2)
+
+    is_copy_constructible_v<E> is true.
+
+10
+
+#
+
+This constructor is trivial if
+
+-   (10.1)
+
+    is_trivially_copy_constructible_v<T> is true and
+
+-   (10.2)
+
+    is_trivially_copy_constructible_v<E> is true.
+
+🔗
+
+constexpr expected(expected&& rhs) noexcept(see below); 
+
+11
+
+#
+
+Constraints:
+
+-   (11.1)
+
+    is_move_constructible_v<T> is true and
+
+-   (11.2)
+
+    is_move_constructible_v<E> is true.
+
+12
+
+#
+
+Effects: If rhs.has_value() is true, direct-non-list-initializes val
+with std​::​move(*rhs).
+
+Otherwise, direct-non-list-initializes unex with std​::​move(rhs.error()).
+
+13
+
+#
+
+Postconditions: rhs.has_value() is unchanged; rhs.has_value() ==
+this->has_value() is true.
+
+14
+
+#
+
+Throws: Any exception thrown by the initialization of val or unex.
+
+15
+
+#
+
+Remarks: The exception specification is equivalent to
+is_nothrow_move_constructible_v<T> &&
+is_nothrow_move_constructible_v<E>.
+
+16
+
+#
+
+This constructor is trivial if
+
+-   (16.1)
+
+    is_trivially_move_constructible_v<T> is true and
+
+-   (16.2)
+
+    is_trivially_move_constructible_v<E> is true.
+
+🔗
+
+template<class U, class G> constexpr explicit(see below) expected(const expected<U, G>& rhs); template<class U, class G> constexpr explicit(see below) expected(expected<U, G>&& rhs); 
+
+17
+
+#
+
+Let:
+
+-   (17.1)
+
+    UF be const U& for the first overload and U for the second overload.
+
+-   (17.2)
+
+    GF be const G& for the first overload and G for the second overload.
+
+18
+
+#
+
+Constraints:
+
+-   (18.1)
+
+    is_constructible_v<T, UF> is true; and
+
+-   (18.2)
+
+    is_constructible_v<E, GF> is true; and
+
+-   (18.3)
+
+    if T is not cv bool, converts-from-any-cvref<T, expected<U, G>> is
+    false; and
+
+-   (18.4)
+
+    is_constructible_v<unexpected<E>, expected<U, G>&> is false; and
+
+-   (18.5)
+
+    is_constructible_v<unexpected<E>, expected<U, G>> is false; and
+
+-   (18.6)
+
+    is_constructible_v<unexpected<E>, const expected<U, G>&> is false;
+    and
+
+-   (18.7)
+
+    is_constructible_v<unexpected<E>, const expected<U, G>> is false.
+
+19
+
+#
+
+Effects: If rhs.has_value(), direct-non-list-initializes val with
+std​::​forward<UF>(*rhs).
+
+Otherwise, direct-non-list-initializes unex with
+std​::​forward<GF>(rhs.error()).
+
+20
+
+#
+
+Postconditions: rhs.has_value() is unchanged; rhs.has_value() ==
+this->has_value() is true.
+
+21
+
+#
+
+Throws: Any exception thrown by the initialization of val or unex.
+
+22
+
+#
+
+Remarks: The expression inside explicit is equivalent to
+!is_convertible_v<UF, T> || !is_convertible_v<GF, E>.
+
+🔗
+
+template<class U = remove_cv_t<T>> constexpr explicit(!is_convertible_v<U, T>) expected(U&& v); 
+
+23
+
+#
+
+Constraints:
+
+-   (23.1)
+
+    is_same_v<remove_cvref_t<U>, in_place_t> is false; and
+
+-   (23.2)
+
+    is_same_v<remove_cvref_t<U>, expected> is false; and
+
+-   (23.3)
+
+    is_same_v<remove_cvref_t<U>, unexpect_t> is false; and
+
+-   (23.4)
+
+    remove_cvref_t<U> is not a specialization of unexpected; and
+
+-   (23.5)
+
+    is_constructible_v<T, U> is true; and
+
+-   (23.6)
+
+    if T is cv bool, remove_cvref_t<U> is not a specialization of
+    expected.
+
+24
+
+#
+
+Effects: Direct-non-list-initializes val with std​::​forward<U>(v).
+
+25
+
+#
+
+Postconditions: has_value() is true.
+
+26
+
+#
+
+Throws: Any exception thrown by the initialization of val.
+
+🔗
+
+template<class G> constexpr explicit(!is_convertible_v<const G&, E>) expected(const unexpected<G>& e); template<class G> constexpr explicit(!is_convertible_v<G, E>) expected(unexpected<G>&& e); 
+
+27
+
+#
+
+Let GF be const G& for the first overload and G for the second overload.
+
+28
+
+#
+
+Constraints: is_constructible_v<E, GF> is true.
+
+29
+
+#
+
+Effects: Direct-non-list-initializes unex with
+std​::​forward<GF>(e.error()).
+
+30
+
+#
+
+Postconditions: has_value() is false.
+
+31
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+🔗
+
+template<class... Args> constexpr explicit expected(in_place_t, Args&&... args); 
+
+32
+
+#
+
+Constraints: is_constructible_v<T, Args...> is true.
+
+33
+
+#
+
+Effects: Direct-non-list-initializes val with
+std​::​forward<Args>(args)....
+
+34
+
+#
+
+Postconditions: has_value() is true.
+
+35
+
+#
+
+Throws: Any exception thrown by the initialization of val.
+
+🔗
+
+template<class U, class... Args> constexpr explicit expected(in_place_t, initializer_list<U> il, Args&&... args); 
+
+36
+
+#
+
+Constraints: is_constructible_v<T, initializer_list<U>&, Args...> is
+true.
+
+37
+
+#
+
+Effects: Direct-non-list-initializes val with il,
+std​::​forward<Args>(args)....
+
+38
+
+#
+
+Postconditions: has_value() is true.
+
+39
+
+#
+
+Throws: Any exception thrown by the initialization of val.
+
+🔗
+
+template<class... Args> constexpr explicit expected(unexpect_t, Args&&... args); 
+
+40
+
+#
+
+Constraints: is_constructible_v<E, Args...> is true.
+
+41
+
+#
+
+Effects: Direct-non-list-initializes unex with
+std​::​forward<Args>(args)....
+
+42
+
+#
+
+Postconditions: has_value() is false.
+
+43
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+🔗
+
+template<class U, class... Args> constexpr explicit expected(unexpect_t, initializer_list<U> il, Args&&... args); 
+
+44
+
+#
+
+Constraints: is_constructible_v<E, initializer_list<U>&, Args...> is
+true.
+
+45
+
+#
+
+Effects: Direct-non-list-initializes unex with il,
+std​::​forward<Args>(args)....
+
+46
+
+#
+
+Postconditions: has_value() is false.
+
+47
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+22.8.6.3 Destructor [expected.object.dtor]
+
+🔗
+
+constexpr ~expected(); 
+
+1
+
+#
+
+Effects: If has_value() is true, destroys val, otherwise destroys unex.
+
+2
+
+#
+
+Remarks: If is_trivially_destructible_v<T> is true, and
+is_trivially_destructible_v<E> is true, then this destructor is a
+trivial destructor.
+
+22.8.6.4 Assignment [expected.object.assign]
+
+1
+
+#
+
+This subclause makes use of the following exposition-only function
+template: template<class T, class U, class... Args> constexpr void
+reinit-expected(T& newval, U& oldval, Args&&... args) { // exposition
+only if constexpr (is_nothrow_constructible_v<T, Args...>) {
+destroy_at(addressof(oldval)); construct_at(addressof(newval),
+std::forward<Args>(args)...); } else if constexpr
+(is_nothrow_move_constructible_v<T>) { T
+tmp(std::forward<Args>(args)...); destroy_at(addressof(oldval));
+construct_at(addressof(newval), std::move(tmp)); } else { U
+tmp(std::move(oldval)); destroy_at(addressof(oldval)); try {
+construct_at(addressof(newval), std::forward<Args>(args)...); } catch
+(...) { construct_at(addressof(oldval), std::move(tmp)); throw; } } }
+
+🔗
+
+constexpr expected& operator=(const expected& rhs); 
+
+2
+
+#
+
+Effects:
+
+-   (2.1)
+
+    If this->has_value() && rhs.has_value() is true, equivalent to val =
+    *rhs.
+
+-   (2.2)
+
+    Otherwise, if this->has_value() is true, equivalent to:
+    reinit-expected(unex, val, rhs.error())
+
+-   (2.3)
+
+    Otherwise, if rhs.has_value() is true, equivalent to:
+    reinit-expected(val, unex, *rhs)
+
+-   (2.4)
+
+    Otherwise, equivalent to unex = rhs.error().
+
+Then, if no exception was thrown, equivalent to: has_val =
+rhs.has_value(); return *this;
+
+3
+
+#
+
+Returns: *this.
+
+4
+
+#
+
+Remarks: This operator is defined as deleted unless:
+
+-   (4.1)
+
+    is_copy_assignable_v<T> is true and
+
+-   (4.2)
+
+    is_copy_constructible_v<T> is true and
+
+-   (4.3)
+
+    is_copy_assignable_v<E> is true and
+
+-   (4.4)
+
+    is_copy_constructible_v<E> is true and
+
+-   (4.5)
+
+    is_nothrow_move_constructible_v<T> ||
+    is_nothrow_move_constructible_v<E> is true.
+
+5
+
+#
+
+This operator is trivial if:
+
+-   (5.1)
+
+    is_trivially_copy_constructible_v<T> is true, and
+
+-   (5.2)
+
+    is_trivially_copy_assignable_v<T> is true, and
+
+-   (5.3)
+
+    is_trivially_destructible_v<T> is true, and
+
+-   (5.4)
+
+    is_trivially_copy_constructible_v<E> is true, and
+
+-   (5.5)
+
+    is_trivially_copy_assignable_v<E> is true, and
+
+-   (5.6)
+
+    is_trivially_destructible_v<E> is true.
+
+🔗
+
+constexpr expected& operator=(expected&& rhs) noexcept(see below); 
+
+6
+
+#
+
+Constraints:
+
+-   (6.1)
+
+    is_move_constructible_v<T> is true and
+
+-   (6.2)
+
+    is_move_assignable_v<T> is true and
+
+-   (6.3)
+
+    is_move_constructible_v<E> is true and
+
+-   (6.4)
+
+    is_move_assignable_v<E> is true and
+
+-   (6.5)
+
+    is_nothrow_move_constructible_v<T> ||
+    is_nothrow_move_constructible_v<E> is true.
+
+7
+
+#
+
+Effects:
+
+-   (7.1)
+
+    If this->has_value() && rhs.has_value() is true, equivalent to val =
+    std​::​move(*rhs).
+
+-   (7.2)
+
+    Otherwise, if this->has_value() is true, equivalent to:
+    reinit-expected(unex, val, std::move(rhs.error()))
+
+-   (7.3)
+
+    Otherwise, if rhs.has_value() is true, equivalent to:
+    reinit-expected(val, unex, std::move(*rhs))
+
+-   (7.4)
+
+    Otherwise, equivalent to unex = std​::​move(rhs.error()).
+
+Then, if no exception was thrown, equivalent to: has_val =
+rhs.has_value(); return *this;
+
+8
+
+#
+
+Returns: *this.
+
+9
+
+#
+
+Remarks: The exception specification is equivalent to:
+is_nothrow_move_assignable_v<T> && is_nothrow_move_constructible_v<T> &&
+is_nothrow_move_assignable_v<E> && is_nothrow_move_constructible_v<E>
+
+10
+
+#
+
+This operator is trivial if:
+
+-   (10.1)
+
+    is_trivially_move_constructible_v<T> is true, and
+
+-   (10.2)
+
+    is_trivially_move_assignable_v<T> is true, and
+
+-   (10.3)
+
+    is_trivially_destructible_v<T> is true, and
+
+-   (10.4)
+
+    is_trivially_move_constructible_v<E> is true, and
+
+-   (10.5)
+
+    is_trivially_move_assignable_v<E> is true, and
+
+-   (10.6)
+
+    is_trivially_destructible_v<E> is true.
+
+🔗
+
+template<class U = remove_cv_t<T>> constexpr expected& operator=(U&& v); 
+
+11
+
+#
+
+Constraints:
+
+-   (11.1)
+
+    is_same_v<expected, remove_cvref_t<U>> is false; and
+
+-   (11.2)
+
+    remove_cvref_t<U> is not a specialization of unexpected; and
+
+-   (11.3)
+
+    is_constructible_v<T, U> is true; and
+
+-   (11.4)
+
+    is_assignable_v<T&, U> is true; and
+
+-   (11.5)
+
+    is_nothrow_constructible_v<T, U> ||
+    is_nothrow_move_constructible_v<T> ||
+    is_nothrow_move_constructible_v<E> is true.
+
+12
+
+#
+
+Effects:
+
+-   (12.1)
+
+    If has_value() is true, equivalent to: val = std​::​forward<U>(v);
+
+-   (12.2)
+
+    Otherwise, equivalent to: reinit-expected(val, unex,
+    std::forward<U>(v)); has_val = true;
+
+13
+
+#
+
+Returns: *this.
+
+🔗
+
+template<class G> constexpr expected& operator=(const unexpected<G>& e); template<class G> constexpr expected& operator=(unexpected<G>&& e); 
+
+14
+
+#
+
+Let GF be const G& for the first overload and G for the second overload.
+
+15
+
+#
+
+Constraints:
+
+-   (15.1)
+
+    is_constructible_v<E, GF> is true; and
+
+-   (15.2)
+
+    is_assignable_v<E&, GF> is true; and
+
+-   (15.3)
+
+    is_nothrow_constructible_v<E, GF> ||
+    is_nothrow_move_constructible_v<T> ||
+    is_nothrow_move_constructible_v<E> is true.
+
+16
+
+#
+
+Effects:
+
+-   (16.1)
+
+    If has_value() is true, equivalent to: reinit-expected(unex, val,
+    std::forward<GF>(e.error())); has_val = false;
+
+-   (16.2)
+
+    Otherwise, equivalent to: unex = std​::​forward<GF>(e.error());
+
+17
+
+#
+
+Returns: *this.
+
+🔗
+
+template<class... Args> constexpr T& emplace(Args&&... args) noexcept; 
+
+18
+
+#
+
+Constraints: is_nothrow_constructible_v<T, Args...> is true.
+
+19
+
+#
+
+Effects: Equivalent to: if (has_value()) { destroy_at(addressof(val)); }
+else { destroy_at(addressof(unex)); has_val = true; } return
+*construct_at(addressof(val), std::forward<Args>(args)...);
+
+🔗
+
+template<class U, class... Args> constexpr T& emplace(initializer_list<U> il, Args&&... args) noexcept; 
+
+20
+
+#
+
+Constraints: is_nothrow_constructible_v<T, initializer_list<U>&,
+Args...> is true.
+
+21
+
+#
+
+Effects: Equivalent to: if (has_value()) { destroy_at(addressof(val)); }
+else { destroy_at(addressof(unex)); has_val = true; } return
+*construct_at(addressof(val), il, std::forward<Args>(args)...);
+
+22.8.6.5 Swap [expected.object.swap]
+
+🔗
+
+constexpr void swap(expected& rhs) noexcept(see below); 
+
+1
+
+#
+
+Constraints:
+
+-   (1.1)
+
+    is_swappable_v<T> is true and
+
+-   (1.2)
+
+    is_swappable_v<E> is true and
+
+-   (1.3)
+
+    is_move_constructible_v<T> && is_move_constructible_v<E> is true,
+    and
+
+-   (1.4)
+
+    is_nothrow_move_constructible_v<T> ||
+    is_nothrow_move_constructible_v<E> is true.
+
+2
+
+#
+
+Effects: See Table 72.
+
+Table 72 — swap(expected&) effects [tab:expected.object.swap]
+
++-----------------------+-----------------------+-----------------------+
+| 🔗                    | this->has_value()     | !this->has_value()    |
++-----------------------+-----------------------+-----------------------+
+| 🔗                    | equivalent to: using  | calls rhs.swap(*this) |
+|                       | std​::​swap; swap(val,  |                       |
+| rhs.has_value()       | rhs.val);             |                       |
++-----------------------+-----------------------+-----------------------+
+| 🔗                    | see below             | equivalent to: using  |
+|                       |                       | std​::​swap; swap(unex, |
+| !rhs.has_value()      |                       | rhs.unex);            |
++-----------------------+-----------------------+-----------------------+
+
+For the case where rhs.has_value() is false and this->has_value() is
+true, equivalent to: if constexpr (is_nothrow_move_constructible_v<E>) {
+E tmp(std::move(rhs.unex)); destroy_at(addressof(rhs.unex)); try {
+construct_at(addressof(rhs.val), std::move(val));
+destroy_at(addressof(val)); construct_at(addressof(unex),
+std::move(tmp)); } catch(...) { construct_at(addressof(rhs.unex),
+std::move(tmp)); throw; } } else { remove_cv_t<T> tmp(std::move(val));
+destroy_at(addressof(val)); try { construct_at(addressof(unex),
+std::move(rhs.unex)); destroy_at(addressof(rhs.unex));
+construct_at(addressof(rhs.val), std::move(tmp)); } catch (...) {
+construct_at(addressof(val), std::move(tmp)); throw; } } has_val =
+false; rhs.has_val = true;
+
+3
+
+#
+
+Throws: Any exception thrown by the expressions in the Effects.
+
+4
+
+#
+
+Remarks: The exception specification is equivalent to:
+is_nothrow_move_constructible_v<T> && is_nothrow_swappable_v<T> &&
+is_nothrow_move_constructible_v<E> && is_nothrow_swappable_v<E>
+
+🔗
+
+friend constexpr void swap(expected& x, expected& y) noexcept(noexcept(x.swap(y))); 
+
+5
+
+#
+
+Effects: Equivalent to x.swap(y).
+
+22.8.6.6 Observers [expected.object.obs]
+
+🔗
+
+constexpr const T* operator->() const noexcept; constexpr T* operator->() noexcept; 
+
+1
+
+#
+
+Hardened preconditions: has_value() is true.
+
+2
+
+#
+
+Returns: addressof(val).
+
+🔗
+
+constexpr const T& operator*() const & noexcept; constexpr T& operator*() & noexcept; 
+
+3
+
+#
+
+Hardened preconditions: has_value() is true.
+
+4
+
+#
+
+Returns: val.
+
+🔗
+
+constexpr T&& operator*() && noexcept; constexpr const T&& operator*() const && noexcept; 
+
+5
+
+#
+
+Hardened preconditions: has_value() is true.
+
+6
+
+#
+
+Returns: std​::​move(val).
+
+🔗
+
+constexpr explicit operator bool() const noexcept; constexpr bool has_value() const noexcept; 
+
+7
+
+#
+
+Returns: has_val.
+
+🔗
+
+constexpr const T& value() const &; constexpr T& value() &; 
+
+8
+
+#
+
+Mandates: is_copy_constructible_v<E> is true.
+
+9
+
+#
+
+Returns: val, if has_value() is true.
+
+10
+
+#
+
+Throws: bad_expected_access(as_const(error())) if has_value() is false.
+
+🔗
+
+constexpr T&& value() &&; constexpr const T&& value() const &&; 
+
+11
+
+#
+
+Mandates: is_copy_constructible_v<E> is true and is_constructible_v<E,
+decltype(std​::​move(error()))> is true.
+
+12
+
+#
+
+Returns: std​::​move(val), if has_value() is true.
+
+13
+
+#
+
+Throws: bad_expected_access(std​::​move(error())) if has_value() is false.
+
+🔗
+
+constexpr const E& error() const & noexcept; constexpr E& error() & noexcept; 
+
+14
+
+#
+
+Hardened preconditions: has_value() is false.
+
+15
+
+#
+
+Returns: unex.
+
+🔗
+
+constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept; 
+
+16
+
+#
+
+Hardened preconditions: has_value() is false.
+
+17
+
+#
+
+Returns: std​::​move(unex).
+
+🔗
+
+template<class U = remove_cv_t<T>> constexpr T value_or(U&& v) const &; 
+
+18
+
+#
+
+Mandates: is_copy_constructible_v<T> is true and is_convertible_v<U, T>
+is true.
+
+19
+
+#
+
+Returns: has_value() ? **this : static_cast<T>(std​::​forward<U>(v)).
+
+🔗
+
+template<class U = remove_cv_t<T>> constexpr T value_or(U&& v) &&; 
+
+20
+
+#
+
+Mandates: is_move_constructible_v<T> is true and is_convertible_v<U, T>
+is true.
+
+21
+
+#
+
+Returns: has_value() ? std​::​move(**this) :
+static_cast<T>(std​::​forward<U>(v)).
+
+🔗
+
+template<class G = E> constexpr E error_or(G&& e) const &; 
+
+22
+
+#
+
+Mandates: is_copy_constructible_v<E> is true and is_convertible_v<G, E>
+is true.
+
+23
+
+#
+
+Returns: std​::​forward<G>(e) if has_value() is true, error() otherwise.
+
+🔗
+
+template<class G = E> constexpr E error_or(G&& e) &&; 
+
+24
+
+#
+
+Mandates: is_move_constructible_v<E> is true and is_convertible_v<G, E>
+is true.
+
+25
+
+#
+
+Returns: std​::​forward<G>(e) if has_value() is true, std​::​move(error())
+otherwise.
+
+22.8.6.7 Monadic operations [expected.object.monadic]
+
+🔗
+
+template<class F> constexpr auto and_then(F&& f) &; template<class F> constexpr auto and_then(F&& f) const &; 
+
+1
+
+#
+
+Let U be remove_cvref_t<invoke_result_t<F, decltype((val))>>.
+
+2
+
+#
+
+Constraints: is_constructible_v<E, decltype(error())> is true.
+
+3
+
+#
+
+Mandates: U is a specialization of expected and is_same_v<typename
+U​::​error_type, E> is true.
+
+4
+
+#
+
+Effects: Equivalent to: if (has_value()) return
+invoke(std::forward<F>(f), val); else return U(unexpect, error());
+
+🔗
+
+template<class F> constexpr auto and_then(F&& f) &&; template<class F> constexpr auto and_then(F&& f) const &&; 
+
+5
+
+#
+
+Let U be remove_cvref_t<invoke_result_t<F, decltype(std​::​move(val))>>.
+
+6
+
+#
+
+Constraints: is_constructible_v<E, decltype(std​::​move(error()))> is
+true.
+
+7
+
+#
+
+Mandates: U is a specialization of expected and is_same_v<typename
+U​::​error_type, E> is true.
+
+8
+
+#
+
+Effects: Equivalent to: if (has_value()) return
+invoke(std::forward<F>(f), std::move(val)); else return U(unexpect,
+std::move(error()));
+
+🔗
+
+template<class F> constexpr auto or_else(F&& f) &; template<class F> constexpr auto or_else(F&& f) const &; 
+
+9
+
+#
+
+Let G be remove_cvref_t<invoke_result_t<F, decltype(error())>>.
+
+10
+
+#
+
+Constraints: is_constructible_v<T, decltype((val))> is true.
+
+11
+
+#
+
+Mandates: G is a specialization of expected and is_same_v<typename
+G​::​value_type, T> is true.
+
+12
+
+#
+
+Effects: Equivalent to: if (has_value()) return G(in_place, val); else
+return invoke(std::forward<F>(f), error());
+
+🔗
+
+template<class F> constexpr auto or_else(F&& f) &&; template<class F> constexpr auto or_else(F&& f) const &&; 
+
+13
+
+#
+
+Let G be remove_cvref_t<invoke_result_t<F,
+decltype(std​::​move(error()))>>.
+
+14
+
+#
+
+Constraints: is_constructible_v<T, decltype(std​::​move(val))> is true.
+
+15
+
+#
+
+Mandates: G is a specialization of expected and is_same_v<typename
+G​::​value_type, T> is true.
+
+16
+
+#
+
+Effects: Equivalent to: if (has_value()) return G(in_place,
+std::move(val)); else return invoke(std::forward<F>(f),
+std::move(error()));
+
+🔗
+
+template<class F> constexpr auto transform(F&& f) &; template<class F> constexpr auto transform(F&& f) const &; 
+
+17
+
+#
+
+Let U be remove_cv_t<invoke_result_t<F, decltype((val))>>.
+
+18
+
+#
+
+Constraints: is_constructible_v<E, decltype(error())> is true.
+
+19
+
+#
+
+Mandates: U is a valid value type for expected.
+
+If is_void_v<U> is false, the declaration U u(invoke(std::forward<F>(f),
+val)); is well-formed.
+
+20
+
+#
+
+Effects:
+
+-   (20.1)
+
+    If has_value() is false, returns expected<U, E>(unexpect, error()).
+
+-   (20.2)
+
+    Otherwise, if is_void_v<U> is false, returns an expected<U, E>
+    object whose has_val member is true and val member is
+    direct-non-list-initialized with invoke(std​::​forward<F>(f), val).
+
+-   (20.3)
+
+    Otherwise, evaluates invoke(std​::​forward<F>(f), val) and then
+    returns expected<U, E>().
+
+🔗
+
+template<class F> constexpr auto transform(F&& f) &&; template<class F> constexpr auto transform(F&& f) const &&; 
+
+21
+
+#
+
+Let U be remove_cv_t<invoke_result_t<F, decltype(std​::​move(val))>>.
+
+22
+
+#
+
+Constraints: is_constructible_v<E, decltype(std​::​move(error()))> is
+true.
+
+23
+
+#
+
+Mandates: U is a valid value type for expected.
+
+If is_void_v<U> is false, the declaration U u(invoke(std::forward<F>(f),
+std::move(val))); is well-formed.
+
+24
+
+#
+
+Effects:
+
+-   (24.1)
+
+    If has_value() is false, returns expected<U, E>(unexpect,
+    std​::​move(error())).
+
+-   (24.2)
+
+    Otherwise, if is_void_v<U> is false, returns an expected<U, E>
+    object whose has_val member is true and val member is
+    direct-non-list-initialized with invoke(std​::​forward<F>(f),
+    std​::​move(val)).
+
+-   (24.3)
+
+    Otherwise, evaluates invoke(std​::​forward<F>(f), std​::​move(val)) and
+    then returns expected<U, E>().
+
+🔗
+
+template<class F> constexpr auto transform_error(F&& f) &; template<class F> constexpr auto transform_error(F&& f) const &; 
+
+25
+
+#
+
+Let G be remove_cv_t<invoke_result_t<F, decltype(error())>>.
+
+26
+
+#
+
+Constraints: is_constructible_v<T, decltype((val))> is true.
+
+27
+
+#
+
+Mandates: G is a valid template argument for unexpected
+([expected.un.general]) and the declaration G
+g(invoke(std::forward<F>(f), error())); is well-formed.
+
+28
+
+#
+
+Returns: If has_value() is true, expected<T, G>(in_place, val);
+otherwise, an expected<T, G> object whose has_val member is false and
+unex member is direct-non-list-initialized with
+invoke(std​::​forward<F>(f), error()).
+
+🔗
+
+template<class F> constexpr auto transform_error(F&& f) &&; template<class F> constexpr auto transform_error(F&& f) const &&; 
+
+29
+
+#
+
+Let G be remove_cv_t<invoke_result_t<F, decltype(std​::​move(error()))>>.
+
+30
+
+#
+
+Constraints: is_constructible_v<T, decltype(std​::​move(val))> is true.
+
+31
+
+#
+
+Mandates: G is a valid template argument for unexpected
+([expected.un.general]) and the declaration G
+g(invoke(std::forward<F>(f), std::move(error()))); is well-formed.
+
+32
+
+#
+
+Returns: If has_value() is true, expected<T, G>(in_place,
+std​::​move(val)); otherwise, an expected<T, G> object whose has_val
+member is false and unex member is direct-non-list-initialized with
+invoke(std​::​forward<F>(f), std​::​move(error())).
+
+22.8.6.8 Equality operators [expected.object.eq]
+
+🔗
+
+template<class T2, class E2> requires (!is_void_v<T2>) friend constexpr bool operator==(const expected& x, const expected<T2, E2>& y); 
+
+1
+
+#
+
+Constraints: The expressions *x == *y and x.error() == y.error() are
+well-formed and their results are convertible to bool.
+
+2
+
+#
+
+Returns: If x.has_value() does not equal y.has_value(), false; otherwise
+if x.has_value() is true, *x == *y; otherwise x.error() == y.error().
+
+🔗
+
+template<class T2> friend constexpr bool operator==(const expected& x, const T2& v); 
+
+3
+
+#
+
+Constraints: T2 is not a specialization of expected.
+
+The expression *x == v is well-formed and its result is convertible to
+bool.
+
+[Note 1: 
+
+T need not be Cpp17EqualityComparable.
+
+— end note]
+
+4
+
+#
+
+Returns: If x.has_value() is true, *x == v; otherwise false.
+
+🔗
+
+template<class E2> friend constexpr bool operator==(const expected& x, const unexpected<E2>& e); 
+
+5
+
+#
+
+Constraints: The expression x.error() == e.error() is well-formed and
+its result is convertible to bool.
+
+6
+
+#
+
+Returns: If !x.has_value() is true, x.error() == e.error(); otherwise
+false.
+
+22.8.7 Partial specialization of expected for void types [expected.void]
+
+22.8.7.1 General [expected.void.general]
+
+template<class T, class E> requires is_void_v<T> class expected<T, E> {
+public: using value_type = T; using error_type = E; using
+unexpected_type = unexpected<E>; template<class U> using rebind =
+expected<U, error_type>; // [expected.void.cons], constructors constexpr
+expected() noexcept; constexpr expected(const expected&); constexpr
+expected(expected&&) noexcept(see below); template<class U, class G>
+constexpr explicit(see below) expected(const expected<U, G>&);
+template<class U, class G> constexpr explicit(see below)
+expected(expected<U, G>&&); template<class G> constexpr explicit(see
+below) expected(const unexpected<G>&); template<class G> constexpr
+explicit(see below) expected(unexpected<G>&&); constexpr explicit
+expected(in_place_t) noexcept; template<class... Args> constexpr
+explicit expected(unexpect_t, Args&&...); template<class U, class...
+Args> constexpr explicit expected(unexpect_t, initializer_list<U>,
+Args&&...); // [expected.void.dtor], destructor constexpr ~expected();
+// [expected.void.assign], assignment constexpr expected&
+operator=(const expected&); constexpr expected& operator=(expected&&)
+noexcept(see below); template<class G> constexpr expected&
+operator=(const unexpected<G>&); template<class G> constexpr expected&
+operator=(unexpected<G>&&); constexpr void emplace() noexcept; //
+[expected.void.swap], swap constexpr void swap(expected&) noexcept(see
+below); friend constexpr void swap(expected& x, expected& y)
+noexcept(noexcept(x.swap(y))); // [expected.void.obs], observers
+constexpr explicit operator bool() const noexcept; constexpr bool
+has_value() const noexcept; constexpr void operator*() const noexcept;
+constexpr void value() const &; // freestanding-deleted constexpr void
+value() &&; // freestanding-deleted constexpr const E& error() const &
+noexcept; constexpr E& error() & noexcept; constexpr const E&& error()
+const && noexcept; constexpr E&& error() && noexcept; template<class G =
+E> constexpr E error_or(G&&) const &; template<class G = E> constexpr E
+error_or(G&&) &&; // [expected.void.monadic], monadic operations
+template<class F> constexpr auto and_then(F&& f) &; template<class F>
+constexpr auto and_then(F&& f) &&; template<class F> constexpr auto
+and_then(F&& f) const &; template<class F> constexpr auto and_then(F&&
+f) const &&; template<class F> constexpr auto or_else(F&& f) &;
+template<class F> constexpr auto or_else(F&& f) &&; template<class F>
+constexpr auto or_else(F&& f) const &; template<class F> constexpr auto
+or_else(F&& f) const &&; template<class F> constexpr auto transform(F&&
+f) &; template<class F> constexpr auto transform(F&& f) &&;
+template<class F> constexpr auto transform(F&& f) const &;
+template<class F> constexpr auto transform(F&& f) const &&;
+template<class F> constexpr auto transform_error(F&& f) &;
+template<class F> constexpr auto transform_error(F&& f) &&;
+template<class F> constexpr auto transform_error(F&& f) const &;
+template<class F> constexpr auto transform_error(F&& f) const &&; //
+[expected.void.eq], equality operators template<class T2, class E2>
+requires is_void_v<T2> friend constexpr bool operator==(const expected&
+x, const expected<T2, E2>& y); template<class E2> friend constexpr bool
+operator==(const expected&, const unexpected<E2>&); private: bool
+has_val; // exposition only union { E unex; // exposition only }; };
+
+1
+
+#
+
+Any object of type expected<T, E> either represents a value of type T,
+or contains a value of type E nested within ([intro.object]) it.
+
+Member has_val indicates whether the expected<T, E> object represents a
+value of type T.
+
+2
+
+#
+
+A program that instantiates the definition of the template expected<T,
+E> with a type for the E parameter that is not a valid template argument
+for unexpected is ill-formed.
+
+3
+
+#
+
+E shall meet the requirements of Cpp17Destructible (Table 35).
+
+22.8.7.2 Constructors [expected.void.cons]
+
+🔗
+
+constexpr expected() noexcept; 
+
+1
+
+#
+
+Postconditions: has_value() is true.
+
+🔗
+
+constexpr expected(const expected& rhs); 
+
+2
+
+#
+
+Effects: If rhs.has_value() is false, direct-non-list-initializes unex
+with rhs.error().
+
+3
+
+#
+
+Postconditions: rhs.has_value() == this->has_value().
+
+4
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+5
+
+#
+
+Remarks: This constructor is defined as deleted unless
+is_copy_constructible_v<E> is true.
+
+6
+
+#
+
+This constructor is trivial if is_trivially_copy_constructible_v<E> is
+true.
+
+🔗
+
+constexpr expected(expected&& rhs) noexcept(is_nothrow_move_constructible_v<E>); 
+
+7
+
+#
+
+Constraints: is_move_constructible_v<E> is true.
+
+8
+
+#
+
+Effects: If rhs.has_value() is false, direct-non-list-initializes unex
+with std​::​move(rhs.error()).
+
+9
+
+#
+
+Postconditions: rhs.has_value() is unchanged; rhs.has_value() ==
+this->has_value() is true.
+
+10
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+11
+
+#
+
+Remarks: This constructor is trivial if
+is_trivially_move_constructible_v<E> is true.
+
+🔗
+
+template<class U, class G> constexpr explicit(!is_convertible_v<const G&, E>) expected(const expected<U, G>& rhs); template<class U, class G> constexpr explicit(!is_convertible_v<G, E>) expected(expected<U, G>&& rhs); 
+
+12
+
+#
+
+Let GF be const G& for the first overload and G for the second overload.
+
+13
+
+#
+
+Constraints:
+
+-   (13.1)
+
+    is_void_v<U> is true; and
+
+-   (13.2)
+
+    is_constructible_v<E, GF> is true; and
+
+-   (13.3)
+
+    is_constructible_v<unexpected<E>, expected<U, G>&> is false; and
+
+-   (13.4)
+
+    is_constructible_v<unexpected<E>, expected<U, G>> is false; and
+
+-   (13.5)
+
+    is_constructible_v<unexpected<E>, const expected<U, G>&> is false;
+    and
+
+-   (13.6)
+
+    is_constructible_v<unexpected<E>, const expected<U, G>> is false.
+
+14
+
+#
+
+Effects: If rhs.has_value() is false, direct-non-list-initializes unex
+with std​::​forward<GF>(rhs.error()).
+
+15
+
+#
+
+Postconditions: rhs.has_value() is unchanged; rhs.has_value() ==
+this->has_value() is true.
+
+16
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+🔗
+
+template<class G> constexpr explicit(!is_convertible_v<const G&, E>) expected(const unexpected<G>& e); template<class G> constexpr explicit(!is_convertible_v<G, E>) expected(unexpected<G>&& e); 
+
+17
+
+#
+
+Let GF be const G& for the first overload and G for the second overload.
+
+18
+
+#
+
+Constraints: is_constructible_v<E, GF> is true.
+
+19
+
+#
+
+Effects: Direct-non-list-initializes unex with
+std​::​forward<GF>(e.error()).
+
+20
+
+#
+
+Postconditions: has_value() is false.
+
+21
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+🔗
+
+constexpr explicit expected(in_place_t) noexcept; 
+
+22
+
+#
+
+Postconditions: has_value() is true.
+
+🔗
+
+template<class... Args> constexpr explicit expected(unexpect_t, Args&&... args); 
+
+23
+
+#
+
+Constraints: is_constructible_v<E, Args...> is true.
+
+24
+
+#
+
+Effects: Direct-non-list-initializes unex with
+std​::​forward<Args>(args)....
+
+25
+
+#
+
+Postconditions: has_value() is false.
+
+26
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+🔗
+
+template<class U, class... Args> constexpr explicit expected(unexpect_t, initializer_list<U> il, Args&&... args); 
+
+27
+
+#
+
+Constraints: is_constructible_v<E, initializer_list<U>&, Args...> is
+true.
+
+28
+
+#
+
+Effects: Direct-non-list-initializes unex with il,
+std​::​forward<Args>(args)....
+
+29
+
+#
+
+Postconditions: has_value() is false.
+
+30
+
+#
+
+Throws: Any exception thrown by the initialization of unex.
+
+22.8.7.3 Destructor [expected.void.dtor]
+
+🔗
+
+constexpr ~expected(); 
+
+1
+
+#
+
+Effects: If has_value() is false, destroys unex.
+
+2
+
+#
+
+Remarks: If is_trivially_destructible_v<E> is true, then this destructor
+is a trivial destructor.
+
+22.8.7.4 Assignment [expected.void.assign]
+
+🔗
+
+constexpr expected& operator=(const expected& rhs); 
+
+1
+
+#
+
+Effects:
+
+-   (1.1)
+
+    If this->has_value() && rhs.has_value() is true, no effects.
+
+-   (1.2)
+
+    Otherwise, if this->has_value() is true, equivalent to:
+    construct_at(addressof(unex), rhs.unex); has_val = false;
+
+-   (1.3)
+
+    Otherwise, if rhs.has_value() is true, destroys unex and sets
+    has_val to true.
+
+-   (1.4)
+
+    Otherwise, equivalent to unex = rhs.error().
+
+2
+
+#
+
+Returns: *this.
+
+3
+
+#
+
+Remarks: This operator is defined as deleted unless
+is_copy_assignable_v<E> is true and is_copy_constructible_v<E> is true.
+
+4
+
+#
+
+This operator is trivial if is_trivially_copy_constructible_v<E>,
+is_trivially_copy_assignable_v<E>, and is_trivially_destructible_v<E>
+are all true.
+
+🔗
+
+constexpr expected& operator=(expected&& rhs) noexcept(see below); 
+
+5
+
+#
+
+Constraints: is_move_constructible_v<E> is true and
+is_move_assignable_v<E> is true.
+
+6
+
+#
+
+Effects:
+
+-   (6.1)
+
+    If this->has_value() && rhs.has_value() is true, no effects.
+
+-   (6.2)
+
+    Otherwise, if this->has_value() is true, equivalent to:
+    construct_at(addressof(unex), std::move(rhs.unex)); has_val = false;
+
+-   (6.3)
+
+    Otherwise, if rhs.has_value() is true, destroys unex and sets
+    has_val to true.
+
+-   (6.4)
+
+    Otherwise, equivalent to unex = std​::​move(rhs.error()).
+
+7
+
+#
+
+Returns: *this.
+
+8
+
+#
+
+Remarks: The exception specification is equivalent to
+is_nothrow_move_constructible_v<E> && is_nothrow_move_assignable_v<E>.
+
+9
+
+#
+
+This operator is trivial if is_trivially_move_constructible_v<E>,
+is_trivially_move_assignable_v<E>, and is_trivially_destructible_v<E>
+are all true.
+
+🔗
+
+template<class G> constexpr expected& operator=(const unexpected<G>& e); template<class G> constexpr expected& operator=(unexpected<G>&& e); 
+
+10
+
+#
+
+Let GF be const G& for the first overload and G for the second overload.
+
+11
+
+#
+
+Constraints: is_constructible_v<E, GF> is true and is_assignable_v<E&,
+GF> is true.
+
+12
+
+#
+
+Effects:
+
+-   (12.1)
+
+    If has_value() is true, equivalent to: construct_at(addressof(unex),
+    std::forward<GF>(e.error())); has_val = false;
+
+-   (12.2)
+
+    Otherwise, equivalent to: unex = std​::​forward<GF>(e.error());
+
+13
+
+#
+
+Returns: *this.
+
+🔗
+
+constexpr void emplace() noexcept; 
+
+14
+
+#
+
+Effects: If has_value() is false, destroys unex and sets has_val to
+true.
+
+22.8.7.5 Swap [expected.void.swap]
+
+🔗
+
+constexpr void swap(expected& rhs) noexcept(see below); 
+
+1
+
+#
+
+Constraints: is_swappable_v<E> is true and is_move_constructible_v<E> is
+true.
+
+2
+
+#
+
+Effects: See Table 73.
+
+Table 73 — swap(expected&) effects [tab:expected.void.swap]
+
++-----------------------+-----------------------+-----------------------+
+| 🔗                    | this->has_value()     | !this->has_value()    |
++-----------------------+-----------------------+-----------------------+
+| 🔗                    | no effects            | calls rhs.swap(*this) |
+|                       |                       |                       |
+| rhs.has_value()       |                       |                       |
++-----------------------+-----------------------+-----------------------+
+| 🔗                    | see below             | equivalent to: using  |
+|                       |                       | std​::​swap; swap(unex, |
+| !rhs.has_value()      |                       | rhs.unex);            |
++-----------------------+-----------------------+-----------------------+
+
+For the case where rhs.has_value() is false and this->has_value() is
+true, equivalent to: construct_at(addressof(unex), std::move(rhs.unex));
+destroy_at(addressof(rhs.unex)); has_val = false; rhs.has_val = true;
+
+3
+
+#
+
+Throws: Any exception thrown by the expressions in the Effects.
+
+4
+
+#
+
+Remarks: The exception specification is equivalent to
+is_nothrow_move_constructible_v<E> && is_nothrow_swappable_v<E>.
+
+🔗
+
+friend constexpr void swap(expected& x, expected& y) noexcept(noexcept(x.swap(y))); 
+
+5
+
+#
+
+Effects: Equivalent to x.swap(y).
+
+22.8.7.6 Observers [expected.void.obs]
+
+🔗
+
+constexpr explicit operator bool() const noexcept; constexpr bool has_value() const noexcept; 
+
+1
+
+#
+
+Returns: has_val.
+
+🔗
+
+constexpr void operator*() const noexcept; 
+
+2
+
+#
+
+Hardened preconditions: has_value() is true.
+
+🔗
+
+constexpr void value() const &; 
+
+3
+
+#
+
+Mandates: is_copy_constructible_v<E> is true.
+
+4
+
+#
+
+Throws: bad_expected_access(error()) if has_value() is false.
+
+🔗
+
+constexpr void value() &&; 
+
+5
+
+#
+
+Mandates: is_copy_constructible_v<E> is true and
+is_move_constructible_v<E> is true.
+
+6
+
+#
+
+Throws: bad_expected_access(std​::​move(error())) if has_value() is false.
+
+🔗
+
+constexpr const E& error() const & noexcept; constexpr E& error() & noexcept; 
+
+7
+
+#
+
+Hardened preconditions: has_value() is false.
+
+8
+
+#
+
+Returns: unex.
+
+🔗
+
+constexpr E&& error() && noexcept; constexpr const E&& error() const && noexcept; 
+
+9
+
+#
+
+Hardened preconditions: has_value() is false.
+
+10
+
+#
+
+Returns: std​::​move(unex).
+
+🔗
+
+template<class G = E> constexpr E error_or(G&& e) const &; 
+
+11
+
+#
+
+Mandates: is_copy_constructible_v<E> is true and is_convertible_v<G, E>
+is true.
+
+12
+
+#
+
+Returns: std​::​forward<G>(e) if has_value() is true, error() otherwise.
+
+🔗
+
+template<class G = E> constexpr E error_or(G&& e) &&; 
+
+13
+
+#
+
+Mandates: is_move_constructible_v<E> is true and is_convertible_v<G, E>
+is true.
+
+14
+
+#
+
+Returns: std​::​forward<G>(e) if has_value() is true, std​::​move(error())
+otherwise.
+
+22.8.7.7 Monadic operations [expected.void.monadic]
+
+🔗
+
+template<class F> constexpr auto and_then(F&& f) &; template<class F> constexpr auto and_then(F&& f) const &; 
+
+1
+
+#
+
+Let U be remove_cvref_t<invoke_result_t<F>>.
+
+2
+
+#
+
+Constraints: is_constructible_v<E, decltype(error())>> is true.
+
+3
+
+#
+
+Mandates: U is a specialization of expected and is_same_v<typename
+U​::​error_type, E> is true.
+
+4
+
+#
+
+Effects: Equivalent to: if (has_value()) return
+invoke(std::forward<F>(f)); else return U(unexpect, error());
+
+🔗
+
+template<class F> constexpr auto and_then(F&& f) &&; template<class F> constexpr auto and_then(F&& f) const &&; 
+
+5
+
+#
+
+Let U be remove_cvref_t<invoke_result_t<F>>.
+
+6
+
+#
+
+Constraints: is_constructible_v<E, decltype(std​::​move(error()))> is
+true.
+
+7
+
+#
+
+Mandates: U is a specialization of expected and is_same_v<typename
+U​::​error_type, E> is true.
+
+8
+
+#
+
+Effects: Equivalent to: if (has_value()) return
+invoke(std::forward<F>(f)); else return U(unexpect, std::move(error()));
+
+🔗
+
+template<class F> constexpr auto or_else(F&& f) &; template<class F> constexpr auto or_else(F&& f) const &; 
+
+9
+
+#
+
+Let G be remove_cvref_t<invoke_result_t<F, decltype(error())>>.
+
+10
+
+#
+
+Mandates: G is a specialization of expected and is_same_v<typename
+G​::​value_type, T> is true.
+
+11
+
+#
+
+Effects: Equivalent to: if (has_value()) return G(); else return
+invoke(std::forward<F>(f), error());
+
+🔗
+
+template<class F> constexpr auto or_else(F&& f) &&; template<class F> constexpr auto or_else(F&& f) const &&; 
+
+12
+
+#
+
+Let G be remove_cvref_t<invoke_result_t<F,
+decltype(std​::​move(error()))>>.
+
+13
+
+#
+
+Mandates: G is a specialization of expected and is_same_v<typename
+G​::​value_type, T> is true.
+
+14
+
+#
+
+Effects: Equivalent to: if (has_value()) return G(); else return
+invoke(std::forward<F>(f), std::move(error()));
+
+🔗
+
+template<class F> constexpr auto transform(F&& f) &; template<class F> constexpr auto transform(F&& f) const &; 
+
+15
+
+#
+
+Let U be remove_cv_t<invoke_result_t<F>>.
+
+16
+
+#
+
+Constraints: is_constructible_v<E, decltype(error())> is true.
+
+17
+
+#
+
+Mandates: U is a valid value type for expected.
+
+If is_void_v<U> is false, the declaration U
+u(invoke(std::forward<F>(f))); is well-formed.
+
+18
+
+#
+
+Effects:
+
+-   (18.1)
+
+    If has_value() is false, returns expected<U, E>(unexpect, error()).
+
+-   (18.2)
+
+    Otherwise, if is_void_v<U> is false, returns an expected<U, E>
+    object whose has_val member is true and val member is
+    direct-non-list-initialized with invoke(std​::​forward<F>(f)).
+
+-   (18.3)
+
+    Otherwise, evaluates invoke(std​::​forward<F>(f)) and then returns
+    expected<U, E>().
+
+🔗
+
+template<class F> constexpr auto transform(F&& f) &&; template<class F> constexpr auto transform(F&& f) const &&; 
+
+19
+
+#
+
+Let U be remove_cv_t<invoke_result_t<F>>.
+
+20
+
+#
+
+Constraints: is_constructible_v<E, decltype(std​::​move(error()))> is
+true.
+
+21
+
+#
+
+Mandates: U is a valid value type for expected.
+
+If is_void_v<U> is false, the declaration U
+u(invoke(std::forward<F>(f))); is well-formed.
+
+22
+
+#
+
+Effects:
+
+-   (22.1)
+
+    If has_value() is false, returns expected<U, E>(unexpect,
+    std​::​move(error())).
+
+-   (22.2)
+
+    Otherwise, if is_void_v<U> is false, returns an expected<U, E>
+    object whose has_val member is true and val member is
+    direct-non-list-initialized with invoke(std​::​forward<F>(f)).
+
+-   (22.3)
+
+    Otherwise, evaluates invoke(std​::​forward<F>(f)) and then returns
+    expected<U, E>().
+
+🔗
+
+template<class F> constexpr auto transform_error(F&& f) &; template<class F> constexpr auto transform_error(F&& f) const &; 
+
+23
+
+#
+
+Let G be remove_cv_t<invoke_result_t<F, decltype(error())>>.
+
+24
+
+#
+
+Mandates: G is a valid template argument for unexpected
+([expected.un.general]) and the declaration G
+g(invoke(std::forward<F>(f), error())); is well-formed.
+
+25
+
+#
+
+Returns: If has_value() is true, expected<T, G>(); otherwise, an
+expected<T, G> object whose has_val member is false and unex member is
+direct-non-list-initialized with invoke(std​::​forward<F>(f), error()).
+
+🔗
+
+template<class F> constexpr auto transform_error(F&& f) &&; template<class F> constexpr auto transform_error(F&& f) const &&; 
+
+26
+
+#
+
+Let G be remove_cv_t<invoke_result_t<F, decltype(std​::​move(error()))>>.
+
+27
+
+#
+
+Mandates: G is a valid template argument for unexpected
+([expected.un.general]) and the declaration G
+g(invoke(std::forward<F>(f), std::move(error()))); is well-formed.
+
+28
+
+#
+
+Returns: If has_value() is true, expected<T, G>(); otherwise, an
+expected<T, G> object whose has_val member is false and unex member is
+direct-non-list-initialized with invoke(std​::​forward<F>(f),
+std​::​move(error())).
+
+22.8.7.8 Equality operators [expected.void.eq]
+
+🔗
+
+template<class T2, class E2> requires is_void_v<T2> friend constexpr bool operator==(const expected& x, const expected<T2, E2>& y); 
+
+1
+
+#
+
+Constraints: The expression x.error() == y.error() is well-formed and
+its result is convertible to bool.
+
+2
+
+#
+
+Returns: If x.has_value() does not equal y.has_value(), false; otherwise
+if x.has_value() is true, true; otherwise x.error() == y.error().
+
+🔗
+
+template<class E2> friend constexpr bool operator==(const expected& x, const unexpected<E2>& e); 
+
+3
+
+#
+
+Constraints: The expression x.error() == e.error() is well-formed and
+its result is convertible to bool.
+
+4
+
+#
+
+Returns: If !x.has_value() is true, x.error() == e.error(); otherwise
+false.

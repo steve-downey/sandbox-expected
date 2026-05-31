@@ -1,0 +1,4950 @@
+* 22 General utilities library [[https://eel.is/c++draft/#utilities][[utilities]]]
+:PROPERTIES:
+:CUSTOM_ID: general-utilities-library-utilities
+:END:
+** 22.8 Expected objects [expected]
+:PROPERTIES:
+:CUSTOM_ID: expected-objects-expected
+:END:
+
+--------------
+
+*** 22.8.1 General [[https://eel.is/c++draft/expected#general][[expected.general]]]
+:PROPERTIES:
+:CUSTOM_ID: general-expected.general
+:END:
+
+*** 22.8.2 Header <expected> synopsis [[https://eel.is/c++draft/expected#syn][[expected.syn]]]
+:PROPERTIES:
+:CUSTOM_ID: header-expected-synopsis-expected.syn
+:END:
+
+*** 22.8.3 Class template unexpected [[https://eel.is/c++draft/expected#unexpected][[expected.unexpected]]]
+:PROPERTIES:
+:CUSTOM_ID: class-template-unexpected-expected.unexpected
+:END:
+
+**** 22.8.3.1 General [[https://eel.is/c++draft/expected#un.general][[expected.un.general]]]
+:PROPERTIES:
+:CUSTOM_ID: general-expected.un.general
+:END:
+
+**** 22.8.3.2 Constructors [[https://eel.is/c++draft/expected#un.cons][[expected.un.cons]]]
+:PROPERTIES:
+:CUSTOM_ID: constructors-expected.un.cons
+:END:
+
+**** 22.8.3.3 Observers [[https://eel.is/c++draft/expected#un.obs][[expected.un.obs]]]
+:PROPERTIES:
+:CUSTOM_ID: observers-expected.un.obs
+:END:
+
+**** 22.8.3.4 Swap [[https://eel.is/c++draft/expected#un.swap][[expected.un.swap]]]
+:PROPERTIES:
+:CUSTOM_ID: swap-expected.un.swap
+:END:
+
+**** 22.8.3.5 Equality operator [[https://eel.is/c++draft/expected#un.eq][[expected.un.eq]]]
+:PROPERTIES:
+:CUSTOM_ID: equality-operator-expected.un.eq
+:END:
+
+*** 22.8.4 Class template bad_expected_access [[https://eel.is/c++draft/expected#bad][[expected.bad]]]
+:PROPERTIES:
+:CUSTOM_ID: class-template-bad_expected_access-expected.bad
+:END:
+
+*** 22.8.5 Class template specialization bad_expected_access<void> [[https://eel.is/c++draft/expected#bad.void][[expected.bad.void]]]
+:PROPERTIES:
+:CUSTOM_ID: class-template-specialization-bad_expected_accessvoid-expected.bad.void
+:END:
+
+*** 22.8.6 Class template expected [[https://eel.is/c++draft/expected#expected][[expected.expected]]]
+:PROPERTIES:
+:CUSTOM_ID: class-template-expected-expected.expected
+:END:
+
+**** 22.8.6.1 General [[https://eel.is/c++draft/expected#object.general][[expected.object.general]]]
+:PROPERTIES:
+:CUSTOM_ID: general-expected.object.general
+:END:
+
+**** 22.8.6.2 Constructors [[https://eel.is/c++draft/expected#object.cons][[expected.object.cons]]]
+:PROPERTIES:
+:CUSTOM_ID: constructors-expected.object.cons
+:END:
+
+**** 22.8.6.3 Destructor [[https://eel.is/c++draft/expected#object.dtor][[expected.object.dtor]]]
+:PROPERTIES:
+:CUSTOM_ID: destructor-expected.object.dtor
+:END:
+
+**** 22.8.6.4 Assignment [[https://eel.is/c++draft/expected#object.assign][[expected.object.assign]]]
+:PROPERTIES:
+:CUSTOM_ID: assignment-expected.object.assign
+:END:
+
+**** 22.8.6.5 Swap [[https://eel.is/c++draft/expected#object.swap][[expected.object.swap]]]
+:PROPERTIES:
+:CUSTOM_ID: swap-expected.object.swap
+:END:
+
+**** 22.8.6.6 Observers [[https://eel.is/c++draft/expected#object.obs][[expected.object.obs]]]
+:PROPERTIES:
+:CUSTOM_ID: observers-expected.object.obs
+:END:
+
+**** 22.8.6.7 Monadic operations [[https://eel.is/c++draft/expected#object.monadic][[expected.object.monadic]]]
+:PROPERTIES:
+:CUSTOM_ID: monadic-operations-expected.object.monadic
+:END:
+
+**** 22.8.6.8 Equality operators [[https://eel.is/c++draft/expected#object.eq][[expected.object.eq]]]
+:PROPERTIES:
+:CUSTOM_ID: equality-operators-expected.object.eq
+:END:
+
+*** 22.8.7 Partial specialization of expected for void types [[https://eel.is/c++draft/expected#void][[expected.void]]]
+:PROPERTIES:
+:CUSTOM_ID: partial-specialization-of-expected-for-void-types-expected.void
+:END:
+
+**** 22.8.7.1 General [[https://eel.is/c++draft/expected#void.general][[expected.void.general]]]
+:PROPERTIES:
+:CUSTOM_ID: general-expected.void.general
+:END:
+
+**** 22.8.7.2 Constructors [[https://eel.is/c++draft/expected#void.cons][[expected.void.cons]]]
+:PROPERTIES:
+:CUSTOM_ID: constructors-expected.void.cons
+:END:
+
+**** 22.8.7.3 Destructor [[https://eel.is/c++draft/expected#void.dtor][[expected.void.dtor]]]
+:PROPERTIES:
+:CUSTOM_ID: destructor-expected.void.dtor
+:END:
+
+**** 22.8.7.4 Assignment [[https://eel.is/c++draft/expected#void.assign][[expected.void.assign]]]
+:PROPERTIES:
+:CUSTOM_ID: assignment-expected.void.assign
+:END:
+
+**** 22.8.7.5 Swap [[https://eel.is/c++draft/expected#void.swap][[expected.void.swap]]]
+:PROPERTIES:
+:CUSTOM_ID: swap-expected.void.swap
+:END:
+
+**** 22.8.7.6 Observers [[https://eel.is/c++draft/expected#void.obs][[expected.void.obs]]]
+:PROPERTIES:
+:CUSTOM_ID: observers-expected.void.obs
+:END:
+
+**** 22.8.7.7 Monadic operations [[https://eel.is/c++draft/expected#void.monadic][[expected.void.monadic]]]
+:PROPERTIES:
+:CUSTOM_ID: monadic-operations-expected.void.monadic
+:END:
+
+**** 22.8.7.8 Equality operators [[https://eel.is/c++draft/expected#void.eq][[expected.void.eq]]]
+:PROPERTIES:
+:CUSTOM_ID: equality-operators-expected.void.eq
+:END:
+
+--------------
+
+<<general>>
+*** [[https://eel.is/c++draft/expected#general][22.8.1]] General [[https://eel.is/c++draft/expected.general][[expected.general]]]
+:PROPERTIES:
+:CUSTOM_ID: general-expected.general-1
+:END:
+
+<<general-1>>
+
+[[https://eel.is/c++draft/expected#general-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8105][#]]
+
+<<general-1.sentence-1>>
+Subclause [expected] describes the class template expected that
+represents expected
+objects[[https://eel.is/c++draft/expected#general-1.sentence-1][.]]
+
+<<general-1.sentence-2>>
+An expected<T, E> object holds an object of type T or an object of type
+E and manages the lifetime of the contained
+objects[[https://eel.is/c++draft/expected#general-1.sentence-2][.]]
+
+<<syn>>
+*** [[https://eel.is/c++draft/expected#syn][22.8.2]] Header <expected> synopsis [[https://eel.is/c++draft/expected.syn][[expected.syn]]]
+:PROPERTIES:
+:CUSTOM_ID: header-expected-synopsis-expected.syn-1
+:END:
+
+<<header:<expected>>>
+
+[[https://eel.is/c++draft/expected#header:%3cexpected%3e][🔗]]
+
+// mostly freestanding namespace std { //
+[[https://eel.is/c++draft/expected#unexpected][[expected.unexpected]]],
+class template unexpected template<class E> class unexpected; //
+[[https://eel.is/c++draft/expected#bad][[expected.bad]]], class template
+bad_expected_access template<class E> class bad_expected_access; //
+[[https://eel.is/c++draft/expected#bad.void][[expected.bad.void]]],
+specialization for void template<> class bad_expected_access<void>; //
+in-place construction of unexpected values struct unexpect_t { explicit
+unexpect_t() = default; }; inline constexpr unexpect_t unexpect{}; //
+[[https://eel.is/c++draft/expected#expected][[expected.expected]]],
+class template expected template<class T, class E> class expected; //
+partially freestanding //
+[[https://eel.is/c++draft/expected#void][[expected.void]]], partial
+specialization of expected for void types template<class T, class E>
+requires is_void_v<T> class expected<T, E>; // partially freestanding }
+
+<<unexpected>>
+*** [[https://eel.is/c++draft/expected#unexpected][22.8.3]] Class template unexpected [[https://eel.is/c++draft/expected.unexpected][[expected.unexpected]]]
+:PROPERTIES:
+:CUSTOM_ID: class-template-unexpected-expected.unexpected-1
+:END:
+
+<<un.general>>
+**** [[https://eel.is/c++draft/expected#un.general][22.8.3.1]] General [[https://eel.is/c++draft/expected.un.general][[expected.un.general]]]
+:PROPERTIES:
+:CUSTOM_ID: general-expected.un.general-1
+:END:
+
+<<un.general-1>>
+
+[[https://eel.is/c++draft/expected#un.general-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8147][#]]
+
+<<un.general-1.sentence-1>>
+Subclause
+[[https://eel.is/c++draft/expected#unexpected][[expected.unexpected]]]
+describes the class template unexpected that represents unexpected
+objects stored in expected
+objects[[https://eel.is/c++draft/expected#un.general-1.sentence-1][.]]
+
+<<lib:unexpected>>
+
+[[https://eel.is/c++draft/expected#lib:unexpected][🔗]]
+
+namespace std { template<class E> class unexpected { public: //
+[[https://eel.is/c++draft/expected#un.cons][[expected.un.cons]]],
+constructors constexpr unexpected(const unexpected&) = default;
+constexpr unexpected(unexpected&&) = default; template<class Err = E>
+constexpr explicit unexpected(Err&&); template<class... Args> constexpr
+explicit unexpected(in_place_t, Args&&...); template<class U, class...
+Args> constexpr explicit unexpected(in_place_t, initializer_list<U>,
+Args&&...); constexpr unexpected& operator=(const unexpected&) =
+default; constexpr unexpected& operator=(unexpected&&) = default;
+constexpr const E& error() const & noexcept; constexpr E& error() &
+noexcept; constexpr const E&& error() const && noexcept; constexpr E&&
+error() && noexcept; constexpr void swap(unexpected& other)
+noexcept(/see below/); template<class E2> friend constexpr bool
+operator==(const unexpected&, const unexpected<E2>&); friend constexpr
+void swap(unexpected& x, unexpected& y) noexcept(noexcept(x.swap(y)));
+private: E /unex/; // /exposition only/ }; template<class E>
+unexpected(E) -> unexpected<E>; }
+
+<<un.general-2>>
+
+[[https://eel.is/c++draft/expected#un.general-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8190][#]]
+
+<<un.general-2.sentence-1>>
+A program that instantiates the definition of unexpected for a
+non-object type, an array type, a specialization of unexpected, or a
+cv-qualified type is
+ill-formed[[https://eel.is/c++draft/expected#un.general-2.sentence-1][.]]
+
+<<un.cons>>
+**** [[https://eel.is/c++draft/expected#un.cons][22.8.3.2]] Constructors [[https://eel.is/c++draft/expected.un.cons][[expected.un.cons]]]
+:PROPERTIES:
+:CUSTOM_ID: constructors-expected.un.cons-1
+:END:
+
+<<lib:unexpected,constructor>>
+
+[[https://eel.is/c++draft/expected#lib:unexpected,constructor][🔗]]
+
+=template==<==class== Err ===== E==>== ==constexpr== ==explicit== unexpected==(==Err==&==&== e==)==; =
+
+<<un.cons-1>>
+
+[[https://eel.is/c++draft/expected#un.cons-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8207][#]]
+
+<<un.cons-1.sentence-1>>
+/Constraints/:
+- 
+
+  <<un.cons-1.1>>
+
+  [[https://eel.is/c++draft/expected#un.cons-1.1][(1.1)]]
+
+  is_same_v<remove_cvref_t<Err>, unexpected> is false; and
+
+- 
+
+  <<un.cons-1.2>>
+
+  [[https://eel.is/c++draft/expected#un.cons-1.2][(1.2)]]
+
+  is_same_v<remove_cvref_t<Err>, in_place_t> is false; and
+
+- 
+
+  <<un.cons-1.3>>
+
+  [[https://eel.is/c++draft/expected#un.cons-1.3][(1.3)]]
+
+  is_constructible_v<E, Err> is
+  true[[https://eel.is/c++draft/expected#un.cons-1.sentence-1][.]]
+
+<<un.cons-2>>
+
+[[https://eel.is/c++draft/expected#un.cons-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8218][#]]
+
+<<un.cons-2.sentence-1>>
+/Effects/: Direct-non-list-initializes /unex/ with
+std​::​forward<Err>(e)[[https://eel.is/c++draft/expected#un.cons-2.sentence-1][.]]
+
+<<un.cons-3>>
+
+[[https://eel.is/c++draft/expected#un.cons-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8222][#]]
+
+<<un.cons-3.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#un.cons-3.sentence-1][.]]
+
+<<lib:unexpected,constructor_>>
+
+[[https://eel.is/c++draft/expected#lib:unexpected,constructor_][🔗]]
+
+=template==<==class==.==.==.== Args==>== ==constexpr== ==explicit== unexpected==(==in_place_t, Args==&==&==.==.==.== args==)==; =
+
+<<un.cons-4>>
+
+[[https://eel.is/c++draft/expected#un.cons-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8234][#]]
+
+<<un.cons-4.sentence-1>>
+/Constraints/: is_constructible_v<E, Args...> is
+true[[https://eel.is/c++draft/expected#un.cons-4.sentence-1][.]]
+
+<<un.cons-5>>
+
+[[https://eel.is/c++draft/expected#un.cons-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8238][#]]
+
+<<un.cons-5.sentence-1>>
+/Effects/: Direct-non-list-initializes /unex/ with
+std​::​forward<Args>(args)...[[https://eel.is/c++draft/expected#un.cons-5.sentence-1][.]]
+
+<<un.cons-6>>
+
+[[https://eel.is/c++draft/expected#un.cons-6][6]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8243][#]]
+
+<<un.cons-6.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#un.cons-6.sentence-1][.]]
+
+<<lib:unexpected,constructor__>>
+
+[[https://eel.is/c++draft/expected#lib:unexpected,constructor__][🔗]]
+
+=template==<==class== U, ==class==.==.==.== Args==>== ==constexpr== ==explicit== unexpected==(==in_place_t, initializer_list==<==U==>== il, Args==&==&==.==.==.== args==)==; =
+
+<<un.cons-7>>
+
+[[https://eel.is/c++draft/expected#un.cons-7][7]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8255][#]]
+
+<<un.cons-7.sentence-1>>
+/Constraints/: is_constructible_v<E, initializer_list<U>&, Args...> is
+true[[https://eel.is/c++draft/expected#un.cons-7.sentence-1][.]]
+
+<<un.cons-8>>
+
+[[https://eel.is/c++draft/expected#un.cons-8][8]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8259][#]]
+
+<<un.cons-8.sentence-1>>
+/Effects/: Direct-non-list-initializes /unex/ with il,
+std​::​forward<Args>(args)...[[https://eel.is/c++draft/expected#un.cons-8.sentence-1][.]]
+
+<<un.cons-9>>
+
+[[https://eel.is/c++draft/expected#un.cons-9][9]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8264][#]]
+
+<<un.cons-9.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#un.cons-9.sentence-1][.]]
+
+<<un.obs>>
+**** [[https://eel.is/c++draft/expected#un.obs][22.8.3.3]] Observers [[https://eel.is/c++draft/expected.un.obs][[expected.un.obs]]]
+:PROPERTIES:
+:CUSTOM_ID: observers-expected.un.obs-1
+:END:
+
+<<lib:unexpected,error>>
+
+<<lib:error,unexpected>>
+
+[[https://eel.is/c++draft/expected#lib:error,unexpected][🔗]]
+
+=constexpr== ==const== E==&== error==(==)== ==const== ==&== ==noexcept==; ==constexpr== E==&== error==(==)== ==&== ==noexcept==; =
+
+<<un.obs-1>>
+
+[[https://eel.is/c++draft/expected#un.obs-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8278][#]]
+
+<<un.obs-1.sentence-1>>
+/Returns/:
+/unex/[[https://eel.is/c++draft/expected#un.obs-1.sentence-1][.]]
+
+<<lib:unexpected,error_>>
+
+<<lib:error,unexpected_>>
+
+[[https://eel.is/c++draft/expected#lib:error,unexpected_][🔗]]
+
+=constexpr== E==&==&== error==(==)== ==&==&== ==noexcept==; ==constexpr== ==const== E==&==&== error==(==)== ==const== ==&==&== ==noexcept==; =
+
+<<un.obs-2>>
+
+[[https://eel.is/c++draft/expected#un.obs-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8290][#]]
+
+<<un.obs-2.sentence-1>>
+/Returns/:
+std​::​move(/unex/)[[https://eel.is/c++draft/expected#un.obs-2.sentence-1][.]]
+
+<<un.swap>>
+**** [[https://eel.is/c++draft/expected#un.swap][22.8.3.4]] Swap [[https://eel.is/c++draft/expected.un.swap][[expected.un.swap]]]
+:PROPERTIES:
+:CUSTOM_ID: swap-expected.un.swap-1
+:END:
+
+<<lib:unexpected,swap>>
+
+<<lib:swap,unexpected>>
+
+[[https://eel.is/c++draft/expected#lib:swap,unexpected][🔗]]
+
+=constexpr== ==void== swap==(==unexpected==&== other==)== ==noexcept==(==is_nothrow_swappable_v==<==E==>==)==; =
+
+<<un.swap-1>>
+
+[[https://eel.is/c++draft/expected#un.swap-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8303][#]]
+
+<<un.swap-1.sentence-1>>
+/Mandates/: is_swappable_v<E> is
+true[[https://eel.is/c++draft/expected#un.swap-1.sentence-1][.]]
+
+<<un.swap-2>>
+
+[[https://eel.is/c++draft/expected#un.swap-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8307][#]]
+
+<<un.swap-2.sentence-1>>
+/Effects/: Equivalent to: using std​::​swap; swap(/unex/, other./unex/);
+
+<<un.swap-itemdecl:2>>
+
+[[https://eel.is/c++draft/expected#un.swap-itemdecl:2][🔗]]
+
+=friend== ==constexpr== ==void== swap==(==unexpected==&== x, unexpected==&== y==)== ==noexcept==(==noexcept==(==x==.==swap==(==y==)==)==)==; =
+
+<<un.swap-3>>
+
+[[https://eel.is/c++draft/expected#un.swap-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8318][#]]
+
+<<un.swap-3.sentence-1>>
+/Constraints/: is_swappable_v<E> is
+true[[https://eel.is/c++draft/expected#un.swap-3.sentence-1][.]]
+
+<<un.swap-4>>
+
+[[https://eel.is/c++draft/expected#un.swap-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8322][#]]
+
+<<un.swap-4.sentence-1>>
+/Effects/: Equivalent to
+x.swap(y)[[https://eel.is/c++draft/expected#un.swap-4.sentence-1][.]]
+
+<<un.eq>>
+**** [[https://eel.is/c++draft/expected#un.eq][22.8.3.5]] Equality operator [[https://eel.is/c++draft/expected.un.eq][[expected.un.eq]]]
+:PROPERTIES:
+:CUSTOM_ID: equality-operator-expected.un.eq-1
+:END:
+
+<<lib:unexpected,operator==>>
+
+<<lib:operator==,unexpected>>
+
+[[https://eel.is/c++draft/expected#lib:operator==,unexpected][🔗]]
+
+=template==<==class== E2==>== ==friend== ==constexpr== ==bool== ==operator========(==const== unexpected==&== x, ==const== unexpected==<==E2==>==&== y==)==; =
+
+<<un.eq-1>>
+
+[[https://eel.is/c++draft/expected#un.eq-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8336][#]]
+
+<<un.eq-1.sentence-1>>
+/Mandates/: The expression x.error() == y.error() is well-formed and its
+result is convertible to
+bool[[https://eel.is/c++draft/expected#un.eq-1.sentence-1][.]]
+
+<<un.eq-2>>
+
+[[https://eel.is/c++draft/expected#un.eq-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8341][#]]
+
+<<un.eq-2.sentence-1>>
+/Returns/: x.error() ==
+y.error()[[https://eel.is/c++draft/expected#un.eq-2.sentence-1][.]]
+
+<<bad>>
+*** [[https://eel.is/c++draft/expected#bad][22.8.4]] Class template bad_expected_access [[https://eel.is/c++draft/expected.bad][[expected.bad]]]
+:PROPERTIES:
+:CUSTOM_ID: class-template-bad_expected_access-expected.bad-1
+:END:
+
+<<lib:bad_expected_access>>
+
+[[https://eel.is/c++draft/expected#lib:bad_expected_access][🔗]]
+
+namespace std { template<class E> class bad_expected_access : public
+bad_expected_access<void> { public: constexpr explicit
+bad_expected_access(E); constexpr const char* what() const noexcept
+override; constexpr E& error() & noexcept; constexpr const E& error()
+const & noexcept; constexpr E&& error() && noexcept; constexpr const E&&
+error() const && noexcept; private: E /unex/; // /exposition only/ }; }
+
+<<bad-1>>
+
+[[https://eel.is/c++draft/expected#bad-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8367][#]]
+
+<<bad-1.sentence-1>>
+The class template bad_expected_access defines the type of objects
+thrown as exceptions to report the situation where an attempt is made to
+access the value of an expected<T, E> object for which has_value() is
+false[[https://eel.is/c++draft/expected#bad-1.sentence-1][.]]
+
+<<lib:bad_expected_access,constructor>>
+
+[[https://eel.is/c++draft/expected#lib:bad_expected_access,constructor][🔗]]
+
+=constexpr== ==explicit== bad_expected_access==(==E e==)==; =
+
+<<bad-2>>
+
+[[https://eel.is/c++draft/expected#bad-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8379][#]]
+
+<<bad-2.sentence-1>>
+/Effects/: Initializes /unex/ with
+std​::​move(e)[[https://eel.is/c++draft/expected#bad-2.sentence-1][.]]
+
+<<lib:bad_expected_access,error>>
+
+<<lib:error,bad_expected_access>>
+
+[[https://eel.is/c++draft/expected#lib:error,bad_expected_access][🔗]]
+
+=constexpr== ==const== E==&== error==(==)== ==const== ==&== ==noexcept==; ==constexpr== E==&== error==(==)== ==&== ==noexcept==; =
+
+<<bad-3>>
+
+[[https://eel.is/c++draft/expected#bad-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8391][#]]
+
+<<bad-3.sentence-1>>
+/Returns/:
+/unex/[[https://eel.is/c++draft/expected#bad-3.sentence-1][.]]
+
+<<lib:bad_expected_access,error_>>
+
+<<lib:error,bad_expected_access_>>
+
+[[https://eel.is/c++draft/expected#lib:error,bad_expected_access_][🔗]]
+
+=constexpr== E==&==&== error==(==)== ==&==&== ==noexcept==; ==constexpr== ==const== E==&==&== error==(==)== ==const== ==&==&== ==noexcept==; =
+
+<<bad-4>>
+
+[[https://eel.is/c++draft/expected#bad-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8403][#]]
+
+<<bad-4.sentence-1>>
+/Returns/:
+std​::​move(/unex/)[[https://eel.is/c++draft/expected#bad-4.sentence-1][.]]
+
+<<lib:bad_expected_access,what>>
+
+<<lib:what,bad_expected_access>>
+
+[[https://eel.is/c++draft/expected#lib:what,bad_expected_access][🔗]]
+
+=constexpr== ==const== ==char==*== what==(==)== ==const== ==noexcept== ==override==; =
+
+<<bad-5>>
+
+[[https://eel.is/c++draft/expected#bad-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8414][#]]
+
+<<bad-5.sentence-1>>
+/Returns/: An implementation-defined ntbs, which during constant
+evaluation is encoded with the ordinary literal encoding
+([[https://eel.is/c++draft/lex.ccon][[lex.ccon]]])[[https://eel.is/c++draft/expected#bad-5.sentence-1][.]]
+
+<<bad.void>>
+*** [[https://eel.is/c++draft/expected#bad.void][22.8.5]] Class template specialization bad_expected_access<void> [[https://eel.is/c++draft/expected.bad.void][[expected.bad.void]]]
+:PROPERTIES:
+:CUSTOM_ID: class-template-specialization-bad_expected_accessvoid-expected.bad.void-1
+:END:
+
+namespace std { template<> class bad_expected_access<void> : public
+exception { protected: constexpr bad_expected_access() noexcept;
+constexpr bad_expected_access(const bad_expected_access&) noexcept;
+constexpr bad_expected_access(bad_expected_access&&) noexcept; constexpr
+bad_expected_access& operator=(const bad_expected_access&) noexcept;
+constexpr bad_expected_access& operator=(bad_expected_access&&)
+noexcept; constexpr ~bad_expected_access(); public: constexpr const
+char* what() const noexcept override; }; }
+
+<<lib:bad_expected_access,what_>>
+
+<<lib:what,bad_expected_access_>>
+
+[[https://eel.is/c++draft/expected#lib:what,bad_expected_access_][🔗]]
+
+=constexpr== ==const== ==char==*== what==(==)== ==const== ==noexcept== ==override==; =
+
+<<bad.void-1>>
+
+[[https://eel.is/c++draft/expected#bad.void-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8447][#]]
+
+<<bad.void-1.sentence-1>>
+/Returns/: An implementation-defined ntbs, which during constant
+evaluation is encoded with the ordinary literal encoding
+([[https://eel.is/c++draft/lex.ccon][[lex.ccon]]])[[https://eel.is/c++draft/expected#bad.void-1.sentence-1][.]]
+
+<<expected>>
+*** [[https://eel.is/c++draft/expected#expected][22.8.6]] Class template expected [[https://eel.is/c++draft/expected.expected][[expected.expected]]]
+:PROPERTIES:
+:CUSTOM_ID: class-template-expected-expected.expected-1
+:END:
+
+<<object.general>>
+**** [[https://eel.is/c++draft/expected#object.general][22.8.6.1]] General [[https://eel.is/c++draft/expected.object.general][[expected.object.general]]]
+:PROPERTIES:
+:CUSTOM_ID: general-expected.object.general-1
+:END:
+
+namespace std { template<class T, class E> class expected { public:
+using
+[[https://eel.is/c++draft/expected#lib:expected,value_type][value_type]]
+= T; using
+[[https://eel.is/c++draft/expected#lib:expected,error_type][error_type]]
+= E; using
+[[https://eel.is/c++draft/expected#lib:expected,unexpected_type][unexpected_type]]
+= unexpected<E>; template<class U> using
+[[https://eel.is/c++draft/expected#lib:expected,rebind][rebind]] =
+expected<U, error_type>; //
+[[https://eel.is/c++draft/expected#object.cons][[expected.object.cons]]],
+constructors constexpr expected(); constexpr expected(const expected&);
+constexpr expected(expected&&) noexcept(/see below/); template<class U,
+class G> constexpr explicit(/see below/) expected(const expected<U,
+G>&); template<class U, class G> constexpr explicit(/see below/)
+expected(expected<U, G>&&); template<class U = remove_cv_t<T>> constexpr
+explicit(/see below/) expected(U&& v); template<class G> constexpr
+explicit(/see below/) expected(const unexpected<G>&); template<class G>
+constexpr explicit(/see below/) expected(unexpected<G>&&);
+template<class... Args> constexpr explicit expected(in_place_t,
+Args&&...); template<class U, class... Args> constexpr explicit
+expected(in_place_t, initializer_list<U>, Args&&...); template<class...
+Args> constexpr explicit expected(unexpect_t, Args&&...); template<class
+U, class... Args> constexpr explicit expected(unexpect_t,
+initializer_list<U>, Args&&...); //
+[[https://eel.is/c++draft/expected#object.dtor][[expected.object.dtor]]],
+destructor constexpr ~expected(); //
+[[https://eel.is/c++draft/expected#object.assign][[expected.object.assign]]],
+assignment constexpr expected& operator=(const expected&); constexpr
+expected& operator=(expected&&) noexcept(/see below/); template<class U
+= remove_cv_t<T>> constexpr expected& operator=(U&&); template<class G>
+constexpr expected& operator=(const unexpected<G>&); template<class G>
+constexpr expected& operator=(unexpected<G>&&); template<class... Args>
+constexpr T& emplace(Args&&...) noexcept; template<class U, class...
+Args> constexpr T& emplace(initializer_list<U>, Args&&...) noexcept; //
+[[https://eel.is/c++draft/expected#object.swap][[expected.object.swap]]],
+swap constexpr void swap(expected&) noexcept(/see below/); friend
+constexpr void swap(expected& x, expected& y)
+noexcept(noexcept(x.swap(y))); //
+[[https://eel.is/c++draft/expected#object.obs][[expected.object.obs]]],
+observers constexpr const T* operator->() const noexcept; constexpr T*
+operator->() noexcept; constexpr const T& operator*() const & noexcept;
+constexpr T& operator*() & noexcept; constexpr const T&& operator*()
+const && noexcept; constexpr T&& operator*() && noexcept; constexpr
+explicit operator bool() const noexcept; constexpr bool has_value()
+const noexcept; constexpr const T& value() const &; //
+freestanding-deleted constexpr T& value() &; // freestanding-deleted
+constexpr const T&& value() const &&; // freestanding-deleted constexpr
+T&& value() &&; // freestanding-deleted constexpr const E& error() const
+& noexcept; constexpr E& error() & noexcept; constexpr const E&& error()
+const && noexcept; constexpr E&& error() && noexcept; template<class U =
+remove_cv_t<T>> constexpr T value_or(U&&) const &; template<class U =
+remove_cv_t<T>> constexpr T value_or(U&&) &&; template<class G = E>
+constexpr E error_or(G&&) const &; template<class G = E> constexpr E
+error_or(G&&) &&; //
+[[https://eel.is/c++draft/expected#object.monadic][[expected.object.monadic]]],
+monadic operations template<class F> constexpr auto and_then(F&& f) &;
+template<class F> constexpr auto and_then(F&& f) &&; template<class F>
+constexpr auto and_then(F&& f) const &; template<class F> constexpr auto
+and_then(F&& f) const &&; template<class F> constexpr auto or_else(F&&
+f) &; template<class F> constexpr auto or_else(F&& f) &&; template<class
+F> constexpr auto or_else(F&& f) const &; template<class F> constexpr
+auto or_else(F&& f) const &&; template<class F> constexpr auto
+transform(F&& f) &; template<class F> constexpr auto transform(F&& f)
+&&; template<class F> constexpr auto transform(F&& f) const &;
+template<class F> constexpr auto transform(F&& f) const &&;
+template<class F> constexpr auto transform_error(F&& f) &;
+template<class F> constexpr auto transform_error(F&& f) &&;
+template<class F> constexpr auto transform_error(F&& f) const &;
+template<class F> constexpr auto transform_error(F&& f) const &&; //
+[[https://eel.is/c++draft/expected#object.eq][[expected.object.eq]]],
+equality operators template<class T2, class E2> requires
+(!is_void_v<T2>) friend constexpr bool operator==(const expected& x,
+const expected<T2, E2>& y); template<class T2> friend constexpr bool
+operator==(const expected&, const T2&); template<class E2> friend
+constexpr bool operator==(const expected&, const unexpected<E2>&);
+private: bool /has_val/; // /exposition only/ union { remove_cv_t<T>
+/val/; // /exposition only/ E /unex/; // /exposition only/ }; }; }
+
+<<object.general-1>>
+
+[[https://eel.is/c++draft/expected#object.general-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8575][#]]
+
+<<object.general-1.sentence-1>>
+Any object of type expected<T, E> either contains a value of type T or a
+value of type E nested within
+([[https://eel.is/c++draft/intro.object][[intro.object]]])
+it[[https://eel.is/c++draft/expected#object.general-1.sentence-1][.]]
+
+<<object.general-1.sentence-2>>
+Member /has_val/ indicates whether the expected<T, E> object contains an
+object of type
+T[[https://eel.is/c++draft/expected#object.general-1.sentence-2][.]]
+
+<<object.general-2>>
+
+[[https://eel.is/c++draft/expected#object.general-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8583][#]]
+
+<<object.general-2.sentence-1>>
+A type T is a
+[[https://eel.is/c++draft/expected#def:valid_value_type_for_expected][/valid
+value type for expected/]], if remove_cv_t<T> is void or a complete
+non-array object type that is not in_place_t, unexpect_t, or a
+specialization of
+unexpected[[https://eel.is/c++draft/expected#object.general-2.sentence-1][.]]
+
+<<object.general-2.sentence-2>>
+A program which instantiates class template expected<T, E> with an
+argument T that is not a valid value type for expected is
+ill-formed[[https://eel.is/c++draft/expected#object.general-2.sentence-2][.]]
+
+<<object.general-2.sentence-3>>
+A program that instantiates the definition of the template expected<T,
+E> with a type for the E parameter that is not a valid template argument
+for unexpected is
+ill-formed[[https://eel.is/c++draft/expected#object.general-2.sentence-3][.]]
+
+<<object.general-3>>
+
+[[https://eel.is/c++draft/expected#object.general-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8597][#]]
+
+<<object.general-3.sentence-1>>
+When T is not cv void, it shall meet the
+[[https://eel.is/c++draft/utility.arg.requirements#:Cpp17Destructible][/Cpp17Destructible/]]
+requirements (Table
+[[https://eel.is/c++draft/utility.arg.requirements#tab:cpp17.destructible][35]])[[https://eel.is/c++draft/expected#object.general-3.sentence-1][.]]
+
+<<object.general-3.sentence-2>>
+E shall meet the
+[[https://eel.is/c++draft/utility.arg.requirements#:Cpp17Destructible][/Cpp17Destructible/]]
+requirements[[https://eel.is/c++draft/expected#object.general-3.sentence-2][.]]
+
+<<object.cons>>
+**** [[https://eel.is/c++draft/expected#object.cons][22.8.6.2]] Constructors [[https://eel.is/c++draft/expected.object.cons][[expected.object.cons]]]
+:PROPERTIES:
+:CUSTOM_ID: constructors-expected.object.cons-1
+:END:
+
+<<object.cons-1>>
+
+[[https://eel.is/c++draft/expected#object.cons-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8605][#]]
+
+<<object.cons-1.sentence-1>>
+The exposition-only variable template /converts-from-any-cvref/ defined
+in [[https://eel.is/c++draft/optional.ctor][[optional.ctor]]] is used by
+some constructors for
+expected[[https://eel.is/c++draft/expected#object.cons-1.sentence-1][.]]
+
+<<lib:expected,constructor>>
+
+[[https://eel.is/c++draft/expected#lib:expected,constructor][🔗]]
+
+=constexpr== expected==(==)==; =
+
+<<object.cons-2>>
+
+[[https://eel.is/c++draft/expected#object.cons-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8616][#]]
+
+<<object.cons-2.sentence-1>>
+/Constraints/: is_default_constructible_v<T> is
+true[[https://eel.is/c++draft/expected#object.cons-2.sentence-1][.]]
+
+<<object.cons-3>>
+
+[[https://eel.is/c++draft/expected#object.cons-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8620][#]]
+
+<<object.cons-3.sentence-1>>
+/Effects/: Value-initializes
+/val/[[https://eel.is/c++draft/expected#object.cons-3.sentence-1][.]]
+
+<<object.cons-4>>
+
+[[https://eel.is/c++draft/expected#object.cons-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8624][#]]
+
+<<object.cons-4.sentence-1>>
+/Postconditions/: has_value() is
+true[[https://eel.is/c++draft/expected#object.cons-4.sentence-1][.]]
+
+<<object.cons-5>>
+
+[[https://eel.is/c++draft/expected#object.cons-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8628][#]]
+
+<<object.cons-5.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/val/[[https://eel.is/c++draft/expected#object.cons-5.sentence-1][.]]
+
+<<lib:expected,constructor_>>
+
+[[https://eel.is/c++draft/expected#lib:expected,constructor_][🔗]]
+
+=constexpr== expected==(==const== expected==&== rhs==)==; =
+
+<<object.cons-6>>
+
+[[https://eel.is/c++draft/expected#object.cons-6][6]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8639][#]]
+
+<<object.cons-6.sentence-1>>
+/Effects/: If rhs.has_value() is true, direct-non-list-initializes /val/
+with
+*rhs[[https://eel.is/c++draft/expected#object.cons-6.sentence-1][.]]
+
+<<object.cons-6.sentence-2>>
+Otherwise, direct-non-list-initializes /unex/ with
+rhs.error()[[https://eel.is/c++draft/expected#object.cons-6.sentence-2][.]]
+
+<<object.cons-7>>
+
+[[https://eel.is/c++draft/expected#object.cons-7][7]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8645][#]]
+
+<<object.cons-7.sentence-1>>
+/Postconditions/: rhs.has_value() ==
+this->has_value()[[https://eel.is/c++draft/expected#object.cons-7.sentence-1][.]]
+
+<<object.cons-8>>
+
+[[https://eel.is/c++draft/expected#object.cons-8][8]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8649][#]]
+
+<<object.cons-8.sentence-1>>
+/Throws/: Any exception thrown by the initialization of /val/ or
+/unex/[[https://eel.is/c++draft/expected#object.cons-8.sentence-1][.]]
+
+<<object.cons-9>>
+
+[[https://eel.is/c++draft/expected#object.cons-9][9]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8653][#]]
+
+<<object.cons-9.sentence-1>>
+/Remarks/: This constructor is defined as deleted unless
+- 
+
+  <<object.cons-9.1>>
+
+  [[https://eel.is/c++draft/expected#object.cons-9.1][(9.1)]]
+
+  is_copy_constructible_v<T> is true and
+
+- 
+
+  <<object.cons-9.2>>
+
+  [[https://eel.is/c++draft/expected#object.cons-9.2][(9.2)]]
+
+  is_copy_constructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.cons-9.sentence-1][.]]
+
+<<object.cons-10>>
+
+[[https://eel.is/c++draft/expected#object.cons-10][10]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8663][#]]
+
+<<object.cons-10.sentence-1>>
+This constructor is trivial if
+- 
+
+  <<object.cons-10.1>>
+
+  [[https://eel.is/c++draft/expected#object.cons-10.1][(10.1)]]
+
+  is_trivially_copy_constructible_v<T> is true and
+
+- 
+
+  <<object.cons-10.2>>
+
+  [[https://eel.is/c++draft/expected#object.cons-10.2][(10.2)]]
+
+  is_trivially_copy_constructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.cons-10.sentence-1][.]]
+
+<<lib:expected,constructor__>>
+
+[[https://eel.is/c++draft/expected#lib:expected,constructor__][🔗]]
+
+=constexpr== expected==(==expected==&==&== rhs==)== ==noexcept==(=/=see below=/=)==; =
+
+<<object.cons-11>>
+
+[[https://eel.is/c++draft/expected#object.cons-11][11]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8679][#]]
+
+<<object.cons-11.sentence-1>>
+/Constraints/:
+- 
+
+  <<object.cons-11.1>>
+
+  [[https://eel.is/c++draft/expected#object.cons-11.1][(11.1)]]
+
+  is_move_constructible_v<T> is true and
+
+- 
+
+  <<object.cons-11.2>>
+
+  [[https://eel.is/c++draft/expected#object.cons-11.2][(11.2)]]
+
+  is_move_constructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.cons-11.sentence-1][.]]
+
+<<object.cons-12>>
+
+[[https://eel.is/c++draft/expected#object.cons-12][12]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8688][#]]
+
+<<object.cons-12.sentence-1>>
+/Effects/: If rhs.has_value() is true, direct-non-list-initializes /val/
+with
+std​::​move(*rhs)[[https://eel.is/c++draft/expected#object.cons-12.sentence-1][.]]
+
+<<object.cons-12.sentence-2>>
+Otherwise, direct-non-list-initializes /unex/ with
+std​::​move(rhs.error())[[https://eel.is/c++draft/expected#object.cons-12.sentence-2][.]]
+
+<<object.cons-13>>
+
+[[https://eel.is/c++draft/expected#object.cons-13][13]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8695][#]]
+
+<<object.cons-13.sentence-1>>
+/Postconditions/: rhs.has_value() is unchanged; rhs.has_value() ==
+this->has_value() is
+true[[https://eel.is/c++draft/expected#object.cons-13.sentence-1][.]]
+
+<<object.cons-14>>
+
+[[https://eel.is/c++draft/expected#object.cons-14][14]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8700][#]]
+
+<<object.cons-14.sentence-1>>
+/Throws/: Any exception thrown by the initialization of /val/ or
+/unex/[[https://eel.is/c++draft/expected#object.cons-14.sentence-1][.]]
+
+<<object.cons-15>>
+
+[[https://eel.is/c++draft/expected#object.cons-15][15]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8704][#]]
+
+<<object.cons-15.sentence-1>>
+/Remarks/: The exception specification is equivalent to
+is_nothrow_move_constructible_v<T> &&
+is_nothrow_move_constructible_v<E>[[https://eel.is/c++draft/expected#object.cons-15.sentence-1][.]]
+
+<<object.cons-16>>
+
+[[https://eel.is/c++draft/expected#object.cons-16][16]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8710][#]]
+
+<<object.cons-16.sentence-1>>
+This constructor is trivial if
+- 
+
+  <<object.cons-16.1>>
+
+  [[https://eel.is/c++draft/expected#object.cons-16.1][(16.1)]]
+
+  is_trivially_move_constructible_v<T> is true and
+
+- 
+
+  <<object.cons-16.2>>
+
+  [[https://eel.is/c++draft/expected#object.cons-16.2][(16.2)]]
+
+  is_trivially_move_constructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.cons-16.sentence-1][.]]
+
+<<lib:expected,constructor___>>
+
+[[https://eel.is/c++draft/expected#lib:expected,constructor___][🔗]]
+
+=template==<==class== U, ==class== G==>== ==constexpr== ==explicit==(=/=see below=/=)== expected==(==const== expected==<==U, G==>==&== rhs==)==; ==template==<==class== U, ==class== G==>== ==constexpr== ==explicit==(=/=see below=/=)== expected==(==expected==<==U, G==>==&==&== rhs==)==; =
+
+<<object.cons-17>>
+
+[[https://eel.is/c++draft/expected#object.cons-17][17]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8729][#]]
+
+<<object.cons-17.sentence-1>>
+Let:
+- 
+
+  <<object.cons-17.1>>
+
+  [[https://eel.is/c++draft/expected#object.cons-17.1][(17.1)]]
+
+  <<object.cons-17.1.sentence-1>>
+  UF be const U& for the first overload and U for the second
+  overload[[https://eel.is/c++draft/expected#object.cons-17.1.sentence-1][.]]
+
+- 
+
+  <<object.cons-17.2>>
+
+  [[https://eel.is/c++draft/expected#object.cons-17.2][(17.2)]]
+
+  <<object.cons-17.2.sentence-1>>
+  GF be const G& for the first overload and G for the second
+  overload[[https://eel.is/c++draft/expected#object.cons-17.2.sentence-1][.]]
+
+<<object.cons-18>>
+
+[[https://eel.is/c++draft/expected#object.cons-18][18]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8740][#]]
+
+<<object.cons-18.sentence-1>>
+/Constraints/:
+- 
+
+  <<object.cons-18.1>>
+
+  [[https://eel.is/c++draft/expected#object.cons-18.1][(18.1)]]
+
+  is_constructible_v<T, UF> is true; and
+
+- 
+
+  <<object.cons-18.2>>
+
+  [[https://eel.is/c++draft/expected#object.cons-18.2][(18.2)]]
+
+  is_constructible_v<E, GF> is true; and
+
+- 
+
+  <<object.cons-18.3>>
+
+  [[https://eel.is/c++draft/expected#object.cons-18.3][(18.3)]]
+
+  if T is not cv bool, /converts-from-any-cvref/<T, expected<U, G>> is
+  false; and
+
+- 
+
+  <<object.cons-18.4>>
+
+  [[https://eel.is/c++draft/expected#object.cons-18.4][(18.4)]]
+
+  is_constructible_v<unexpected<E>, expected<U, G>&> is false; and
+
+- 
+
+  <<object.cons-18.5>>
+
+  [[https://eel.is/c++draft/expected#object.cons-18.5][(18.5)]]
+
+  is_constructible_v<unexpected<E>, expected<U, G>> is false; and
+
+- 
+
+  <<object.cons-18.6>>
+
+  [[https://eel.is/c++draft/expected#object.cons-18.6][(18.6)]]
+
+  is_constructible_v<unexpected<E>, const expected<U, G>&> is false; and
+
+- 
+
+  <<object.cons-18.7>>
+
+  [[https://eel.is/c++draft/expected#object.cons-18.7][(18.7)]]
+
+  is_constructible_v<unexpected<E>, const expected<U, G>> is
+  false[[https://eel.is/c++draft/expected#object.cons-18.sentence-1][.]]
+
+<<object.cons-19>>
+
+[[https://eel.is/c++draft/expected#object.cons-19][19]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8760][#]]
+
+<<object.cons-19.sentence-1>>
+/Effects/: If rhs.has_value(), direct-non-list-initializes /val/ with
+std​::​forward<UF>(*rhs)[[https://eel.is/c++draft/expected#object.cons-19.sentence-1][.]]
+
+<<object.cons-19.sentence-2>>
+Otherwise, direct-non-list-initializes /unex/ with
+std​::​forward<GF>(rhs.error())[[https://eel.is/c++draft/expected#object.cons-19.sentence-2][.]]
+
+<<object.cons-20>>
+
+[[https://eel.is/c++draft/expected#object.cons-20][20]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8767][#]]
+
+<<object.cons-20.sentence-1>>
+/Postconditions/: rhs.has_value() is unchanged; rhs.has_value() ==
+this->has_value() is
+true[[https://eel.is/c++draft/expected#object.cons-20.sentence-1][.]]
+
+<<object.cons-21>>
+
+[[https://eel.is/c++draft/expected#object.cons-21][21]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8772][#]]
+
+<<object.cons-21.sentence-1>>
+/Throws/: Any exception thrown by the initialization of /val/ or
+/unex/[[https://eel.is/c++draft/expected#object.cons-21.sentence-1][.]]
+
+<<object.cons-22>>
+
+[[https://eel.is/c++draft/expected#object.cons-22][22]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8776][#]]
+
+<<object.cons-22.sentence-1>>
+/Remarks/: The expression inside explicit is equivalent to
+!is_convertible_v<UF, T> || !is_convertible_v<GF,
+E>[[https://eel.is/c++draft/expected#object.cons-22.sentence-1][.]]
+
+<<lib:expected,constructor____>>
+
+[[https://eel.is/c++draft/expected#lib:expected,constructor____][🔗]]
+
+=template==<==class== U ===== remove_cv_t==<==T==>==>== ==constexpr== ==explicit==(==!==is_convertible_v==<==U, T==>==)== expected==(==U==&==&== v==)==; =
+
+<<object.cons-23>>
+
+[[https://eel.is/c++draft/expected#object.cons-23][23]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8789][#]]
+
+<<object.cons-23.sentence-1>>
+/Constraints/:
+- 
+
+  <<object.cons-23.1>>
+
+  [[https://eel.is/c++draft/expected#object.cons-23.1][(23.1)]]
+
+  is_same_v<remove_cvref_t<U>, in_place_t> is false; and
+
+- 
+
+  <<object.cons-23.2>>
+
+  [[https://eel.is/c++draft/expected#object.cons-23.2][(23.2)]]
+
+  is_same_v<remove_cvref_t<U>, expected> is false; and
+
+- 
+
+  <<object.cons-23.3>>
+
+  [[https://eel.is/c++draft/expected#object.cons-23.3][(23.3)]]
+
+  is_same_v<remove_cvref_t<U>, unexpect_t> is false; and
+
+- 
+
+  <<object.cons-23.4>>
+
+  [[https://eel.is/c++draft/expected#object.cons-23.4][(23.4)]]
+
+  remove_cvref_t<U> is not a specialization of unexpected; and
+
+- 
+
+  <<object.cons-23.5>>
+
+  [[https://eel.is/c++draft/expected#object.cons-23.5][(23.5)]]
+
+  is_constructible_v<T, U> is true; and
+
+- 
+
+  <<object.cons-23.6>>
+
+  [[https://eel.is/c++draft/expected#object.cons-23.6][(23.6)]]
+
+  if T is cv bool, remove_cvref_t<U> is not a specialization of
+  expected[[https://eel.is/c++draft/expected#object.cons-23.sentence-1][.]]
+
+<<object.cons-24>>
+
+[[https://eel.is/c++draft/expected#object.cons-24][24]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8807][#]]
+
+<<object.cons-24.sentence-1>>
+/Effects/: Direct-non-list-initializes /val/ with
+std​::​forward<U>(v)[[https://eel.is/c++draft/expected#object.cons-24.sentence-1][.]]
+
+<<object.cons-25>>
+
+[[https://eel.is/c++draft/expected#object.cons-25][25]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8811][#]]
+
+<<object.cons-25.sentence-1>>
+/Postconditions/: has_value() is
+true[[https://eel.is/c++draft/expected#object.cons-25.sentence-1][.]]
+
+<<object.cons-26>>
+
+[[https://eel.is/c++draft/expected#object.cons-26][26]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8815][#]]
+
+<<object.cons-26.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/val/[[https://eel.is/c++draft/expected#object.cons-26.sentence-1][.]]
+
+<<lib:expected,constructor_____>>
+
+[[https://eel.is/c++draft/expected#lib:expected,constructor_____][🔗]]
+
+=template==<==class== G==>== ==constexpr== ==explicit==(==!==is_convertible_v==<==const== G==&==, E==>==)== expected==(==const== unexpected==<==G==>==&== e==)==; ==template==<==class== G==>== ==constexpr== ==explicit==(==!==is_convertible_v==<==G, E==>==)== expected==(==unexpected==<==G==>==&==&== e==)==; =
+
+<<object.cons-27>>
+
+[[https://eel.is/c++draft/expected#object.cons-27][27]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8829][#]]
+
+<<object.cons-27.sentence-1>>
+Let GF be const G& for the first overload and G for the second
+overload[[https://eel.is/c++draft/expected#object.cons-27.sentence-1][.]]
+
+<<object.cons-28>>
+
+[[https://eel.is/c++draft/expected#object.cons-28][28]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8833][#]]
+
+<<object.cons-28.sentence-1>>
+/Constraints/: is_constructible_v<E, GF> is
+true[[https://eel.is/c++draft/expected#object.cons-28.sentence-1][.]]
+
+<<object.cons-29>>
+
+[[https://eel.is/c++draft/expected#object.cons-29][29]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8837][#]]
+
+<<object.cons-29.sentence-1>>
+/Effects/: Direct-non-list-initializes /unex/ with
+std​::​forward<GF>(e.error())[[https://eel.is/c++draft/expected#object.cons-29.sentence-1][.]]
+
+<<object.cons-30>>
+
+[[https://eel.is/c++draft/expected#object.cons-30][30]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8841][#]]
+
+<<object.cons-30.sentence-1>>
+/Postconditions/: has_value() is
+false[[https://eel.is/c++draft/expected#object.cons-30.sentence-1][.]]
+
+<<object.cons-31>>
+
+[[https://eel.is/c++draft/expected#object.cons-31][31]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8845][#]]
+
+<<object.cons-31.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#object.cons-31.sentence-1][.]]
+
+<<lib:expected,constructor______>>
+
+[[https://eel.is/c++draft/expected#lib:expected,constructor______][🔗]]
+
+=template==<==class==.==.==.== Args==>== ==constexpr== ==explicit== expected==(==in_place_t, Args==&==&==.==.==.== args==)==; =
+
+<<object.cons-32>>
+
+[[https://eel.is/c++draft/expected#object.cons-32][32]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8857][#]]
+
+<<object.cons-32.sentence-1>>
+/Constraints/: is_constructible_v<T, Args...> is
+true[[https://eel.is/c++draft/expected#object.cons-32.sentence-1][.]]
+
+<<object.cons-33>>
+
+[[https://eel.is/c++draft/expected#object.cons-33][33]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8861][#]]
+
+<<object.cons-33.sentence-1>>
+/Effects/: Direct-non-list-initializes /val/ with
+std​::​forward<Args>(args)...[[https://eel.is/c++draft/expected#object.cons-33.sentence-1][.]]
+
+<<object.cons-34>>
+
+[[https://eel.is/c++draft/expected#object.cons-34][34]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8865][#]]
+
+<<object.cons-34.sentence-1>>
+/Postconditions/: has_value() is
+true[[https://eel.is/c++draft/expected#object.cons-34.sentence-1][.]]
+
+<<object.cons-35>>
+
+[[https://eel.is/c++draft/expected#object.cons-35][35]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8869][#]]
+
+<<object.cons-35.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/val/[[https://eel.is/c++draft/expected#object.cons-35.sentence-1][.]]
+
+<<lib:expected,constructor_______>>
+
+[[https://eel.is/c++draft/expected#lib:expected,constructor_______][🔗]]
+
+=template==<==class== U, ==class==.==.==.== Args==>== ==constexpr== ==explicit== expected==(==in_place_t, initializer_list==<==U==>== il, Args==&==&==.==.==.== args==)==; =
+
+<<object.cons-36>>
+
+[[https://eel.is/c++draft/expected#object.cons-36][36]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8881][#]]
+
+<<object.cons-36.sentence-1>>
+/Constraints/: is_constructible_v<T, initializer_list<U>&, Args...> is
+true[[https://eel.is/c++draft/expected#object.cons-36.sentence-1][.]]
+
+<<object.cons-37>>
+
+[[https://eel.is/c++draft/expected#object.cons-37][37]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8885][#]]
+
+<<object.cons-37.sentence-1>>
+/Effects/: Direct-non-list-initializes /val/ with il,
+std​::​forward<Args>(args)...[[https://eel.is/c++draft/expected#object.cons-37.sentence-1][.]]
+
+<<object.cons-38>>
+
+[[https://eel.is/c++draft/expected#object.cons-38][38]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8890][#]]
+
+<<object.cons-38.sentence-1>>
+/Postconditions/: has_value() is
+true[[https://eel.is/c++draft/expected#object.cons-38.sentence-1][.]]
+
+<<object.cons-39>>
+
+[[https://eel.is/c++draft/expected#object.cons-39][39]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8894][#]]
+
+<<object.cons-39.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/val/[[https://eel.is/c++draft/expected#object.cons-39.sentence-1][.]]
+
+<<lib:expected,constructor________>>
+
+[[https://eel.is/c++draft/expected#lib:expected,constructor________][🔗]]
+
+=template==<==class==.==.==.== Args==>== ==constexpr== ==explicit== expected==(==unexpect_t, Args==&==&==.==.==.== args==)==; =
+
+<<object.cons-40>>
+
+[[https://eel.is/c++draft/expected#object.cons-40][40]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8906][#]]
+
+<<object.cons-40.sentence-1>>
+/Constraints/: is_constructible_v<E, Args...> is
+true[[https://eel.is/c++draft/expected#object.cons-40.sentence-1][.]]
+
+<<object.cons-41>>
+
+[[https://eel.is/c++draft/expected#object.cons-41][41]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8910][#]]
+
+<<object.cons-41.sentence-1>>
+/Effects/: Direct-non-list-initializes /unex/ with
+std​::​forward<Args>(args)...[[https://eel.is/c++draft/expected#object.cons-41.sentence-1][.]]
+
+<<object.cons-42>>
+
+[[https://eel.is/c++draft/expected#object.cons-42][42]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8915][#]]
+
+<<object.cons-42.sentence-1>>
+/Postconditions/: has_value() is
+false[[https://eel.is/c++draft/expected#object.cons-42.sentence-1][.]]
+
+<<object.cons-43>>
+
+[[https://eel.is/c++draft/expected#object.cons-43][43]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8919][#]]
+
+<<object.cons-43.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#object.cons-43.sentence-1][.]]
+
+<<lib:expected,constructor_________>>
+
+[[https://eel.is/c++draft/expected#lib:expected,constructor_________][🔗]]
+
+=template==<==class== U, ==class==.==.==.== Args==>== ==constexpr== ==explicit== expected==(==unexpect_t, initializer_list==<==U==>== il, Args==&==&==.==.==.== args==)==; =
+
+<<object.cons-44>>
+
+[[https://eel.is/c++draft/expected#object.cons-44][44]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8931][#]]
+
+<<object.cons-44.sentence-1>>
+/Constraints/: is_constructible_v<E, initializer_list<U>&, Args...> is
+true[[https://eel.is/c++draft/expected#object.cons-44.sentence-1][.]]
+
+<<object.cons-45>>
+
+[[https://eel.is/c++draft/expected#object.cons-45][45]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8935][#]]
+
+<<object.cons-45.sentence-1>>
+/Effects/: Direct-non-list-initializes /unex/ with il,
+std​::​forward<Args>(args)...[[https://eel.is/c++draft/expected#object.cons-45.sentence-1][.]]
+
+<<object.cons-46>>
+
+[[https://eel.is/c++draft/expected#object.cons-46][46]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8940][#]]
+
+<<object.cons-46.sentence-1>>
+/Postconditions/: has_value() is
+false[[https://eel.is/c++draft/expected#object.cons-46.sentence-1][.]]
+
+<<object.cons-47>>
+
+[[https://eel.is/c++draft/expected#object.cons-47][47]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8944][#]]
+
+<<object.cons-47.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#object.cons-47.sentence-1][.]]
+
+<<object.dtor>>
+**** [[https://eel.is/c++draft/expected#object.dtor][22.8.6.3]] Destructor [[https://eel.is/c++draft/expected.object.dtor][[expected.object.dtor]]]
+:PROPERTIES:
+:CUSTOM_ID: destructor-expected.object.dtor-1
+:END:
+
+<<lib:expected,destructor>>
+
+[[https://eel.is/c++draft/expected#lib:expected,destructor][🔗]]
+
+=constexpr== ==~==expected==(==)==; =
+
+<<object.dtor-1>>
+
+[[https://eel.is/c++draft/expected#object.dtor-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8957][#]]
+
+<<object.dtor-1.sentence-1>>
+/Effects/: If has_value() is true, destroys /val/, otherwise destroys
+/unex/[[https://eel.is/c++draft/expected#object.dtor-1.sentence-1][.]]
+
+<<object.dtor-2>>
+
+[[https://eel.is/c++draft/expected#object.dtor-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8962][#]]
+
+<<object.dtor-2.sentence-1>>
+/Remarks/: If is_trivially_destructible_v<T> is true, and
+is_trivially_destructible_v<E> is true, then this destructor is a
+trivial
+destructor[[https://eel.is/c++draft/expected#object.dtor-2.sentence-1][.]]
+
+<<object.assign>>
+**** [[https://eel.is/c++draft/expected#object.assign][22.8.6.4]] Assignment [[https://eel.is/c++draft/expected.object.assign][[expected.object.assign]]]
+:PROPERTIES:
+:CUSTOM_ID: assignment-expected.object.assign-1
+:END:
+
+<<object.assign-1>>
+
+[[https://eel.is/c++draft/expected#object.assign-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L8971][#]]
+
+<<object.assign-1.sentence-1>>
+This subclause makes use of the following exposition-only function
+template: template<class T, class U, class... Args> constexpr void
+/reinit-expected/(T& newval, U& oldval, Args&&... args) { // /exposition
+only/ if constexpr (is_nothrow_constructible_v<T, Args...>) {
+destroy_at(addressof(oldval)); construct_at(addressof(newval),
+std::forward<Args>(args)...); } else if constexpr
+(is_nothrow_move_constructible_v<T>) { T
+tmp(std::forward<Args>(args)...); destroy_at(addressof(oldval));
+construct_at(addressof(newval), std::move(tmp)); } else { U
+tmp(std::move(oldval)); destroy_at(addressof(oldval)); try {
+construct_at(addressof(newval), std::forward<Args>(args)...); } catch
+(...) { construct_at(addressof(oldval), std::move(tmp)); throw; } } }
+
+<<lib:expected,operator=>>
+
+<<lib:operator=,expected>>
+
+[[https://eel.is/c++draft/expected#lib:operator=,expected][🔗]]
+
+=constexpr== expected==&== ==operator=====(==const== expected==&== rhs==)==; =
+
+<<object.assign-2>>
+
+[[https://eel.is/c++draft/expected#object.assign-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9002][#]]
+
+<<object.assign-2.sentence-1>>
+/Effects/:
+- 
+
+  <<object.assign-2.1>>
+
+  [[https://eel.is/c++draft/expected#object.assign-2.1][(2.1)]]
+
+  <<object.assign-2.1.sentence-1>>
+  If this->has_value() && rhs.has_value() is true, equivalent to /val/ =
+  *rhs[[https://eel.is/c++draft/expected#object.assign-2.1.sentence-1][.]]
+
+- 
+
+  <<object.assign-2.2>>
+
+  [[https://eel.is/c++draft/expected#object.assign-2.2][(2.2)]]
+
+  <<object.assign-2.2.sentence-1>>
+  Otherwise, if this->has_value() is true, equivalent to:
+  /reinit-expected/(/unex/, /val/, rhs.error())
+
+- 
+
+  <<object.assign-2.3>>
+
+  [[https://eel.is/c++draft/expected#object.assign-2.3][(2.3)]]
+
+  <<object.assign-2.3.sentence-1>>
+  Otherwise, if rhs.has_value() is true, equivalent to:
+  /reinit-expected/(/val/, /unex/, *rhs)
+
+- 
+
+  <<object.assign-2.4>>
+
+  [[https://eel.is/c++draft/expected#object.assign-2.4][(2.4)]]
+
+  <<object.assign-2.4.sentence-1>>
+  Otherwise, equivalent to /unex/ =
+  rhs.error()[[https://eel.is/c++draft/expected#object.assign-2.4.sentence-1][.]]
+
+<<object.assign-2.sentence-2>>
+Then, if no exception was thrown, equivalent to: /has_val/ =
+rhs.has_value(); return *this;
+
+<<object.assign-3>>
+
+[[https://eel.is/c++draft/expected#object.assign-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9024][#]]
+
+<<object.assign-3.sentence-1>>
+/Returns/:
+*this[[https://eel.is/c++draft/expected#object.assign-3.sentence-1][.]]
+
+<<object.assign-4>>
+
+[[https://eel.is/c++draft/expected#object.assign-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9028][#]]
+
+<<object.assign-4.sentence-1>>
+/Remarks/: This operator is defined as deleted unless:
+- 
+
+  <<object.assign-4.1>>
+
+  [[https://eel.is/c++draft/expected#object.assign-4.1][(4.1)]]
+
+  is_copy_assignable_v<T> is true and
+
+- 
+
+  <<object.assign-4.2>>
+
+  [[https://eel.is/c++draft/expected#object.assign-4.2][(4.2)]]
+
+  is_copy_constructible_v<T> is true and
+
+- 
+
+  <<object.assign-4.3>>
+
+  [[https://eel.is/c++draft/expected#object.assign-4.3][(4.3)]]
+
+  is_copy_assignable_v<E> is true and
+
+- 
+
+  <<object.assign-4.4>>
+
+  [[https://eel.is/c++draft/expected#object.assign-4.4][(4.4)]]
+
+  is_copy_constructible_v<E> is true and
+
+- 
+
+  <<object.assign-4.5>>
+
+  [[https://eel.is/c++draft/expected#object.assign-4.5][(4.5)]]
+
+  is_nothrow_move_constructible_v<T> ||
+  is_nothrow_move_constructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.assign-4.sentence-1][.]]
+
+<<object.assign-5>>
+
+[[https://eel.is/c++draft/expected#object.assign-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9045][#]]
+
+<<object.assign-5.sentence-1>>
+This operator is trivial if:
+- 
+
+  <<object.assign-5.1>>
+
+  [[https://eel.is/c++draft/expected#object.assign-5.1][(5.1)]]
+
+  is_trivially_copy_constructible_v<T> is true, and
+
+- 
+
+  <<object.assign-5.2>>
+
+  [[https://eel.is/c++draft/expected#object.assign-5.2][(5.2)]]
+
+  is_trivially_copy_assignable_v<T> is true, and
+
+- 
+
+  <<object.assign-5.3>>
+
+  [[https://eel.is/c++draft/expected#object.assign-5.3][(5.3)]]
+
+  is_trivially_destructible_v<T> is true, and
+
+- 
+
+  <<object.assign-5.4>>
+
+  [[https://eel.is/c++draft/expected#object.assign-5.4][(5.4)]]
+
+  is_trivially_copy_constructible_v<E> is true, and
+
+- 
+
+  <<object.assign-5.5>>
+
+  [[https://eel.is/c++draft/expected#object.assign-5.5][(5.5)]]
+
+  is_trivially_copy_assignable_v<E> is true, and
+
+- 
+
+  <<object.assign-5.6>>
+
+  [[https://eel.is/c++draft/expected#object.assign-5.6][(5.6)]]
+
+  is_trivially_destructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.assign-5.sentence-1][.]]
+
+<<lib:expected,operator=_>>
+
+<<lib:operator=,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:operator=,expected_][🔗]]
+
+=constexpr== expected==&== ==operator=====(==expected==&==&== rhs==)== ==noexcept==(=/=see below=/=)==; =
+
+<<object.assign-6>>
+
+[[https://eel.is/c++draft/expected#object.assign-6][6]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9063][#]]
+
+<<object.assign-6.sentence-1>>
+/Constraints/:
+- 
+
+  <<object.assign-6.1>>
+
+  [[https://eel.is/c++draft/expected#object.assign-6.1][(6.1)]]
+
+  is_move_constructible_v<T> is true and
+
+- 
+
+  <<object.assign-6.2>>
+
+  [[https://eel.is/c++draft/expected#object.assign-6.2][(6.2)]]
+
+  is_move_assignable_v<T> is true and
+
+- 
+
+  <<object.assign-6.3>>
+
+  [[https://eel.is/c++draft/expected#object.assign-6.3][(6.3)]]
+
+  is_move_constructible_v<E> is true and
+
+- 
+
+  <<object.assign-6.4>>
+
+  [[https://eel.is/c++draft/expected#object.assign-6.4][(6.4)]]
+
+  is_move_assignable_v<E> is true and
+
+- 
+
+  <<object.assign-6.5>>
+
+  [[https://eel.is/c++draft/expected#object.assign-6.5][(6.5)]]
+
+  is_nothrow_move_constructible_v<T> ||
+  is_nothrow_move_constructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.assign-6.sentence-1][.]]
+
+<<object.assign-7>>
+
+[[https://eel.is/c++draft/expected#object.assign-7][7]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9079][#]]
+
+<<object.assign-7.sentence-1>>
+/Effects/:
+- 
+
+  <<object.assign-7.1>>
+
+  [[https://eel.is/c++draft/expected#object.assign-7.1][(7.1)]]
+
+  <<object.assign-7.1.sentence-1>>
+  If this->has_value() && rhs.has_value() is true, equivalent to /val/ =
+  std​::​move(*rhs)[[https://eel.is/c++draft/expected#object.assign-7.1.sentence-1][.]]
+
+- 
+
+  <<object.assign-7.2>>
+
+  [[https://eel.is/c++draft/expected#object.assign-7.2][(7.2)]]
+
+  <<object.assign-7.2.sentence-1>>
+  Otherwise, if this->has_value() is true, equivalent to:
+  /reinit-expected/(/unex/, /val/, std::move(rhs.error()))
+
+- 
+
+  <<object.assign-7.3>>
+
+  [[https://eel.is/c++draft/expected#object.assign-7.3][(7.3)]]
+
+  <<object.assign-7.3.sentence-1>>
+  Otherwise, if rhs.has_value() is true, equivalent to:
+  /reinit-expected/(/val/, /unex/, std::move(*rhs))
+
+- 
+
+  <<object.assign-7.4>>
+
+  [[https://eel.is/c++draft/expected#object.assign-7.4][(7.4)]]
+
+  <<object.assign-7.4.sentence-1>>
+  Otherwise, equivalent to /unex/ =
+  std​::​move(rhs.error())[[https://eel.is/c++draft/expected#object.assign-7.4.sentence-1][.]]
+
+<<object.assign-7.sentence-2>>
+Then, if no exception was thrown, equivalent to: has_val =
+rhs.has_value(); return *this;
+
+<<object.assign-8>>
+
+[[https://eel.is/c++draft/expected#object.assign-8][8]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9101][#]]
+
+<<object.assign-8.sentence-1>>
+/Returns/:
+*this[[https://eel.is/c++draft/expected#object.assign-8.sentence-1][.]]
+
+<<object.assign-9>>
+
+[[https://eel.is/c++draft/expected#object.assign-9][9]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9105][#]]
+
+<<object.assign-9.sentence-1>>
+/Remarks/: The exception specification is equivalent to:
+is_nothrow_move_assignable_v<T> && is_nothrow_move_constructible_v<T> &&
+is_nothrow_move_assignable_v<E> && is_nothrow_move_constructible_v<E>
+
+<<object.assign-10>>
+
+[[https://eel.is/c++draft/expected#object.assign-10][10]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9113][#]]
+
+<<object.assign-10.sentence-1>>
+This operator is trivial if:
+- 
+
+  <<object.assign-10.1>>
+
+  [[https://eel.is/c++draft/expected#object.assign-10.1][(10.1)]]
+
+  is_trivially_move_constructible_v<T> is true, and
+
+- 
+
+  <<object.assign-10.2>>
+
+  [[https://eel.is/c++draft/expected#object.assign-10.2][(10.2)]]
+
+  is_trivially_move_assignable_v<T> is true, and
+
+- 
+
+  <<object.assign-10.3>>
+
+  [[https://eel.is/c++draft/expected#object.assign-10.3][(10.3)]]
+
+  is_trivially_destructible_v<T> is true, and
+
+- 
+
+  <<object.assign-10.4>>
+
+  [[https://eel.is/c++draft/expected#object.assign-10.4][(10.4)]]
+
+  is_trivially_move_constructible_v<E> is true, and
+
+- 
+
+  <<object.assign-10.5>>
+
+  [[https://eel.is/c++draft/expected#object.assign-10.5][(10.5)]]
+
+  is_trivially_move_assignable_v<E> is true, and
+
+- 
+
+  <<object.assign-10.6>>
+
+  [[https://eel.is/c++draft/expected#object.assign-10.6][(10.6)]]
+
+  is_trivially_destructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.assign-10.sentence-1][.]]
+
+<<lib:expected,operator=__>>
+
+<<lib:operator=,expected__>>
+
+[[https://eel.is/c++draft/expected#lib:operator=,expected__][🔗]]
+
+=template==<==class== U ===== remove_cv_t==<==T==>==>== ==constexpr== expected==&== ==operator=====(==U==&==&== v==)==; =
+
+<<object.assign-11>>
+
+[[https://eel.is/c++draft/expected#object.assign-11][11]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9132][#]]
+
+<<object.assign-11.sentence-1>>
+/Constraints/:
+- 
+
+  <<object.assign-11.1>>
+
+  [[https://eel.is/c++draft/expected#object.assign-11.1][(11.1)]]
+
+  is_same_v<expected, remove_cvref_t<U>> is false; and
+
+- 
+
+  <<object.assign-11.2>>
+
+  [[https://eel.is/c++draft/expected#object.assign-11.2][(11.2)]]
+
+  remove_cvref_t<U> is not a specialization of unexpected; and
+
+- 
+
+  <<object.assign-11.3>>
+
+  [[https://eel.is/c++draft/expected#object.assign-11.3][(11.3)]]
+
+  is_constructible_v<T, U> is true; and
+
+- 
+
+  <<object.assign-11.4>>
+
+  [[https://eel.is/c++draft/expected#object.assign-11.4][(11.4)]]
+
+  is_assignable_v<T&, U> is true; and
+
+- 
+
+  <<object.assign-11.5>>
+
+  [[https://eel.is/c++draft/expected#object.assign-11.5][(11.5)]]
+
+  is_nothrow_constructible_v<T, U> || is_nothrow_move_constructible_v<T>
+  ||\\
+  is_nothrow_move_constructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.assign-11.sentence-1][.]]
+
+<<object.assign-12>>
+
+[[https://eel.is/c++draft/expected#object.assign-12][12]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9149][#]]
+
+<<object.assign-12.sentence-1>>
+/Effects/:
+- 
+
+  <<object.assign-12.1>>
+
+  [[https://eel.is/c++draft/expected#object.assign-12.1][(12.1)]]
+
+  If has_value() is true, equivalent to: /val/ = std​::​forward<U>(v);
+
+- 
+
+  <<object.assign-12.2>>
+
+  [[https://eel.is/c++draft/expected#object.assign-12.2][(12.2)]]
+
+  Otherwise, equivalent to: /reinit-expected/(/val/, /unex/,
+  std::forward<U>(v)); /has_val/ = true;
+
+<<object.assign-13>>
+
+[[https://eel.is/c++draft/expected#object.assign-13][13]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9163][#]]
+
+<<object.assign-13.sentence-1>>
+/Returns/:
+*this[[https://eel.is/c++draft/expected#object.assign-13.sentence-1][.]]
+
+<<lib:expected,operator=___>>
+
+<<lib:operator=,expected___>>
+
+[[https://eel.is/c++draft/expected#lib:operator=,expected___][🔗]]
+
+=template==<==class== G==>== ==constexpr== expected==&== ==operator=====(==const== unexpected==<==G==>==&== e==)==; ==template==<==class== G==>== ==constexpr== expected==&== ==operator=====(==unexpected==<==G==>==&==&== e==)==; =
+
+<<object.assign-14>>
+
+[[https://eel.is/c++draft/expected#object.assign-14][14]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9177][#]]
+
+<<object.assign-14.sentence-1>>
+Let GF be const G& for the first overload and G for the second
+overload[[https://eel.is/c++draft/expected#object.assign-14.sentence-1][.]]
+
+<<object.assign-15>>
+
+[[https://eel.is/c++draft/expected#object.assign-15][15]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9181][#]]
+
+<<object.assign-15.sentence-1>>
+/Constraints/:
+- 
+
+  <<object.assign-15.1>>
+
+  [[https://eel.is/c++draft/expected#object.assign-15.1][(15.1)]]
+
+  is_constructible_v<E, GF> is true; and
+
+- 
+
+  <<object.assign-15.2>>
+
+  [[https://eel.is/c++draft/expected#object.assign-15.2][(15.2)]]
+
+  is_assignable_v<E&, GF> is true; and
+
+- 
+
+  <<object.assign-15.3>>
+
+  [[https://eel.is/c++draft/expected#object.assign-15.3][(15.3)]]
+
+  is_nothrow_constructible_v<E, GF> ||
+  is_nothrow_move_constructible_v<T> ||\\
+  is_nothrow_move_constructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.assign-15.sentence-1][.]]
+
+<<object.assign-16>>
+
+[[https://eel.is/c++draft/expected#object.assign-16][16]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9193][#]]
+
+<<object.assign-16.sentence-1>>
+/Effects/:
+- 
+
+  <<object.assign-16.1>>
+
+  [[https://eel.is/c++draft/expected#object.assign-16.1][(16.1)]]
+
+  If has_value() is true, equivalent to: /reinit-expected/(/unex/,
+  /val/, std::forward<GF>(e.error())); /has_val/ = false;
+
+- 
+
+  <<object.assign-16.2>>
+
+  [[https://eel.is/c++draft/expected#object.assign-16.2][(16.2)]]
+
+  Otherwise, equivalent to: /unex/ = std​::​forward<GF>(e.error());
+
+<<object.assign-17>>
+
+[[https://eel.is/c++draft/expected#object.assign-17][17]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9207][#]]
+
+<<object.assign-17.sentence-1>>
+/Returns/:
+*this[[https://eel.is/c++draft/expected#object.assign-17.sentence-1][.]]
+
+<<lib:expected,emplace>>
+
+<<lib:emplace,expected>>
+
+[[https://eel.is/c++draft/expected#lib:emplace,expected][🔗]]
+
+=template==<==class==.==.==.== Args==>== ==constexpr== T==&== emplace==(==Args==&==&==.==.==.== args==)== ==noexcept==; =
+
+<<object.assign-18>>
+
+[[https://eel.is/c++draft/expected#object.assign-18][18]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9219][#]]
+
+<<object.assign-18.sentence-1>>
+/Constraints/: is_nothrow_constructible_v<T, Args...> is
+true[[https://eel.is/c++draft/expected#object.assign-18.sentence-1][.]]
+
+<<object.assign-19>>
+
+[[https://eel.is/c++draft/expected#object.assign-19][19]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9223][#]]
+
+<<object.assign-19.sentence-1>>
+/Effects/: Equivalent to: if (has_value()) {
+destroy_at(addressof(/val/)); } else { destroy_at(addressof(/unex/));
+/has_val/ = true; } return *construct_at(addressof(/val/),
+std::forward<Args>(args)...);
+
+<<lib:expected,emplace_>>
+
+<<lib:emplace,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:emplace,expected_][🔗]]
+
+=template==<==class== U, ==class==.==.==.== Args==>== ==constexpr== T==&== emplace==(==initializer_list==<==U==>== il, Args==&==&==.==.==.== args==)== ==noexcept==; =
+
+<<object.assign-20>>
+
+[[https://eel.is/c++draft/expected#object.assign-20][20]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9244][#]]
+
+<<object.assign-20.sentence-1>>
+/Constraints/: is_nothrow_constructible_v<T, initializer_list<U>&,
+Args...> is
+true[[https://eel.is/c++draft/expected#object.assign-20.sentence-1][.]]
+
+<<object.assign-21>>
+
+[[https://eel.is/c++draft/expected#object.assign-21][21]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9249][#]]
+
+<<object.assign-21.sentence-1>>
+/Effects/: Equivalent to: if (has_value()) {
+destroy_at(addressof(/val/)); } else { destroy_at(addressof(/unex/));
+/has_val/ = true; } return *construct_at(addressof(/val/), il,
+std::forward<Args>(args)...);
+
+<<object.swap>>
+**** [[https://eel.is/c++draft/expected#object.swap][22.8.6.5]] Swap [[https://eel.is/c++draft/expected.object.swap][[expected.object.swap]]]
+:PROPERTIES:
+:CUSTOM_ID: swap-expected.object.swap-1
+:END:
+
+<<lib:expected,swap>>
+
+<<lib:swap,expected>>
+
+[[https://eel.is/c++draft/expected#lib:swap,expected][🔗]]
+
+=constexpr== ==void== swap==(==expected==&== rhs==)== ==noexcept==(=/=see below=/=)==; =
+
+<<object.swap-1>>
+
+[[https://eel.is/c++draft/expected#object.swap-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9271][#]]
+
+<<object.swap-1.sentence-1>>
+/Constraints/:
+- 
+
+  <<object.swap-1.1>>
+
+  [[https://eel.is/c++draft/expected#object.swap-1.1][(1.1)]]
+
+  is_swappable_v<T> is true and
+
+- 
+
+  <<object.swap-1.2>>
+
+  [[https://eel.is/c++draft/expected#object.swap-1.2][(1.2)]]
+
+  is_swappable_v<E> is true and
+
+- 
+
+  <<object.swap-1.3>>
+
+  [[https://eel.is/c++draft/expected#object.swap-1.3][(1.3)]]
+
+  is_move_constructible_v<T> && is_move_constructible_v<E> is true, and
+
+- 
+
+  <<object.swap-1.4>>
+
+  [[https://eel.is/c++draft/expected#object.swap-1.4][(1.4)]]
+
+  is_nothrow_move_constructible_v<T> ||
+  is_nothrow_move_constructible_v<E> is
+  true[[https://eel.is/c++draft/expected#object.swap-1.sentence-1][.]]
+
+<<object.swap-2>>
+
+[[https://eel.is/c++draft/expected#object.swap-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9286][#]]
+
+<<object.swap-2.sentence-1>>
+/Effects/: See Table
+[[https://eel.is/c++draft/expected#tab:expected.object.swap][72]][[https://eel.is/c++draft/expected#object.swap-2.sentence-1][.]]
+
+<<tab:expected.object.swap>>
+Table [[https://eel.is/c++draft/expected#tab:expected.object.swap][72]]
+--- swap(expected&)
+effects [[https://eel.is/c++draft/tab:expected.object.swap][[tab:expected.object.swap]]]\\
+| [[https://eel.is/c++draft/expected#tab:expected.object.swap-row-1][🔗]] | <<tab:expected.object.swap-row-1-column-2-sentence-1>>  | <<tab:expected.object.swap-row-1-column-3-sentence-1>>    |
+|                                                                         | *this->has_value()*                                     | *!this->has_value()*                                      |
+| [[https://eel.is/c++draft/expected#tab:expected.object.swap-row-2][🔗]] | <<tab:expected.object.swap-row-2-column-2-sentence-1>>  | <<tab:expected.object.swap-row-2-column-3-sentence-1>>    |
+|                                                                         | equivalent to: using std​::​swap; swap(/val/, rhs./val/); | calls rhs.swap(*this)                                     |
+| <<tab:expected.object.swap-row-2-column-1-sentence-1>>                  |                                                         |                                                           |
+| *rhs.has_value()*                                                       |                                                         |                                                           |
+| [[https://eel.is/c++draft/expected#tab:expected.object.swap-row-3][🔗]] | <<tab:expected.object.swap-row-3-column-2-sentence-1>>  | <<tab:expected.object.swap-row-3-column-3-sentence-1>>    |
+|                                                                         | /see below/                                             | equivalent to: using std​::​swap; swap(/unex/, rhs./unex/); |
+| <<tab:expected.object.swap-row-3-column-1-sentence-1>>                  |                                                         |                                                           |
+| *!rhs.has_value()*                                                      |                                                         |                                                           |
+
+<<object.swap-2.sentence-2>>
+For the case where rhs.has_value() is false and this->has_value() is
+true, equivalent to: if constexpr (is_nothrow_move_constructible_v<E>) {
+E tmp(std::move(rhs./unex/)); destroy_at(addressof(rhs./unex/)); try {
+construct_at(addressof(rhs./val/), std::move(/val/));
+destroy_at(addressof(/val/)); construct_at(addressof(/unex/),
+std::move(tmp)); } catch(...) { construct_at(addressof(rhs./unex/),
+std::move(tmp)); throw; } } else { remove_cv_t<T> tmp(std::move(/val/));
+destroy_at(addressof(/val/)); try { construct_at(addressof(/unex/),
+std::move(rhs./unex/)); destroy_at(addressof(rhs./unex/));
+construct_at(addressof(rhs./val/), std::move(tmp)); } catch (...) {
+construct_at(addressof(/val/), std::move(tmp)); throw; } } /has_val/ =
+false; rhs./has_val/ = true;
+
+<<object.swap-3>>
+
+[[https://eel.is/c++draft/expected#object.swap-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9332][#]]
+
+<<object.swap-3.sentence-1>>
+/Throws/: Any exception thrown by the expressions in the
+/Effects/[[https://eel.is/c++draft/expected#object.swap-3.sentence-1][.]]
+
+<<object.swap-4>>
+
+[[https://eel.is/c++draft/expected#object.swap-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9336][#]]
+
+<<object.swap-4.sentence-1>>
+/Remarks/: The exception specification is equivalent to:
+is_nothrow_move_constructible_v<T> && is_nothrow_swappable_v<T> &&
+is_nothrow_move_constructible_v<E> && is_nothrow_swappable_v<E>
+
+<<lib:expected,swap_>>
+
+<<lib:swap,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:swap,expected_][🔗]]
+
+=friend== ==constexpr== ==void== swap==(==expected==&== x, expected==&== y==)== ==noexcept==(==noexcept==(==x==.==swap==(==y==)==)==)==; =
+
+<<object.swap-5>>
+
+[[https://eel.is/c++draft/expected#object.swap-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9351][#]]
+
+<<object.swap-5.sentence-1>>
+/Effects/: Equivalent to
+x.swap(y)[[https://eel.is/c++draft/expected#object.swap-5.sentence-1][.]]
+
+<<object.obs>>
+**** [[https://eel.is/c++draft/expected#object.obs][22.8.6.6]] Observers [[https://eel.is/c++draft/expected.object.obs][[expected.object.obs]]]
+:PROPERTIES:
+:CUSTOM_ID: observers-expected.object.obs-1
+:END:
+
+<<lib:expected,operator->>>
+
+<<lib:operator->,expected>>
+
+[[https://eel.is/c++draft/expected#lib:operator-%3e,expected][🔗]]
+
+=constexpr== ==const== T==*== ==operator==-==>==(==)== ==const== ==noexcept==; ==constexpr== T==*== ==operator==-==>==(==)== ==noexcept==; =
+
+<<object.obs-1>>
+
+[[https://eel.is/c++draft/expected#object.obs-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9365][#]]
+
+<<object.obs-1.sentence-1>>
+/Hardened preconditions/: has_value() is
+true[[https://eel.is/c++draft/expected#object.obs-1.sentence-1][.]]
+
+<<object.obs-2>>
+
+[[https://eel.is/c++draft/expected#object.obs-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9369][#]]
+
+<<object.obs-2.sentence-1>>
+/Returns/:
+addressof(/val/)[[https://eel.is/c++draft/expected#object.obs-2.sentence-1][.]]
+
+<<lib:expected,operator*>>
+
+<<lib:operator*,expected>>
+
+[[https://eel.is/c++draft/expected#lib:operator*,expected][🔗]]
+
+=constexpr== ==const== T==&== ==operator==*==(==)== ==const== ==&== ==noexcept==; ==constexpr== T==&== ==operator==*==(==)== ==&== ==noexcept==; =
+
+<<object.obs-3>>
+
+[[https://eel.is/c++draft/expected#object.obs-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9381][#]]
+
+<<object.obs-3.sentence-1>>
+/Hardened preconditions/: has_value() is
+true[[https://eel.is/c++draft/expected#object.obs-3.sentence-1][.]]
+
+<<object.obs-4>>
+
+[[https://eel.is/c++draft/expected#object.obs-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9385][#]]
+
+<<object.obs-4.sentence-1>>
+/Returns/:
+/val/[[https://eel.is/c++draft/expected#object.obs-4.sentence-1][.]]
+
+<<lib:expected,operator*_>>
+
+<<lib:operator*,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:operator*,expected_][🔗]]
+
+=constexpr== T==&==&== ==operator==*==(==)== ==&==&== ==noexcept==; ==constexpr== ==const== T==&==&== ==operator==*==(==)== ==const== ==&==&== ==noexcept==; =
+
+<<object.obs-5>>
+
+[[https://eel.is/c++draft/expected#object.obs-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9397][#]]
+
+<<object.obs-5.sentence-1>>
+/Hardened preconditions/: has_value() is
+true[[https://eel.is/c++draft/expected#object.obs-5.sentence-1][.]]
+
+<<object.obs-6>>
+
+[[https://eel.is/c++draft/expected#object.obs-6][6]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9401][#]]
+
+<<object.obs-6.sentence-1>>
+/Returns/:
+std​::​move(/val/)[[https://eel.is/c++draft/expected#object.obs-6.sentence-1][.]]
+
+<<lib:expected,has_value>>
+
+<<lib:has_value,expected>>
+
+<<lib:expected,operator_bool>>
+
+<<lib:operator_bool,expected>>
+
+[[https://eel.is/c++draft/expected#lib:operator_bool,expected][🔗]]
+
+=constexpr== ==explicit== ==operator== ==bool==(==)== ==const== ==noexcept==; ==constexpr== ==bool== has_value==(==)== ==const== ==noexcept==; =
+
+<<object.obs-7>>
+
+[[https://eel.is/c++draft/expected#object.obs-7][7]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9414][#]]
+
+<<object.obs-7.sentence-1>>
+/Returns/:
+/has_val/[[https://eel.is/c++draft/expected#object.obs-7.sentence-1][.]]
+
+<<lib:expected,value>>
+
+<<lib:value,expected>>
+
+[[https://eel.is/c++draft/expected#lib:value,expected][🔗]]
+
+=constexpr== ==const== T==&== value==(==)== ==const== ==&==; ==constexpr== T==&== value==(==)== ==&==; =
+
+<<object.obs-8>>
+
+[[https://eel.is/c++draft/expected#object.obs-8][8]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9426][#]]
+
+<<object.obs-8.sentence-1>>
+/Mandates/: is_copy_constructible_v<E> is
+true[[https://eel.is/c++draft/expected#object.obs-8.sentence-1][.]]
+
+<<object.obs-9>>
+
+[[https://eel.is/c++draft/expected#object.obs-9][9]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9430][#]]
+
+<<object.obs-9.sentence-1>>
+/Returns/: /val/, if has_value() is
+true[[https://eel.is/c++draft/expected#object.obs-9.sentence-1][.]]
+
+<<object.obs-10>>
+
+[[https://eel.is/c++draft/expected#object.obs-10][10]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9434][#]]
+
+<<object.obs-10.sentence-1>>
+/Throws/: bad_expected_access(as_const(error())) if has_value() is
+false[[https://eel.is/c++draft/expected#object.obs-10.sentence-1][.]]
+
+<<lib:expected,value_>>
+
+<<lib:value,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:value,expected_][🔗]]
+
+=constexpr== T==&==&== value==(==)== ==&==&==; ==constexpr== ==const== T==&==&== value==(==)== ==const== ==&==&==; =
+
+<<object.obs-11>>
+
+[[https://eel.is/c++draft/expected#object.obs-11][11]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9446][#]]
+
+<<object.obs-11.sentence-1>>
+/Mandates/: is_copy_constructible_v<E> is true and is_constructible_v<E,
+decltype(std​::​move(error()))> is
+true[[https://eel.is/c++draft/expected#object.obs-11.sentence-1][.]]
+
+<<object.obs-12>>
+
+[[https://eel.is/c++draft/expected#object.obs-12][12]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9451][#]]
+
+<<object.obs-12.sentence-1>>
+/Returns/: std​::​move(/val/), if has_value() is
+true[[https://eel.is/c++draft/expected#object.obs-12.sentence-1][.]]
+
+<<object.obs-13>>
+
+[[https://eel.is/c++draft/expected#object.obs-13][13]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9455][#]]
+
+<<object.obs-13.sentence-1>>
+/Throws/: bad_expected_access(std​::​move(error())) if has_value() is
+false[[https://eel.is/c++draft/expected#object.obs-13.sentence-1][.]]
+
+<<lib:expected,error>>
+
+<<lib:error,expected>>
+
+[[https://eel.is/c++draft/expected#lib:error,expected][🔗]]
+
+=constexpr== ==const== E==&== error==(==)== ==const== ==&== ==noexcept==; ==constexpr== E==&== error==(==)== ==&== ==noexcept==; =
+
+<<object.obs-14>>
+
+[[https://eel.is/c++draft/expected#object.obs-14][14]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9468][#]]
+
+<<object.obs-14.sentence-1>>
+/Hardened preconditions/: has_value() is
+false[[https://eel.is/c++draft/expected#object.obs-14.sentence-1][.]]
+
+<<object.obs-15>>
+
+[[https://eel.is/c++draft/expected#object.obs-15][15]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9472][#]]
+
+<<object.obs-15.sentence-1>>
+/Returns/:
+/unex/[[https://eel.is/c++draft/expected#object.obs-15.sentence-1][.]]
+
+<<lib:expected,error_>>
+
+<<lib:error,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:error,expected_][🔗]]
+
+=constexpr== E==&==&== error==(==)== ==&==&== ==noexcept==; ==constexpr== ==const== E==&==&== error==(==)== ==const== ==&==&== ==noexcept==; =
+
+<<object.obs-16>>
+
+[[https://eel.is/c++draft/expected#object.obs-16][16]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9484][#]]
+
+<<object.obs-16.sentence-1>>
+/Hardened preconditions/: has_value() is
+false[[https://eel.is/c++draft/expected#object.obs-16.sentence-1][.]]
+
+<<object.obs-17>>
+
+[[https://eel.is/c++draft/expected#object.obs-17][17]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9488][#]]
+
+<<object.obs-17.sentence-1>>
+/Returns/:
+std​::​move(/unex/)[[https://eel.is/c++draft/expected#object.obs-17.sentence-1][.]]
+
+<<lib:expected,value_or>>
+
+<<lib:value_or,expected>>
+
+[[https://eel.is/c++draft/expected#lib:value_or,expected][🔗]]
+
+=template==<==class== U ===== remove_cv_t==<==T==>==>== ==constexpr== T value_or==(==U==&==&== v==)== ==const== ==&==; =
+
+<<object.obs-18>>
+
+[[https://eel.is/c++draft/expected#object.obs-18][18]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9499][#]]
+
+<<object.obs-18.sentence-1>>
+/Mandates/: is_copy_constructible_v<T> is true and is_convertible_v<U,
+T> is
+true[[https://eel.is/c++draft/expected#object.obs-18.sentence-1][.]]
+
+<<object.obs-19>>
+
+[[https://eel.is/c++draft/expected#object.obs-19][19]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9504][#]]
+
+<<object.obs-19.sentence-1>>
+/Returns/: has_value() ? **this :
+static_cast<T>(std​::​forward<U>(v))[[https://eel.is/c++draft/expected#object.obs-19.sentence-1][.]]
+
+<<lib:expected,value_or_>>
+
+<<lib:value_or,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:value_or,expected_][🔗]]
+
+=template==<==class== U ===== remove_cv_t==<==T==>==>== ==constexpr== T value_or==(==U==&==&== v==)== ==&==&==; =
+
+<<object.obs-20>>
+
+[[https://eel.is/c++draft/expected#object.obs-20][20]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9515][#]]
+
+<<object.obs-20.sentence-1>>
+/Mandates/: is_move_constructible_v<T> is true and is_convertible_v<U,
+T> is
+true[[https://eel.is/c++draft/expected#object.obs-20.sentence-1][.]]
+
+<<object.obs-21>>
+
+[[https://eel.is/c++draft/expected#object.obs-21][21]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9520][#]]
+
+<<object.obs-21.sentence-1>>
+/Returns/: has_value() ? std​::​move(**this) :
+static_cast<T>(std​::​forward<U>(v))[[https://eel.is/c++draft/expected#object.obs-21.sentence-1][.]]
+
+<<lib:expected,error_or>>
+
+<<lib:error_or,expected>>
+
+[[https://eel.is/c++draft/expected#lib:error_or,expected][🔗]]
+
+=template==<==class== G ===== E==>== ==constexpr== E error_or==(==G==&==&== e==)== ==const== ==&==; =
+
+<<object.obs-22>>
+
+[[https://eel.is/c++draft/expected#object.obs-22][22]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9531][#]]
+
+<<object.obs-22.sentence-1>>
+/Mandates/: is_copy_constructible_v<E> is true and is_convertible_v<G,
+E> is
+true[[https://eel.is/c++draft/expected#object.obs-22.sentence-1][.]]
+
+<<object.obs-23>>
+
+[[https://eel.is/c++draft/expected#object.obs-23][23]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9536][#]]
+
+<<object.obs-23.sentence-1>>
+/Returns/: std​::​forward<G>(e) if has_value() is true, error()
+otherwise[[https://eel.is/c++draft/expected#object.obs-23.sentence-1][.]]
+
+<<lib:expected,error_or_>>
+
+<<lib:error_or,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:error_or,expected_][🔗]]
+
+=template==<==class== G ===== E==>== ==constexpr== E error_or==(==G==&==&== e==)== ==&==&==; =
+
+<<object.obs-24>>
+
+[[https://eel.is/c++draft/expected#object.obs-24][24]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9548][#]]
+
+<<object.obs-24.sentence-1>>
+/Mandates/: is_move_constructible_v<E> is true and is_convertible_v<G,
+E> is
+true[[https://eel.is/c++draft/expected#object.obs-24.sentence-1][.]]
+
+<<object.obs-25>>
+
+[[https://eel.is/c++draft/expected#object.obs-25][25]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9553][#]]
+
+<<object.obs-25.sentence-1>>
+/Returns/: std​::​forward<G>(e) if has_value() is true, std​::​move(error())
+otherwise[[https://eel.is/c++draft/expected#object.obs-25.sentence-1][.]]
+
+<<object.monadic>>
+**** [[https://eel.is/c++draft/expected#object.monadic][22.8.6.7]] Monadic operations [[https://eel.is/c++draft/expected.object.monadic][[expected.object.monadic]]]
+:PROPERTIES:
+:CUSTOM_ID: monadic-operations-expected.object.monadic-1
+:END:
+
+<<lib:expected,and_then>>
+
+<<lib:and_then,expected>>
+
+[[https://eel.is/c++draft/expected#lib:and_then,expected][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== and_then==(==F==&==&== f==)== ==&==; ==template==<==class== F==>== ==constexpr== ==auto== and_then==(==F==&==&== f==)== ==const== ==&==; =
+
+<<object.monadic-1>>
+
+[[https://eel.is/c++draft/expected#object.monadic-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9568][#]]
+
+<<object.monadic-1.sentence-1>>
+Let U be remove_cvref_t<invoke_result_t<F,
+decltype((/val/))>>[[https://eel.is/c++draft/expected#object.monadic-1.sentence-1][.]]
+
+<<object.monadic-2>>
+
+[[https://eel.is/c++draft/expected#object.monadic-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9571][#]]
+
+<<object.monadic-2.sentence-1>>
+/Constraints/: is_constructible_v<E, decltype(error())> is
+true[[https://eel.is/c++draft/expected#object.monadic-2.sentence-1][.]]
+
+<<object.monadic-3>>
+
+[[https://eel.is/c++draft/expected#object.monadic-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9575][#]]
+
+<<object.monadic-3.sentence-1>>
+/Mandates/: U is a specialization of expected and is_same_v<typename
+U​::​error_type, E> is
+true[[https://eel.is/c++draft/expected#object.monadic-3.sentence-1][.]]
+
+<<object.monadic-4>>
+
+[[https://eel.is/c++draft/expected#object.monadic-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9580][#]]
+
+<<object.monadic-4.sentence-1>>
+/Effects/: Equivalent to: if (has_value()) return
+invoke(std::forward<F>(f), /val/); else return U(unexpect, error());
+
+<<lib:expected,and_then_>>
+
+<<lib:and_then,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:and_then,expected_][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== and_then==(==F==&==&== f==)== ==&==&==; ==template==<==class== F==>== ==constexpr== ==auto== and_then==(==F==&==&== f==)== ==const== ==&==&==; =
+
+<<object.monadic-5>>
+
+[[https://eel.is/c++draft/expected#object.monadic-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9598][#]]
+
+<<object.monadic-5.sentence-1>>
+Let U be remove_cvref_t<invoke_result_t<F,
+decltype(std​::​move(/val/))>>[[https://eel.is/c++draft/expected#object.monadic-5.sentence-1][.]]
+
+<<object.monadic-6>>
+
+[[https://eel.is/c++draft/expected#object.monadic-6][6]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9602][#]]
+
+<<object.monadic-6.sentence-1>>
+/Constraints/: is_constructible_v<E, decltype(std​::​move(error()))> is
+true[[https://eel.is/c++draft/expected#object.monadic-6.sentence-1][.]]
+
+<<object.monadic-7>>
+
+[[https://eel.is/c++draft/expected#object.monadic-7][7]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9606][#]]
+
+<<object.monadic-7.sentence-1>>
+/Mandates/: U is a specialization of expected and is_same_v<typename
+U​::​error_type, E> is
+true[[https://eel.is/c++draft/expected#object.monadic-7.sentence-1][.]]
+
+<<object.monadic-8>>
+
+[[https://eel.is/c++draft/expected#object.monadic-8][8]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9611][#]]
+
+<<object.monadic-8.sentence-1>>
+/Effects/: Equivalent to: if (has_value()) return
+invoke(std::forward<F>(f), std::move(/val/)); else return U(unexpect,
+std::move(error()));
+
+<<lib:expected,or_else>>
+
+<<lib:or_else,expected>>
+
+[[https://eel.is/c++draft/expected#lib:or_else,expected][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== or_else==(==F==&==&== f==)== ==&==; ==template==<==class== F==>== ==constexpr== ==auto== or_else==(==F==&==&== f==)== ==const== ==&==; =
+
+<<object.monadic-9>>
+
+[[https://eel.is/c++draft/expected#object.monadic-9][9]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9629][#]]
+
+<<object.monadic-9.sentence-1>>
+Let G be remove_cvref_t<invoke_result_t<F,
+decltype(error())>>[[https://eel.is/c++draft/expected#object.monadic-9.sentence-1][.]]
+
+<<object.monadic-10>>
+
+[[https://eel.is/c++draft/expected#object.monadic-10][10]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9632][#]]
+
+<<object.monadic-10.sentence-1>>
+/Constraints/: is_constructible_v<T, decltype((/val/))> is
+true[[https://eel.is/c++draft/expected#object.monadic-10.sentence-1][.]]
+
+<<object.monadic-11>>
+
+[[https://eel.is/c++draft/expected#object.monadic-11][11]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9636][#]]
+
+<<object.monadic-11.sentence-1>>
+/Mandates/: G is a specialization of expected and is_same_v<typename
+G​::​value_type, T> is
+true[[https://eel.is/c++draft/expected#object.monadic-11.sentence-1][.]]
+
+<<object.monadic-12>>
+
+[[https://eel.is/c++draft/expected#object.monadic-12][12]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9641][#]]
+
+<<object.monadic-12.sentence-1>>
+/Effects/: Equivalent to: if (has_value()) return G(in_place, /val/);
+else return invoke(std::forward<F>(f), error());
+
+<<lib:expected,or_else_>>
+
+<<lib:or_else,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:or_else,expected_][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== or_else==(==F==&==&== f==)== ==&==&==; ==template==<==class== F==>== ==constexpr== ==auto== or_else==(==F==&==&== f==)== ==const== ==&==&==; =
+
+<<object.monadic-13>>
+
+[[https://eel.is/c++draft/expected#object.monadic-13][13]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9659][#]]
+
+<<object.monadic-13.sentence-1>>
+Let G be remove_cvref_t<invoke_result_t<F,
+decltype(std​::​move(error()))>>[[https://eel.is/c++draft/expected#object.monadic-13.sentence-1][.]]
+
+<<object.monadic-14>>
+
+[[https://eel.is/c++draft/expected#object.monadic-14][14]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9663][#]]
+
+<<object.monadic-14.sentence-1>>
+/Constraints/: is_constructible_v<T, decltype(std​::​move(/val/))> is
+true[[https://eel.is/c++draft/expected#object.monadic-14.sentence-1][.]]
+
+<<object.monadic-15>>
+
+[[https://eel.is/c++draft/expected#object.monadic-15][15]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9667][#]]
+
+<<object.monadic-15.sentence-1>>
+/Mandates/: G is a specialization of expected and is_same_v<typename
+G​::​value_type, T> is
+true[[https://eel.is/c++draft/expected#object.monadic-15.sentence-1][.]]
+
+<<object.monadic-16>>
+
+[[https://eel.is/c++draft/expected#object.monadic-16][16]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9672][#]]
+
+<<object.monadic-16.sentence-1>>
+/Effects/: Equivalent to: if (has_value()) return G(in_place,
+std::move(/val/)); else return invoke(std::forward<F>(f),
+std::move(error()));
+
+<<lib:expected,transform>>
+
+<<lib:transform,expected>>
+
+[[https://eel.is/c++draft/expected#lib:transform,expected][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== transform==(==F==&==&== f==)== ==&==; ==template==<==class== F==>== ==constexpr== ==auto== transform==(==F==&==&== f==)== ==const== ==&==; =
+
+<<object.monadic-17>>
+
+[[https://eel.is/c++draft/expected#object.monadic-17][17]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9690][#]]
+
+<<object.monadic-17.sentence-1>>
+Let U be remove_cv_t<invoke_result_t<F,
+decltype((/val/))>>[[https://eel.is/c++draft/expected#object.monadic-17.sentence-1][.]]
+
+<<object.monadic-18>>
+
+[[https://eel.is/c++draft/expected#object.monadic-18][18]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9694][#]]
+
+<<object.monadic-18.sentence-1>>
+/Constraints/: is_constructible_v<E, decltype(error())> is
+true[[https://eel.is/c++draft/expected#object.monadic-18.sentence-1][.]]
+
+<<object.monadic-19>>
+
+[[https://eel.is/c++draft/expected#object.monadic-19][19]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9698][#]]
+
+<<object.monadic-19.sentence-1>>
+/Mandates/: U is a valid value type for
+expected[[https://eel.is/c++draft/expected#object.monadic-19.sentence-1][.]]
+
+<<object.monadic-19.sentence-2>>
+If is_void_v<U> is false, the declaration U u(invoke(std::forward<F>(f),
+/val/)); is
+well-formed[[https://eel.is/c++draft/expected#object.monadic-19.sentence-2][.]]
+
+<<object.monadic-20>>
+
+[[https://eel.is/c++draft/expected#object.monadic-20][20]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9708][#]]
+
+<<object.monadic-20.sentence-1>>
+/Effects/:
+- 
+
+  <<object.monadic-20.1>>
+
+  [[https://eel.is/c++draft/expected#object.monadic-20.1][(20.1)]]
+
+  <<object.monadic-20.1.sentence-1>>
+  If has_value() is false, returns expected<U, E>(unexpect,
+  error())[[https://eel.is/c++draft/expected#object.monadic-20.1.sentence-1][.]]
+
+- 
+
+  <<object.monadic-20.2>>
+
+  [[https://eel.is/c++draft/expected#object.monadic-20.2][(20.2)]]
+
+  <<object.monadic-20.2.sentence-1>>
+  Otherwise, if is_void_v<U> is false, returns an expected<U, E> object
+  whose /has_val/ member is true and /val/ member is
+  direct-non-list-initialized with invoke(std​::​forward<F>(f),
+  /val/)[[https://eel.is/c++draft/expected#object.monadic-20.2.sentence-1][.]]
+
+- 
+
+  <<object.monadic-20.3>>
+
+  [[https://eel.is/c++draft/expected#object.monadic-20.3][(20.3)]]
+
+  <<object.monadic-20.3.sentence-1>>
+  Otherwise, evaluates invoke(std​::​forward<F>(f), /val/) and then
+  returns expected<U,
+  E>()[[https://eel.is/c++draft/expected#object.monadic-20.3.sentence-1][.]]
+
+<<lib:expected,transform_>>
+
+<<lib:transform,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:transform,expected_][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== transform==(==F==&==&== f==)== ==&==&==; ==template==<==class== F==>== ==constexpr== ==auto== transform==(==F==&==&== f==)== ==const== ==&==&==; =
+
+<<object.monadic-21>>
+
+[[https://eel.is/c++draft/expected#object.monadic-21][21]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9732][#]]
+
+<<object.monadic-21.sentence-1>>
+Let U be remove_cv_t<invoke_result_t<F,
+decltype(std​::​move(/val/))>>[[https://eel.is/c++draft/expected#object.monadic-21.sentence-1][.]]
+
+<<object.monadic-22>>
+
+[[https://eel.is/c++draft/expected#object.monadic-22][22]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9736][#]]
+
+<<object.monadic-22.sentence-1>>
+/Constraints/: is_constructible_v<E, decltype(std​::​move(error()))> is
+true[[https://eel.is/c++draft/expected#object.monadic-22.sentence-1][.]]
+
+<<object.monadic-23>>
+
+[[https://eel.is/c++draft/expected#object.monadic-23][23]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9740][#]]
+
+<<object.monadic-23.sentence-1>>
+/Mandates/: U is a valid value type for
+expected[[https://eel.is/c++draft/expected#object.monadic-23.sentence-1][.]]
+
+<<object.monadic-23.sentence-2>>
+If is_void_v<U> is false, the declaration U u(invoke(std::forward<F>(f),
+std::move(/val/))); is
+well-formed[[https://eel.is/c++draft/expected#object.monadic-23.sentence-2][.]]
+
+<<object.monadic-24>>
+
+[[https://eel.is/c++draft/expected#object.monadic-24][24]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9749][#]]
+
+<<object.monadic-24.sentence-1>>
+/Effects/:
+- 
+
+  <<object.monadic-24.1>>
+
+  [[https://eel.is/c++draft/expected#object.monadic-24.1][(24.1)]]
+
+  <<object.monadic-24.1.sentence-1>>
+  If has_value() is false, returns expected<U, E>(unexpect,
+  std​::​move(error()))[[https://eel.is/c++draft/expected#object.monadic-24.1.sentence-1][.]]
+
+- 
+
+  <<object.monadic-24.2>>
+
+  [[https://eel.is/c++draft/expected#object.monadic-24.2][(24.2)]]
+
+  <<object.monadic-24.2.sentence-1>>
+  Otherwise, if is_void_v<U> is false, returns an expected<U, E> object
+  whose /has_val/ member is true and /val/ member is
+  direct-non-list-initialized with invoke(std​::​forward<F>(f),
+  std​::​move(/val/))[[https://eel.is/c++draft/expected#object.monadic-24.2.sentence-1][.]]
+
+- 
+
+  <<object.monadic-24.3>>
+
+  [[https://eel.is/c++draft/expected#object.monadic-24.3][(24.3)]]
+
+  <<object.monadic-24.3.sentence-1>>
+  Otherwise, evaluates invoke(std​::​forward<F>(f), std​::​move(/val/)) and
+  then returns expected<U,
+  E>()[[https://eel.is/c++draft/expected#object.monadic-24.3.sentence-1][.]]
+
+<<lib:expected,transform_error>>
+
+<<lib:transform_error,expected>>
+
+[[https://eel.is/c++draft/expected#lib:transform_error,expected][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== transform_error==(==F==&==&== f==)== ==&==; ==template==<==class== F==>== ==constexpr== ==auto== transform_error==(==F==&==&== f==)== ==const== ==&==; =
+
+<<object.monadic-25>>
+
+[[https://eel.is/c++draft/expected#object.monadic-25][25]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9773][#]]
+
+<<object.monadic-25.sentence-1>>
+Let G be remove_cv_t<invoke_result_t<F,
+decltype(error())>>[[https://eel.is/c++draft/expected#object.monadic-25.sentence-1][.]]
+
+<<object.monadic-26>>
+
+[[https://eel.is/c++draft/expected#object.monadic-26][26]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9776][#]]
+
+<<object.monadic-26.sentence-1>>
+/Constraints/: is_constructible_v<T, decltype((/val/))> is
+true[[https://eel.is/c++draft/expected#object.monadic-26.sentence-1][.]]
+
+<<object.monadic-27>>
+
+[[https://eel.is/c++draft/expected#object.monadic-27][27]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9780][#]]
+
+<<object.monadic-27.sentence-1>>
+/Mandates/: G is a valid template argument for unexpected
+([[https://eel.is/c++draft/expected#un.general][[expected.un.general]]])
+and the declaration G g(invoke(std::forward<F>(f), error())); is
+well-formed[[https://eel.is/c++draft/expected#object.monadic-27.sentence-1][.]]
+
+<<object.monadic-28>>
+
+[[https://eel.is/c++draft/expected#object.monadic-28][28]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9789][#]]
+
+<<object.monadic-28.sentence-1>>
+/Returns/: If has_value() is true, expected<T, G>(in_place, /val/);
+otherwise, an expected<T, G> object whose /has_val/ member is false and
+/unex/ member is direct-non-list-initialized with
+invoke(std​::​forward<F>(f),
+error())[[https://eel.is/c++draft/expected#object.monadic-28.sentence-1][.]]
+
+<<lib:expected,transform_error_>>
+
+<<lib:transform_error,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:transform_error,expected_][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== transform_error==(==F==&==&== f==)== ==&==&==; ==template==<==class== F==>== ==constexpr== ==auto== transform_error==(==F==&==&== f==)== ==const== ==&==&==; =
+
+<<object.monadic-29>>
+
+[[https://eel.is/c++draft/expected#object.monadic-29][29]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9804][#]]
+
+<<object.monadic-29.sentence-1>>
+Let G be remove_cv_t<invoke_result_t<F,
+decltype(std​::​move(error()))>>[[https://eel.is/c++draft/expected#object.monadic-29.sentence-1][.]]
+
+<<object.monadic-30>>
+
+[[https://eel.is/c++draft/expected#object.monadic-30][30]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9808][#]]
+
+<<object.monadic-30.sentence-1>>
+/Constraints/: is_constructible_v<T, decltype(std​::​move(/val/))> is
+true[[https://eel.is/c++draft/expected#object.monadic-30.sentence-1][.]]
+
+<<object.monadic-31>>
+
+[[https://eel.is/c++draft/expected#object.monadic-31][31]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9812][#]]
+
+<<object.monadic-31.sentence-1>>
+/Mandates/: G is a valid template argument for unexpected
+([[https://eel.is/c++draft/expected#un.general][[expected.un.general]]])
+and the declaration G g(invoke(std::forward<F>(f), std::move(error())));
+is
+well-formed[[https://eel.is/c++draft/expected#object.monadic-31.sentence-1][.]]
+
+<<object.monadic-32>>
+
+[[https://eel.is/c++draft/expected#object.monadic-32][32]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9821][#]]
+
+<<object.monadic-32.sentence-1>>
+/Returns/: If has_value() is true, expected<T, G>(in_place,
+std​::​move(/val/)); otherwise, an expected<T, G> object whose /has_val/
+member is false and /unex/ member is direct-non-list-initialized with
+invoke(std​::​forward<F>(f),
+std​::​move(error()))[[https://eel.is/c++draft/expected#object.monadic-32.sentence-1][.]]
+
+<<object.eq>>
+**** [[https://eel.is/c++draft/expected#object.eq][22.8.6.8]] Equality operators [[https://eel.is/c++draft/expected.object.eq][[expected.object.eq]]]
+:PROPERTIES:
+:CUSTOM_ID: equality-operators-expected.object.eq-1
+:END:
+
+<<lib:expected,operator==>>
+
+<<lib:operator==,expected>>
+
+[[https://eel.is/c++draft/expected#lib:operator==,expected][🔗]]
+
+=template==<==class== T2, ==class== E2==>== ==requires== ==(==!==is_void_v==<==T2==>==)== ==friend== ==constexpr== ==bool== ==operator========(==const== expected==&== x, ==const== expected==<==T2, E2==>==&== y==)==; =
+
+<<object.eq-1>>
+
+[[https://eel.is/c++draft/expected#object.eq-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9839][#]]
+
+<<object.eq-1.sentence-1>>
+/Constraints/: The expressions *x == *y and x.error() == y.error() are
+well-formed and their results are convertible to
+bool[[https://eel.is/c++draft/expected#object.eq-1.sentence-1][.]]
+
+<<object.eq-2>>
+
+[[https://eel.is/c++draft/expected#object.eq-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9844][#]]
+
+<<object.eq-2.sentence-1>>
+/Returns/: If x.has_value() does not equal y.has_value(), false;
+otherwise if x.has_value() is true, *x == *y; otherwise x.error() ==
+y.error()[[https://eel.is/c++draft/expected#object.eq-2.sentence-1][.]]
+
+<<lib:expected,operator==_>>
+
+<<lib:operator==,expected_>>
+
+[[https://eel.is/c++draft/expected#lib:operator==,expected_][🔗]]
+
+=template==<==class== T2==>== ==friend== ==constexpr== ==bool== ==operator========(==const== expected==&== x, ==const== T2==&== v==)==; =
+
+<<object.eq-3>>
+
+[[https://eel.is/c++draft/expected#object.eq-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9857][#]]
+
+<<object.eq-3.sentence-1>>
+/Constraints/: T2 is not a specialization of
+expected[[https://eel.is/c++draft/expected#object.eq-3.sentence-1][.]]
+
+<<object.eq-3.sentence-2>>
+The expression *x == v is well-formed and its result is convertible to
+bool[[https://eel.is/c++draft/expected#object.eq-3.sentence-2][.]]
+
+<<object.eq-note-1>>
+
+[/Note [[https://eel.is/c++draft/expected#object.eq-note-1][1]]/: 
+
+<<object.eq-3.sentence-3>>
+T need not be
+[[https://eel.is/c++draft/utility.arg.requirements#:Cpp17EqualityComparable][/Cpp17EqualityComparable/]][[https://eel.is/c++draft/expected#object.eq-3.sentence-3][.]]
+
+--- /end note/]
+
+<<object.eq-4>>
+
+[[https://eel.is/c++draft/expected#object.eq-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9866][#]]
+
+<<object.eq-4.sentence-1>>
+/Returns/: If x.has_value() is true, *x == v; otherwise
+false[[https://eel.is/c++draft/expected#object.eq-4.sentence-1][.]]
+
+<<lib:expected,operator==__>>
+
+<<lib:operator==,expected__>>
+
+[[https://eel.is/c++draft/expected#lib:operator==,expected__][🔗]]
+
+=template==<==class== E2==>== ==friend== ==constexpr== ==bool== ==operator========(==const== expected==&== x, ==const== unexpected==<==E2==>==&== e==)==; =
+
+<<object.eq-5>>
+
+[[https://eel.is/c++draft/expected#object.eq-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9879][#]]
+
+<<object.eq-5.sentence-1>>
+/Constraints/: The expression x.error() == e.error() is well-formed and
+its result is convertible to
+bool[[https://eel.is/c++draft/expected#object.eq-5.sentence-1][.]]
+
+<<object.eq-6>>
+
+[[https://eel.is/c++draft/expected#object.eq-6][6]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9884][#]]
+
+<<object.eq-6.sentence-1>>
+/Returns/: If !x.has_value() is true, x.error() == e.error(); otherwise
+false[[https://eel.is/c++draft/expected#object.eq-6.sentence-1][.]]
+
+<<void>>
+*** [[https://eel.is/c++draft/expected#void][22.8.7]] Partial specialization of expected for void types [[https://eel.is/c++draft/expected.void][[expected.void]]]
+:PROPERTIES:
+:CUSTOM_ID: partial-specialization-of-expected-for-void-types-expected.void-1
+:END:
+
+<<void.general>>
+**** [[https://eel.is/c++draft/expected#void.general][22.8.7.1]] General [[https://eel.is/c++draft/expected.void.general][[expected.void.general]]]
+:PROPERTIES:
+:CUSTOM_ID: general-expected.void.general-1
+:END:
+
+template<class T, class E> requires is_void_v<T> class expected<T, E> {
+public: using
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,value_type][value_type]]
+= T; using
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,error_type][error_type]]
+= E; using
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,unexpected_type][unexpected_type]]
+= unexpected<E>; template<class U> using
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,rebind][rebind]]
+= expected<U, error_type>; //
+[[https://eel.is/c++draft/expected#void.cons][[expected.void.cons]]],
+constructors constexpr expected() noexcept; constexpr expected(const
+expected&); constexpr expected(expected&&) noexcept(/see below/);
+template<class U, class G> constexpr explicit(/see below/)
+expected(const expected<U, G>&); template<class U, class G> constexpr
+explicit(/see below/) expected(expected<U, G>&&); template<class G>
+constexpr explicit(/see below/) expected(const unexpected<G>&);
+template<class G> constexpr explicit(/see below/)
+expected(unexpected<G>&&); constexpr explicit expected(in_place_t)
+noexcept; template<class... Args> constexpr explicit
+expected(unexpect_t, Args&&...); template<class U, class... Args>
+constexpr explicit expected(unexpect_t, initializer_list<U>, Args&&...);
+// [[https://eel.is/c++draft/expected#void.dtor][[expected.void.dtor]]],
+destructor constexpr ~expected(); //
+[[https://eel.is/c++draft/expected#void.assign][[expected.void.assign]]],
+assignment constexpr expected& operator=(const expected&); constexpr
+expected& operator=(expected&&) noexcept(/see below/); template<class G>
+constexpr expected& operator=(const unexpected<G>&); template<class G>
+constexpr expected& operator=(unexpected<G>&&); constexpr void emplace()
+noexcept; //
+[[https://eel.is/c++draft/expected#void.swap][[expected.void.swap]]],
+swap constexpr void swap(expected&) noexcept(/see below/); friend
+constexpr void swap(expected& x, expected& y)
+noexcept(noexcept(x.swap(y))); //
+[[https://eel.is/c++draft/expected#void.obs][[expected.void.obs]]],
+observers constexpr explicit operator bool() const noexcept; constexpr
+bool has_value() const noexcept; constexpr void operator*() const
+noexcept; constexpr void value() const &; // freestanding-deleted
+constexpr void value() &&; // freestanding-deleted constexpr const E&
+error() const & noexcept; constexpr E& error() & noexcept; constexpr
+const E&& error() const && noexcept; constexpr E&& error() && noexcept;
+template<class G = E> constexpr E error_or(G&&) const &; template<class
+G = E> constexpr E error_or(G&&) &&; //
+[[https://eel.is/c++draft/expected#void.monadic][[expected.void.monadic]]],
+monadic operations template<class F> constexpr auto and_then(F&& f) &;
+template<class F> constexpr auto and_then(F&& f) &&; template<class F>
+constexpr auto and_then(F&& f) const &; template<class F> constexpr auto
+and_then(F&& f) const &&; template<class F> constexpr auto or_else(F&&
+f) &; template<class F> constexpr auto or_else(F&& f) &&; template<class
+F> constexpr auto or_else(F&& f) const &; template<class F> constexpr
+auto or_else(F&& f) const &&; template<class F> constexpr auto
+transform(F&& f) &; template<class F> constexpr auto transform(F&& f)
+&&; template<class F> constexpr auto transform(F&& f) const &;
+template<class F> constexpr auto transform(F&& f) const &&;
+template<class F> constexpr auto transform_error(F&& f) &;
+template<class F> constexpr auto transform_error(F&& f) &&;
+template<class F> constexpr auto transform_error(F&& f) const &;
+template<class F> constexpr auto transform_error(F&& f) const &&; //
+[[https://eel.is/c++draft/expected#void.eq][[expected.void.eq]]],
+equality operators template<class T2, class E2> requires is_void_v<T2>
+friend constexpr bool operator==(const expected& x, const expected<T2,
+E2>& y); template<class E2> friend constexpr bool operator==(const
+expected&, const unexpected<E2>&); private: bool /has_val/; //
+/exposition only/ union { E /unex/; // /exposition only/ }; };
+
+<<void.general-1>>
+
+[[https://eel.is/c++draft/expected#void.general-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9988][#]]
+
+<<void.general-1.sentence-1>>
+Any object of type expected<T, E> either represents a value of type T,
+or contains a value of type E nested within
+([[https://eel.is/c++draft/intro.object][[intro.object]]])
+it[[https://eel.is/c++draft/expected#void.general-1.sentence-1][.]]
+
+<<void.general-1.sentence-2>>
+Member /has_val/ indicates whether the expected<T, E> object represents
+a value of type
+T[[https://eel.is/c++draft/expected#void.general-1.sentence-2][.]]
+
+<<void.general-2>>
+
+[[https://eel.is/c++draft/expected#void.general-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L9996][#]]
+
+<<void.general-2.sentence-1>>
+A program that instantiates the definition of the template expected<T,
+E> with a type for the E parameter that is not a valid template argument
+for unexpected is
+ill-formed[[https://eel.is/c++draft/expected#void.general-2.sentence-1][.]]
+
+<<void.general-3>>
+
+[[https://eel.is/c++draft/expected#void.general-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10002][#]]
+
+<<void.general-3.sentence-1>>
+E shall meet the requirements of
+[[https://eel.is/c++draft/utility.arg.requirements#:Cpp17Destructible][/Cpp17Destructible/]]
+(Table
+[[https://eel.is/c++draft/utility.arg.requirements#tab:cpp17.destructible][35]])[[https://eel.is/c++draft/expected#void.general-3.sentence-1][.]]
+
+<<void.cons>>
+**** [[https://eel.is/c++draft/expected#void.cons][22.8.7.2]] Constructors [[https://eel.is/c++draft/expected.void.cons][[expected.void.cons]]]
+:PROPERTIES:
+:CUSTOM_ID: constructors-expected.void.cons-1
+:END:
+
+<<lib:expected<void>,constructor>>
+
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,constructor][🔗]]
+
+=constexpr== expected==(==)== ==noexcept==; =
+
+<<void.cons-1>>
+
+[[https://eel.is/c++draft/expected#void.cons-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10014][#]]
+
+<<void.cons-1.sentence-1>>
+/Postconditions/: has_value() is
+true[[https://eel.is/c++draft/expected#void.cons-1.sentence-1][.]]
+
+<<lib:expected<void>,constructor_>>
+
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,constructor_][🔗]]
+
+=constexpr== expected==(==const== expected==&== rhs==)==; =
+
+<<void.cons-2>>
+
+[[https://eel.is/c++draft/expected#void.cons-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10025][#]]
+
+<<void.cons-2.sentence-1>>
+/Effects/: If rhs.has_value() is false, direct-non-list-initializes
+/unex/ with
+rhs.error()[[https://eel.is/c++draft/expected#void.cons-2.sentence-1][.]]
+
+<<void.cons-3>>
+
+[[https://eel.is/c++draft/expected#void.cons-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10030][#]]
+
+<<void.cons-3.sentence-1>>
+/Postconditions/: rhs.has_value() ==
+this->has_value()[[https://eel.is/c++draft/expected#void.cons-3.sentence-1][.]]
+
+<<void.cons-4>>
+
+[[https://eel.is/c++draft/expected#void.cons-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10034][#]]
+
+<<void.cons-4.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#void.cons-4.sentence-1][.]]
+
+<<void.cons-5>>
+
+[[https://eel.is/c++draft/expected#void.cons-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10038][#]]
+
+<<void.cons-5.sentence-1>>
+/Remarks/: This constructor is defined as deleted unless
+is_copy_constructible_v<E> is
+true[[https://eel.is/c++draft/expected#void.cons-5.sentence-1][.]]
+
+<<void.cons-6>>
+
+[[https://eel.is/c++draft/expected#void.cons-6][6]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10043][#]]
+
+<<void.cons-6.sentence-1>>
+This constructor is trivial if is_trivially_copy_constructible_v<E> is
+true[[https://eel.is/c++draft/expected#void.cons-6.sentence-1][.]]
+
+<<lib:expected<void>,constructor__>>
+
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,constructor__][🔗]]
+
+=constexpr== expected==(==expected==&==&== rhs==)== ==noexcept==(==is_nothrow_move_constructible_v==<==E==>==)==; =
+
+<<void.cons-7>>
+
+[[https://eel.is/c++draft/expected#void.cons-7][7]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10054][#]]
+
+<<void.cons-7.sentence-1>>
+/Constraints/: is_move_constructible_v<E> is
+true[[https://eel.is/c++draft/expected#void.cons-7.sentence-1][.]]
+
+<<void.cons-8>>
+
+[[https://eel.is/c++draft/expected#void.cons-8][8]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10058][#]]
+
+<<void.cons-8.sentence-1>>
+/Effects/: If rhs.has_value() is false, direct-non-list-initializes
+/unex/ with
+std​::​move(rhs.error())[[https://eel.is/c++draft/expected#void.cons-8.sentence-1][.]]
+
+<<void.cons-9>>
+
+[[https://eel.is/c++draft/expected#void.cons-9][9]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10063][#]]
+
+<<void.cons-9.sentence-1>>
+/Postconditions/: rhs.has_value() is unchanged; rhs.has_value() ==
+this->has_value() is
+true[[https://eel.is/c++draft/expected#void.cons-9.sentence-1][.]]
+
+<<void.cons-10>>
+
+[[https://eel.is/c++draft/expected#void.cons-10][10]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10068][#]]
+
+<<void.cons-10.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#void.cons-10.sentence-1][.]]
+
+<<void.cons-11>>
+
+[[https://eel.is/c++draft/expected#void.cons-11][11]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10072][#]]
+
+<<void.cons-11.sentence-1>>
+/Remarks/: This constructor is trivial if
+is_trivially_move_constructible_v<E> is
+true[[https://eel.is/c++draft/expected#void.cons-11.sentence-1][.]]
+
+<<lib:expected<void>,constructor___>>
+
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,constructor___][🔗]]
+
+=template==<==class== U, ==class== G==>== ==constexpr== ==explicit==(==!==is_convertible_v==<==const== G==&==, E==>==)== expected==(==const== expected==<==U, G==>==&== rhs==)==; ==template==<==class== U, ==class== G==>== ==constexpr== ==explicit==(==!==is_convertible_v==<==G, E==>==)== expected==(==expected==<==U, G==>==&==&== rhs==)==; =
+
+<<void.cons-12>>
+
+[[https://eel.is/c++draft/expected#void.cons-12][12]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10087][#]]
+
+<<void.cons-12.sentence-1>>
+Let GF be const G& for the first overload and G for the second
+overload[[https://eel.is/c++draft/expected#void.cons-12.sentence-1][.]]
+
+<<void.cons-13>>
+
+[[https://eel.is/c++draft/expected#void.cons-13][13]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10091][#]]
+
+<<void.cons-13.sentence-1>>
+/Constraints/:
+- 
+
+  <<void.cons-13.1>>
+
+  [[https://eel.is/c++draft/expected#void.cons-13.1][(13.1)]]
+
+  is_void_v<U> is true; and
+
+- 
+
+  <<void.cons-13.2>>
+
+  [[https://eel.is/c++draft/expected#void.cons-13.2][(13.2)]]
+
+  is_constructible_v<E, GF> is true; and
+
+- 
+
+  <<void.cons-13.3>>
+
+  [[https://eel.is/c++draft/expected#void.cons-13.3][(13.3)]]
+
+  is_constructible_v<unexpected<E>, expected<U, G>&> is false; and
+
+- 
+
+  <<void.cons-13.4>>
+
+  [[https://eel.is/c++draft/expected#void.cons-13.4][(13.4)]]
+
+  is_constructible_v<unexpected<E>, expected<U, G>> is false; and
+
+- 
+
+  <<void.cons-13.5>>
+
+  [[https://eel.is/c++draft/expected#void.cons-13.5][(13.5)]]
+
+  is_constructible_v<unexpected<E>, const expected<U, G>&> is false; and
+
+- 
+
+  <<void.cons-13.6>>
+
+  [[https://eel.is/c++draft/expected#void.cons-13.6][(13.6)]]
+
+  is_constructible_v<unexpected<E>, const expected<U, G>> is
+  false[[https://eel.is/c++draft/expected#void.cons-13.sentence-1][.]]
+
+<<void.cons-14>>
+
+[[https://eel.is/c++draft/expected#void.cons-14][14]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10112][#]]
+
+<<void.cons-14.sentence-1>>
+/Effects/: If rhs.has_value() is false, direct-non-list-initializes
+/unex/ with
+std​::​forward<GF>(rhs.error())[[https://eel.is/c++draft/expected#void.cons-14.sentence-1][.]]
+
+<<void.cons-15>>
+
+[[https://eel.is/c++draft/expected#void.cons-15][15]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10118][#]]
+
+<<void.cons-15.sentence-1>>
+/Postconditions/: rhs.has_value() is unchanged; rhs.has_value() ==
+this->has_value() is
+true[[https://eel.is/c++draft/expected#void.cons-15.sentence-1][.]]
+
+<<void.cons-16>>
+
+[[https://eel.is/c++draft/expected#void.cons-16][16]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10123][#]]
+
+<<void.cons-16.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#void.cons-16.sentence-1][.]]
+
+<<lib:expected<void>,constructor____>>
+
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,constructor____][🔗]]
+
+=template==<==class== G==>== ==constexpr== ==explicit==(==!==is_convertible_v==<==const== G==&==, E==>==)== expected==(==const== unexpected==<==G==>==&== e==)==; ==template==<==class== G==>== ==constexpr== ==explicit==(==!==is_convertible_v==<==G, E==>==)== expected==(==unexpected==<==G==>==&==&== e==)==; =
+
+<<void.cons-17>>
+
+[[https://eel.is/c++draft/expected#void.cons-17][17]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10137][#]]
+
+<<void.cons-17.sentence-1>>
+Let GF be const G& for the first overload and G for the second
+overload[[https://eel.is/c++draft/expected#void.cons-17.sentence-1][.]]
+
+<<void.cons-18>>
+
+[[https://eel.is/c++draft/expected#void.cons-18][18]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10141][#]]
+
+<<void.cons-18.sentence-1>>
+/Constraints/: is_constructible_v<E, GF> is
+true[[https://eel.is/c++draft/expected#void.cons-18.sentence-1][.]]
+
+<<void.cons-19>>
+
+[[https://eel.is/c++draft/expected#void.cons-19][19]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10145][#]]
+
+<<void.cons-19.sentence-1>>
+/Effects/: Direct-non-list-initializes /unex/ with
+std​::​forward<GF>(e.error())[[https://eel.is/c++draft/expected#void.cons-19.sentence-1][.]]
+
+<<void.cons-20>>
+
+[[https://eel.is/c++draft/expected#void.cons-20][20]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10150][#]]
+
+<<void.cons-20.sentence-1>>
+/Postconditions/: has_value() is
+false[[https://eel.is/c++draft/expected#void.cons-20.sentence-1][.]]
+
+<<void.cons-21>>
+
+[[https://eel.is/c++draft/expected#void.cons-21][21]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10154][#]]
+
+<<void.cons-21.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#void.cons-21.sentence-1][.]]
+
+<<lib:expected<void>,constructor_____>>
+
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,constructor_____][🔗]]
+
+=constexpr== ==explicit== expected==(==in_place_t==)== ==noexcept==; =
+
+<<void.cons-22>>
+
+[[https://eel.is/c++draft/expected#void.cons-22][22]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10165][#]]
+
+<<void.cons-22.sentence-1>>
+/Postconditions/: has_value() is
+true[[https://eel.is/c++draft/expected#void.cons-22.sentence-1][.]]
+
+<<lib:expected<void>,constructor______>>
+
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,constructor______][🔗]]
+
+=template==<==class==.==.==.== Args==>== ==constexpr== ==explicit== expected==(==unexpect_t, Args==&==&==.==.==.== args==)==; =
+
+<<void.cons-23>>
+
+[[https://eel.is/c++draft/expected#void.cons-23][23]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10177][#]]
+
+<<void.cons-23.sentence-1>>
+/Constraints/: is_constructible_v<E, Args...> is
+true[[https://eel.is/c++draft/expected#void.cons-23.sentence-1][.]]
+
+<<void.cons-24>>
+
+[[https://eel.is/c++draft/expected#void.cons-24][24]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10181][#]]
+
+<<void.cons-24.sentence-1>>
+/Effects/: Direct-non-list-initializes /unex/ with
+std​::​forward<Args>(args)...[[https://eel.is/c++draft/expected#void.cons-24.sentence-1][.]]
+
+<<void.cons-25>>
+
+[[https://eel.is/c++draft/expected#void.cons-25][25]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10186][#]]
+
+<<void.cons-25.sentence-1>>
+/Postconditions/: has_value() is
+false[[https://eel.is/c++draft/expected#void.cons-25.sentence-1][.]]
+
+<<void.cons-26>>
+
+[[https://eel.is/c++draft/expected#void.cons-26][26]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10190][#]]
+
+<<void.cons-26.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#void.cons-26.sentence-1][.]]
+
+<<lib:expected<void>,constructor_______>>
+
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,constructor_______][🔗]]
+
+=template==<==class== U, ==class==.==.==.== Args==>== ==constexpr== ==explicit== expected==(==unexpect_t, initializer_list==<==U==>== il, Args==&==&==.==.==.== args==)==; =
+
+<<void.cons-27>>
+
+[[https://eel.is/c++draft/expected#void.cons-27][27]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10202][#]]
+
+<<void.cons-27.sentence-1>>
+/Constraints/: is_constructible_v<E, initializer_list<U>&, Args...> is
+true[[https://eel.is/c++draft/expected#void.cons-27.sentence-1][.]]
+
+<<void.cons-28>>
+
+[[https://eel.is/c++draft/expected#void.cons-28][28]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10206][#]]
+
+<<void.cons-28.sentence-1>>
+/Effects/: Direct-non-list-initializes /unex/ with il,
+std​::​forward<Args>(args)...[[https://eel.is/c++draft/expected#void.cons-28.sentence-1][.]]
+
+<<void.cons-29>>
+
+[[https://eel.is/c++draft/expected#void.cons-29][29]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10211][#]]
+
+<<void.cons-29.sentence-1>>
+/Postconditions/: has_value() is
+false[[https://eel.is/c++draft/expected#void.cons-29.sentence-1][.]]
+
+<<void.cons-30>>
+
+[[https://eel.is/c++draft/expected#void.cons-30][30]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10215][#]]
+
+<<void.cons-30.sentence-1>>
+/Throws/: Any exception thrown by the initialization of
+/unex/[[https://eel.is/c++draft/expected#void.cons-30.sentence-1][.]]
+
+<<void.dtor>>
+**** [[https://eel.is/c++draft/expected#void.dtor][22.8.7.3]] Destructor [[https://eel.is/c++draft/expected.void.dtor][[expected.void.dtor]]]
+:PROPERTIES:
+:CUSTOM_ID: destructor-expected.void.dtor-1
+:END:
+
+<<lib:expected<void>,destructor>>
+
+[[https://eel.is/c++draft/expected#lib:expected%3cvoid%3e,destructor][🔗]]
+
+=constexpr== ==~==expected==(==)==; =
+
+<<void.dtor-1>>
+
+[[https://eel.is/c++draft/expected#void.dtor-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10228][#]]
+
+<<void.dtor-1.sentence-1>>
+/Effects/: If has_value() is false, destroys
+/unex/[[https://eel.is/c++draft/expected#void.dtor-1.sentence-1][.]]
+
+<<void.dtor-2>>
+
+[[https://eel.is/c++draft/expected#void.dtor-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10232][#]]
+
+<<void.dtor-2.sentence-1>>
+/Remarks/: If is_trivially_destructible_v<E> is true, then this
+destructor is a trivial
+destructor[[https://eel.is/c++draft/expected#void.dtor-2.sentence-1][.]]
+
+<<void.assign>>
+**** [[https://eel.is/c++draft/expected#void.assign][22.8.7.4]] Assignment [[https://eel.is/c++draft/expected.void.assign][[expected.void.assign]]]
+:PROPERTIES:
+:CUSTOM_ID: assignment-expected.void.assign-1
+:END:
+
+<<lib:expected<void>,operator=>>
+
+<<lib:operator=,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:operator=,expected%3cvoid%3e][🔗]]
+
+=constexpr== expected==&== ==operator=====(==const== expected==&== rhs==)==; =
+
+<<void.assign-1>>
+
+[[https://eel.is/c++draft/expected#void.assign-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10246][#]]
+
+<<void.assign-1.sentence-1>>
+/Effects/:
+- 
+
+  <<void.assign-1.1>>
+
+  [[https://eel.is/c++draft/expected#void.assign-1.1][(1.1)]]
+
+  <<void.assign-1.1.sentence-1>>
+  If this->has_value() && rhs.has_value() is true, no
+  effects[[https://eel.is/c++draft/expected#void.assign-1.1.sentence-1][.]]
+
+- 
+
+  <<void.assign-1.2>>
+
+  [[https://eel.is/c++draft/expected#void.assign-1.2][(1.2)]]
+
+  <<void.assign-1.2.sentence-1>>
+  Otherwise, if this->has_value() is true, equivalent to:
+  construct_at(addressof(/unex/), rhs./unex/); /has_val/ = false;
+
+- 
+
+  <<void.assign-1.3>>
+
+  [[https://eel.is/c++draft/expected#void.assign-1.3][(1.3)]]
+
+  <<void.assign-1.3.sentence-1>>
+  Otherwise, if rhs.has_value() is true, destroys /unex/ and sets
+  /has_val/ to
+  true[[https://eel.is/c++draft/expected#void.assign-1.3.sentence-1][.]]
+
+- 
+
+  <<void.assign-1.4>>
+
+  [[https://eel.is/c++draft/expected#void.assign-1.4][(1.4)]]
+
+  <<void.assign-1.4.sentence-1>>
+  Otherwise, equivalent to /unex/ =
+  rhs.error()[[https://eel.is/c++draft/expected#void.assign-1.4.sentence-1][.]]
+
+<<void.assign-2>>
+
+[[https://eel.is/c++draft/expected#void.assign-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10261][#]]
+
+<<void.assign-2.sentence-1>>
+/Returns/:
+*this[[https://eel.is/c++draft/expected#void.assign-2.sentence-1][.]]
+
+<<void.assign-3>>
+
+[[https://eel.is/c++draft/expected#void.assign-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10265][#]]
+
+<<void.assign-3.sentence-1>>
+/Remarks/: This operator is defined as deleted unless
+is_copy_assignable_v<E> is true and is_copy_constructible_v<E> is
+true[[https://eel.is/c++draft/expected#void.assign-3.sentence-1][.]]
+
+<<void.assign-4>>
+
+[[https://eel.is/c++draft/expected#void.assign-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10271][#]]
+
+<<void.assign-4.sentence-1>>
+This operator is trivial if is_trivially_copy_constructible_v<E>,
+is_trivially_copy_assignable_v<E>, and is_trivially_destructible_v<E>
+are all
+true[[https://eel.is/c++draft/expected#void.assign-4.sentence-1][.]]
+
+<<lib:expected<void>,operator=_>>
+
+<<lib:operator=,expected<void>_>>
+
+[[https://eel.is/c++draft/expected#lib:operator=,expected%3cvoid%3e_][🔗]]
+
+=constexpr== expected==&== ==operator=====(==expected==&==&== rhs==)== ==noexcept==(=/=see below=/=)==; =
+
+<<void.assign-5>>
+
+[[https://eel.is/c++draft/expected#void.assign-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10285][#]]
+
+<<void.assign-5.sentence-1>>
+/Constraints/: is_move_constructible_v<E> is true and
+is_move_assignable_v<E> is
+true[[https://eel.is/c++draft/expected#void.assign-5.sentence-1][.]]
+
+<<void.assign-6>>
+
+[[https://eel.is/c++draft/expected#void.assign-6][6]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10290][#]]
+
+<<void.assign-6.sentence-1>>
+/Effects/:
+- 
+
+  <<void.assign-6.1>>
+
+  [[https://eel.is/c++draft/expected#void.assign-6.1][(6.1)]]
+
+  <<void.assign-6.1.sentence-1>>
+  If this->has_value() && rhs.has_value() is true, no
+  effects[[https://eel.is/c++draft/expected#void.assign-6.1.sentence-1][.]]
+
+- 
+
+  <<void.assign-6.2>>
+
+  [[https://eel.is/c++draft/expected#void.assign-6.2][(6.2)]]
+
+  <<void.assign-6.2.sentence-1>>
+  Otherwise, if this->has_value() is true, equivalent to:
+  construct_at(addressof(/unex/), std::move(rhs./unex/)); /has_val/ =
+  false;
+
+- 
+
+  <<void.assign-6.3>>
+
+  [[https://eel.is/c++draft/expected#void.assign-6.3][(6.3)]]
+
+  <<void.assign-6.3.sentence-1>>
+  Otherwise, if rhs.has_value() is true, destroys /unex/ and sets
+  /has_val/ to
+  true[[https://eel.is/c++draft/expected#void.assign-6.3.sentence-1][.]]
+
+- 
+
+  <<void.assign-6.4>>
+
+  [[https://eel.is/c++draft/expected#void.assign-6.4][(6.4)]]
+
+  <<void.assign-6.4.sentence-1>>
+  Otherwise, equivalent to /unex/ =
+  std​::​move(rhs.error())[[https://eel.is/c++draft/expected#void.assign-6.4.sentence-1][.]]
+
+<<void.assign-7>>
+
+[[https://eel.is/c++draft/expected#void.assign-7][7]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10308][#]]
+
+<<void.assign-7.sentence-1>>
+/Returns/:
+*this[[https://eel.is/c++draft/expected#void.assign-7.sentence-1][.]]
+
+<<void.assign-8>>
+
+[[https://eel.is/c++draft/expected#void.assign-8][8]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10312][#]]
+
+<<void.assign-8.sentence-1>>
+/Remarks/: The exception specification is equivalent to
+is_nothrow_move_constructible_v<E> &&
+is_nothrow_move_assignable_v<E>[[https://eel.is/c++draft/expected#void.assign-8.sentence-1][.]]
+
+<<void.assign-9>>
+
+[[https://eel.is/c++draft/expected#void.assign-9][9]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10317][#]]
+
+<<void.assign-9.sentence-1>>
+This operator is trivial if is_trivially_move_constructible_v<E>,
+is_trivially_move_assignable_v<E>, and is_trivially_destructible_v<E>
+are all
+true[[https://eel.is/c++draft/expected#void.assign-9.sentence-1][.]]
+
+<<lib:expected<void>,operator=__>>
+
+<<lib:operator=,expected<void>__>>
+
+[[https://eel.is/c++draft/expected#lib:operator=,expected%3cvoid%3e__][🔗]]
+
+=template==<==class== G==>== ==constexpr== expected==&== ==operator=====(==const== unexpected==<==G==>==&== e==)==; ==template==<==class== G==>== ==constexpr== expected==&== ==operator=====(==unexpected==<==G==>==&==&== e==)==; =
+
+<<void.assign-10>>
+
+[[https://eel.is/c++draft/expected#void.assign-10][10]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10334][#]]
+
+<<void.assign-10.sentence-1>>
+Let GF be const G& for the first overload and G for the second
+overload[[https://eel.is/c++draft/expected#void.assign-10.sentence-1][.]]
+
+<<void.assign-11>>
+
+[[https://eel.is/c++draft/expected#void.assign-11][11]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10338][#]]
+
+<<void.assign-11.sentence-1>>
+/Constraints/: is_constructible_v<E, GF> is true and is_assignable_v<E&,
+GF> is
+true[[https://eel.is/c++draft/expected#void.assign-11.sentence-1][.]]
+
+<<void.assign-12>>
+
+[[https://eel.is/c++draft/expected#void.assign-12][12]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10343][#]]
+
+<<void.assign-12.sentence-1>>
+/Effects/:
+- 
+
+  <<void.assign-12.1>>
+
+  [[https://eel.is/c++draft/expected#void.assign-12.1][(12.1)]]
+
+  If has_value() is true, equivalent to: construct_at(addressof(/unex/),
+  std::forward<GF>(e.error())); /has_val/ = false;
+
+- 
+
+  <<void.assign-12.2>>
+
+  [[https://eel.is/c++draft/expected#void.assign-12.2][(12.2)]]
+
+  Otherwise, equivalent to: /unex/ = std​::​forward<GF>(e.error());
+
+<<void.assign-13>>
+
+[[https://eel.is/c++draft/expected#void.assign-13][13]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10357][#]]
+
+<<void.assign-13.sentence-1>>
+/Returns/:
+*this[[https://eel.is/c++draft/expected#void.assign-13.sentence-1][.]]
+
+<<lib:expected<void>,emplace>>
+
+<<lib:emplace,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:emplace,expected%3cvoid%3e][🔗]]
+
+=constexpr== ==void== emplace==(==)== ==noexcept==; =
+
+<<void.assign-14>>
+
+[[https://eel.is/c++draft/expected#void.assign-14][14]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10368][#]]
+
+<<void.assign-14.sentence-1>>
+/Effects/: If has_value() is false, destroys /unex/ and sets /has_val/
+to true[[https://eel.is/c++draft/expected#void.assign-14.sentence-1][.]]
+
+<<void.swap>>
+**** [[https://eel.is/c++draft/expected#void.swap][22.8.7.5]] Swap [[https://eel.is/c++draft/expected.void.swap][[expected.void.swap]]]
+:PROPERTIES:
+:CUSTOM_ID: swap-expected.void.swap-1
+:END:
+
+<<lib:expected<void>,swap>>
+
+<<lib:swap,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:swap,expected%3cvoid%3e][🔗]]
+
+=constexpr== ==void== swap==(==expected==&== rhs==)== ==noexcept==(=/=see below=/=)==; =
+
+<<void.swap-1>>
+
+[[https://eel.is/c++draft/expected#void.swap-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10382][#]]
+
+<<void.swap-1.sentence-1>>
+/Constraints/: is_swappable_v<E> is true and is_move_constructible_v<E>
+is true[[https://eel.is/c++draft/expected#void.swap-1.sentence-1][.]]
+
+<<void.swap-2>>
+
+[[https://eel.is/c++draft/expected#void.swap-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10387][#]]
+
+<<void.swap-2.sentence-1>>
+/Effects/: See Table
+[[https://eel.is/c++draft/expected#tab:expected.void.swap][73]][[https://eel.is/c++draft/expected#void.swap-2.sentence-1][.]]
+
+<<tab:expected.void.swap>>
+Table [[https://eel.is/c++draft/expected#tab:expected.void.swap][73]]
+--- swap(expected&)
+effects [[https://eel.is/c++draft/tab:expected.void.swap][[tab:expected.void.swap]]]\\
+| [[https://eel.is/c++draft/expected#tab:expected.void.swap-row-1][🔗]] | <<tab:expected.void.swap-row-1-column-2-sentence-1>> | <<tab:expected.void.swap-row-1-column-3-sentence-1>>      |
+|                                                                       | *this->has_value()*                                  | *!this->has_value()*                                      |
+| [[https://eel.is/c++draft/expected#tab:expected.void.swap-row-2][🔗]] | <<tab:expected.void.swap-row-2-column-2-sentence-1>> | <<tab:expected.void.swap-row-2-column-3-sentence-1>>      |
+|                                                                       | no effects                                           | calls rhs.swap(*this)                                     |
+| <<tab:expected.void.swap-row-2-column-1-sentence-1>>                  |                                                      |                                                           |
+| *rhs.has_value()*                                                     |                                                      |                                                           |
+| [[https://eel.is/c++draft/expected#tab:expected.void.swap-row-3][🔗]] | <<tab:expected.void.swap-row-3-column-2-sentence-1>> | <<tab:expected.void.swap-row-3-column-3-sentence-1>>      |
+|                                                                       | /see below/                                          | equivalent to: using std​::​swap; swap(/unex/, rhs./unex/); |
+| <<tab:expected.void.swap-row-3-column-1-sentence-1>>                  |                                                      |                                                           |
+| *!rhs.has_value()*                                                    |                                                      |                                                           |
+
+<<void.swap-2.sentence-2>>
+For the case where rhs.has_value() is false and this->has_value() is
+true, equivalent to: construct_at(addressof(/unex/),
+std::move(rhs./unex/)); destroy_at(addressof(rhs./unex/)); /has_val/ =
+false; rhs./has_val/ = true;
+
+<<void.swap-3>>
+
+[[https://eel.is/c++draft/expected#void.swap-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10412][#]]
+
+<<void.swap-3.sentence-1>>
+/Throws/: Any exception thrown by the expressions in the
+/Effects/[[https://eel.is/c++draft/expected#void.swap-3.sentence-1][.]]
+
+<<void.swap-4>>
+
+[[https://eel.is/c++draft/expected#void.swap-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10416][#]]
+
+<<void.swap-4.sentence-1>>
+/Remarks/: The exception specification is equivalent to
+is_nothrow_move_constructible_v<E> &&
+is_nothrow_swappable_v<E>[[https://eel.is/c++draft/expected#void.swap-4.sentence-1][.]]
+
+<<lib:expected<void>,swap_>>
+
+<<lib:swap,expected<void>_>>
+
+[[https://eel.is/c++draft/expected#lib:swap,expected%3cvoid%3e_][🔗]]
+
+=friend== ==constexpr== ==void== swap==(==expected==&== x, expected==&== y==)== ==noexcept==(==noexcept==(==x==.==swap==(==y==)==)==)==; =
+
+<<void.swap-5>>
+
+[[https://eel.is/c++draft/expected#void.swap-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10428][#]]
+
+<<void.swap-5.sentence-1>>
+/Effects/: Equivalent to
+x.swap(y)[[https://eel.is/c++draft/expected#void.swap-5.sentence-1][.]]
+
+<<void.obs>>
+**** [[https://eel.is/c++draft/expected#void.obs][22.8.7.6]] Observers [[https://eel.is/c++draft/expected.void.obs][[expected.void.obs]]]
+:PROPERTIES:
+:CUSTOM_ID: observers-expected.void.obs-1
+:END:
+
+<<lib:expected<void>,has_value>>
+
+<<lib:has_value,expected<void>>>
+
+<<lib:expected<void>,operator_bool>>
+
+<<lib:operator_bool,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:operator_bool,expected%3cvoid%3e][🔗]]
+
+=constexpr== ==explicit== ==operator== ==bool==(==)== ==const== ==noexcept==; ==constexpr== ==bool== has_value==(==)== ==const== ==noexcept==; =
+
+<<void.obs-1>>
+
+[[https://eel.is/c++draft/expected#void.obs-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10443][#]]
+
+<<void.obs-1.sentence-1>>
+/Returns/:
+/has_val/[[https://eel.is/c++draft/expected#void.obs-1.sentence-1][.]]
+
+<<lib:expected<void>,operator*>>
+
+<<lib:operator*,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:operator*,expected%3cvoid%3e][🔗]]
+
+=constexpr== ==void== ==operator==*==(==)== ==const== ==noexcept==; =
+
+<<void.obs-2>>
+
+[[https://eel.is/c++draft/expected#void.obs-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10454][#]]
+
+<<void.obs-2.sentence-1>>
+/Hardened preconditions/: has_value() is
+true[[https://eel.is/c++draft/expected#void.obs-2.sentence-1][.]]
+
+<<lib:expected<void>,value>>
+
+<<lib:value,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:value,expected%3cvoid%3e][🔗]]
+
+=constexpr== ==void== value==(==)== ==const== ==&==; =
+
+<<void.obs-3>>
+
+[[https://eel.is/c++draft/expected#void.obs-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10465][#]]
+
+<<void.obs-3.sentence-1>>
+/Mandates/: is_copy_constructible_v<E> is
+true[[https://eel.is/c++draft/expected#void.obs-3.sentence-1][.]]
+
+<<void.obs-4>>
+
+[[https://eel.is/c++draft/expected#void.obs-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10469][#]]
+
+<<void.obs-4.sentence-1>>
+/Throws/: bad_expected_access(error()) if has_value() is
+false[[https://eel.is/c++draft/expected#void.obs-4.sentence-1][.]]
+
+<<lib:expected<void>,value_>>
+
+<<lib:value,expected<void>_>>
+
+[[https://eel.is/c++draft/expected#lib:value,expected%3cvoid%3e_][🔗]]
+
+=constexpr== ==void== value==(==)== ==&==&==; =
+
+<<void.obs-5>>
+
+[[https://eel.is/c++draft/expected#void.obs-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10480][#]]
+
+<<void.obs-5.sentence-1>>
+/Mandates/: is_copy_constructible_v<E> is true and
+is_move_constructible_v<E> is
+true[[https://eel.is/c++draft/expected#void.obs-5.sentence-1][.]]
+
+<<void.obs-6>>
+
+[[https://eel.is/c++draft/expected#void.obs-6][6]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10485][#]]
+
+<<void.obs-6.sentence-1>>
+/Throws/: bad_expected_access(std​::​move(error())) if has_value() is
+false[[https://eel.is/c++draft/expected#void.obs-6.sentence-1][.]]
+
+<<lib:expected<void>,error>>
+
+<<lib:error,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:error,expected%3cvoid%3e][🔗]]
+
+=constexpr== ==const== E==&== error==(==)== ==const== ==&== ==noexcept==; ==constexpr== E==&== error==(==)== ==&== ==noexcept==; =
+
+<<void.obs-7>>
+
+[[https://eel.is/c++draft/expected#void.obs-7][7]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10498][#]]
+
+<<void.obs-7.sentence-1>>
+/Hardened preconditions/: has_value() is
+false[[https://eel.is/c++draft/expected#void.obs-7.sentence-1][.]]
+
+<<void.obs-8>>
+
+[[https://eel.is/c++draft/expected#void.obs-8][8]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10502][#]]
+
+<<void.obs-8.sentence-1>>
+/Returns/:
+/unex/[[https://eel.is/c++draft/expected#void.obs-8.sentence-1][.]]
+
+<<lib:expected<void>,error_>>
+
+<<lib:error,expected<void>_>>
+
+[[https://eel.is/c++draft/expected#lib:error,expected%3cvoid%3e_][🔗]]
+
+=constexpr== E==&==&== error==(==)== ==&==&== ==noexcept==; ==constexpr== ==const== E==&==&== error==(==)== ==const== ==&==&== ==noexcept==; =
+
+<<void.obs-9>>
+
+[[https://eel.is/c++draft/expected#void.obs-9][9]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10514][#]]
+
+<<void.obs-9.sentence-1>>
+/Hardened preconditions/: has_value() is
+false[[https://eel.is/c++draft/expected#void.obs-9.sentence-1][.]]
+
+<<void.obs-10>>
+
+[[https://eel.is/c++draft/expected#void.obs-10][10]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10518][#]]
+
+<<void.obs-10.sentence-1>>
+/Returns/:
+std​::​move(/unex/)[[https://eel.is/c++draft/expected#void.obs-10.sentence-1][.]]
+
+<<lib:expected<void>,error_or>>
+
+<<lib:error_or,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:error_or,expected%3cvoid%3e][🔗]]
+
+=template==<==class== G ===== E==>== ==constexpr== E error_or==(==G==&==&== e==)== ==const== ==&==; =
+
+<<void.obs-11>>
+
+[[https://eel.is/c++draft/expected#void.obs-11][11]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10529][#]]
+
+<<void.obs-11.sentence-1>>
+/Mandates/: is_copy_constructible_v<E> is true and is_convertible_v<G,
+E> is true[[https://eel.is/c++draft/expected#void.obs-11.sentence-1][.]]
+
+<<void.obs-12>>
+
+[[https://eel.is/c++draft/expected#void.obs-12][12]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10534][#]]
+
+<<void.obs-12.sentence-1>>
+/Returns/: std​::​forward<G>(e) if has_value() is true, error()
+otherwise[[https://eel.is/c++draft/expected#void.obs-12.sentence-1][.]]
+
+<<lib:expected<void>,error_or_>>
+
+<<lib:error_or,expected<void>_>>
+
+[[https://eel.is/c++draft/expected#lib:error_or,expected%3cvoid%3e_][🔗]]
+
+=template==<==class== G ===== E==>== ==constexpr== E error_or==(==G==&==&== e==)== ==&==&==; =
+
+<<void.obs-13>>
+
+[[https://eel.is/c++draft/expected#void.obs-13][13]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10546][#]]
+
+<<void.obs-13.sentence-1>>
+/Mandates/: is_move_constructible_v<E> is true and is_convertible_v<G,
+E> is true[[https://eel.is/c++draft/expected#void.obs-13.sentence-1][.]]
+
+<<void.obs-14>>
+
+[[https://eel.is/c++draft/expected#void.obs-14][14]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10551][#]]
+
+<<void.obs-14.sentence-1>>
+/Returns/: std​::​forward<G>(e) if has_value() is true, std​::​move(error())
+otherwise[[https://eel.is/c++draft/expected#void.obs-14.sentence-1][.]]
+
+<<void.monadic>>
+**** [[https://eel.is/c++draft/expected#void.monadic][22.8.7.7]] Monadic operations [[https://eel.is/c++draft/expected.void.monadic][[expected.void.monadic]]]
+:PROPERTIES:
+:CUSTOM_ID: monadic-operations-expected.void.monadic-1
+:END:
+
+<<lib:expected<void>,and_then>>
+
+<<lib:and_then,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:and_then,expected%3cvoid%3e][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== and_then==(==F==&==&== f==)== ==&==; ==template==<==class== F==>== ==constexpr== ==auto== and_then==(==F==&==&== f==)== ==const== ==&==; =
+
+<<void.monadic-1>>
+
+[[https://eel.is/c++draft/expected#void.monadic-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10566][#]]
+
+<<void.monadic-1.sentence-1>>
+Let U be
+remove_cvref_t<invoke_result_t<F>>[[https://eel.is/c++draft/expected#void.monadic-1.sentence-1][.]]
+
+<<void.monadic-2>>
+
+[[https://eel.is/c++draft/expected#void.monadic-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10569][#]]
+
+<<void.monadic-2.sentence-1>>
+/Constraints/: is_constructible_v<E, decltype(error())>> is
+true[[https://eel.is/c++draft/expected#void.monadic-2.sentence-1][.]]
+
+<<void.monadic-3>>
+
+[[https://eel.is/c++draft/expected#void.monadic-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10573][#]]
+
+<<void.monadic-3.sentence-1>>
+/Mandates/: U is a specialization of expected and is_same_v<typename
+U​::​error_type, E> is
+true[[https://eel.is/c++draft/expected#void.monadic-3.sentence-1][.]]
+
+<<void.monadic-4>>
+
+[[https://eel.is/c++draft/expected#void.monadic-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10578][#]]
+
+<<void.monadic-4.sentence-1>>
+/Effects/: Equivalent to: if (has_value()) return
+invoke(std::forward<F>(f)); else return U(unexpect, error());
+
+<<lib:expected<void>,and_then_>>
+
+<<lib:and_then,expected<void>_>>
+
+[[https://eel.is/c++draft/expected#lib:and_then,expected%3cvoid%3e_][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== and_then==(==F==&==&== f==)== ==&==&==; ==template==<==class== F==>== ==constexpr== ==auto== and_then==(==F==&==&== f==)== ==const== ==&==&==; =
+
+<<void.monadic-5>>
+
+[[https://eel.is/c++draft/expected#void.monadic-5][5]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10596][#]]
+
+<<void.monadic-5.sentence-1>>
+Let U be
+remove_cvref_t<invoke_result_t<F>>[[https://eel.is/c++draft/expected#void.monadic-5.sentence-1][.]]
+
+<<void.monadic-6>>
+
+[[https://eel.is/c++draft/expected#void.monadic-6][6]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10599][#]]
+
+<<void.monadic-6.sentence-1>>
+/Constraints/: is_constructible_v<E, decltype(std​::​move(error()))> is
+true[[https://eel.is/c++draft/expected#void.monadic-6.sentence-1][.]]
+
+<<void.monadic-7>>
+
+[[https://eel.is/c++draft/expected#void.monadic-7][7]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10603][#]]
+
+<<void.monadic-7.sentence-1>>
+/Mandates/: U is a specialization of expected and is_same_v<typename
+U​::​error_type, E> is
+true[[https://eel.is/c++draft/expected#void.monadic-7.sentence-1][.]]
+
+<<void.monadic-8>>
+
+[[https://eel.is/c++draft/expected#void.monadic-8][8]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10608][#]]
+
+<<void.monadic-8.sentence-1>>
+/Effects/: Equivalent to: if (has_value()) return
+invoke(std::forward<F>(f)); else return U(unexpect, std::move(error()));
+
+<<lib:expected<void>,or_else>>
+
+<<lib:or_else,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:or_else,expected%3cvoid%3e][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== or_else==(==F==&==&== f==)== ==&==; ==template==<==class== F==>== ==constexpr== ==auto== or_else==(==F==&==&== f==)== ==const== ==&==; =
+
+<<void.monadic-9>>
+
+[[https://eel.is/c++draft/expected#void.monadic-9][9]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10626][#]]
+
+<<void.monadic-9.sentence-1>>
+Let G be remove_cvref_t<invoke_result_t<F,
+decltype(error())>>[[https://eel.is/c++draft/expected#void.monadic-9.sentence-1][.]]
+
+<<void.monadic-10>>
+
+[[https://eel.is/c++draft/expected#void.monadic-10][10]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10629][#]]
+
+<<void.monadic-10.sentence-1>>
+/Mandates/: G is a specialization of expected and is_same_v<typename
+G​::​value_type, T> is
+true[[https://eel.is/c++draft/expected#void.monadic-10.sentence-1][.]]
+
+<<void.monadic-11>>
+
+[[https://eel.is/c++draft/expected#void.monadic-11][11]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10634][#]]
+
+<<void.monadic-11.sentence-1>>
+/Effects/: Equivalent to: if (has_value()) return G(); else return
+invoke(std::forward<F>(f), error());
+
+<<lib:expected<void>,or_else_>>
+
+<<lib:or_else,expected<void>_>>
+
+[[https://eel.is/c++draft/expected#lib:or_else,expected%3cvoid%3e_][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== or_else==(==F==&==&== f==)== ==&==&==; ==template==<==class== F==>== ==constexpr== ==auto== or_else==(==F==&==&== f==)== ==const== ==&==&==; =
+
+<<void.monadic-12>>
+
+[[https://eel.is/c++draft/expected#void.monadic-12][12]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10652][#]]
+
+<<void.monadic-12.sentence-1>>
+Let G be remove_cvref_t<invoke_result_t<F,
+decltype(std​::​move(error()))>>[[https://eel.is/c++draft/expected#void.monadic-12.sentence-1][.]]
+
+<<void.monadic-13>>
+
+[[https://eel.is/c++draft/expected#void.monadic-13][13]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10656][#]]
+
+<<void.monadic-13.sentence-1>>
+/Mandates/: G is a specialization of expected and is_same_v<typename
+G​::​value_type, T> is
+true[[https://eel.is/c++draft/expected#void.monadic-13.sentence-1][.]]
+
+<<void.monadic-14>>
+
+[[https://eel.is/c++draft/expected#void.monadic-14][14]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10661][#]]
+
+<<void.monadic-14.sentence-1>>
+/Effects/: Equivalent to: if (has_value()) return G(); else return
+invoke(std::forward<F>(f), std::move(error()));
+
+<<lib:expected<void>,transform>>
+
+<<lib:transform,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:transform,expected%3cvoid%3e][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== transform==(==F==&==&== f==)== ==&==; ==template==<==class== F==>== ==constexpr== ==auto== transform==(==F==&==&== f==)== ==const== ==&==; =
+
+<<void.monadic-15>>
+
+[[https://eel.is/c++draft/expected#void.monadic-15][15]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10679][#]]
+
+<<void.monadic-15.sentence-1>>
+Let U be
+remove_cv_t<invoke_result_t<F>>[[https://eel.is/c++draft/expected#void.monadic-15.sentence-1][.]]
+
+<<void.monadic-16>>
+
+[[https://eel.is/c++draft/expected#void.monadic-16][16]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10682][#]]
+
+<<void.monadic-16.sentence-1>>
+/Constraints/: is_constructible_v<E, decltype(error())> is
+true[[https://eel.is/c++draft/expected#void.monadic-16.sentence-1][.]]
+
+<<void.monadic-17>>
+
+[[https://eel.is/c++draft/expected#void.monadic-17][17]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10686][#]]
+
+<<void.monadic-17.sentence-1>>
+/Mandates/: U is a valid value type for
+expected[[https://eel.is/c++draft/expected#void.monadic-17.sentence-1][.]]
+
+<<void.monadic-17.sentence-2>>
+If is_void_v<U> is false, the declaration U
+u(invoke(std::forward<F>(f))); is
+well-formed[[https://eel.is/c++draft/expected#void.monadic-17.sentence-2][.]]
+
+<<void.monadic-18>>
+
+[[https://eel.is/c++draft/expected#void.monadic-18][18]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10695][#]]
+
+<<void.monadic-18.sentence-1>>
+/Effects/:
+- 
+
+  <<void.monadic-18.1>>
+
+  [[https://eel.is/c++draft/expected#void.monadic-18.1][(18.1)]]
+
+  <<void.monadic-18.1.sentence-1>>
+  If has_value() is false, returns expected<U, E>(unexpect,
+  error())[[https://eel.is/c++draft/expected#void.monadic-18.1.sentence-1][.]]
+
+- 
+
+  <<void.monadic-18.2>>
+
+  [[https://eel.is/c++draft/expected#void.monadic-18.2][(18.2)]]
+
+  <<void.monadic-18.2.sentence-1>>
+  Otherwise, if is_void_v<U> is false, returns an expected<U, E> object
+  whose /has_val/ member is true and /val/ member is
+  direct-non-list-initialized with
+  invoke(std​::​forward<F>(f))[[https://eel.is/c++draft/expected#void.monadic-18.2.sentence-1][.]]
+
+- 
+
+  <<void.monadic-18.3>>
+
+  [[https://eel.is/c++draft/expected#void.monadic-18.3][(18.3)]]
+
+  <<void.monadic-18.3.sentence-1>>
+  Otherwise, evaluates invoke(std​::​forward<F>(f)) and then returns
+  expected<U,
+  E>()[[https://eel.is/c++draft/expected#void.monadic-18.3.sentence-1][.]]
+
+<<lib:expected<void>,transform_>>
+
+<<lib:transform,expected<void>_>>
+
+[[https://eel.is/c++draft/expected#lib:transform,expected%3cvoid%3e_][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== transform==(==F==&==&== f==)== ==&==&==; ==template==<==class== F==>== ==constexpr== ==auto== transform==(==F==&==&== f==)== ==const== ==&==&==; =
+
+<<void.monadic-19>>
+
+[[https://eel.is/c++draft/expected#void.monadic-19][19]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10719][#]]
+
+<<void.monadic-19.sentence-1>>
+Let U be
+remove_cv_t<invoke_result_t<F>>[[https://eel.is/c++draft/expected#void.monadic-19.sentence-1][.]]
+
+<<void.monadic-20>>
+
+[[https://eel.is/c++draft/expected#void.monadic-20][20]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10722][#]]
+
+<<void.monadic-20.sentence-1>>
+/Constraints/: is_constructible_v<E, decltype(std​::​move(error()))> is
+true[[https://eel.is/c++draft/expected#void.monadic-20.sentence-1][.]]
+
+<<void.monadic-21>>
+
+[[https://eel.is/c++draft/expected#void.monadic-21][21]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10726][#]]
+
+<<void.monadic-21.sentence-1>>
+/Mandates/: U is a valid value type for
+expected[[https://eel.is/c++draft/expected#void.monadic-21.sentence-1][.]]
+
+<<void.monadic-21.sentence-2>>
+If is_void_v<U> is false, the declaration U
+u(invoke(std::forward<F>(f))); is
+well-formed[[https://eel.is/c++draft/expected#void.monadic-21.sentence-2][.]]
+
+<<void.monadic-22>>
+
+[[https://eel.is/c++draft/expected#void.monadic-22][22]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10735][#]]
+
+<<void.monadic-22.sentence-1>>
+/Effects/:
+- 
+
+  <<void.monadic-22.1>>
+
+  [[https://eel.is/c++draft/expected#void.monadic-22.1][(22.1)]]
+
+  <<void.monadic-22.1.sentence-1>>
+  If has_value() is false, returns expected<U, E>(unexpect,
+  std​::​move(error()))[[https://eel.is/c++draft/expected#void.monadic-22.1.sentence-1][.]]
+
+- 
+
+  <<void.monadic-22.2>>
+
+  [[https://eel.is/c++draft/expected#void.monadic-22.2][(22.2)]]
+
+  <<void.monadic-22.2.sentence-1>>
+  Otherwise, if is_void_v<U> is false, returns an expected<U, E> object
+  whose /has_val/ member is true and /val/ member is
+  direct-non-list-initialized with
+  invoke(std​::​forward<F>(f))[[https://eel.is/c++draft/expected#void.monadic-22.2.sentence-1][.]]
+
+- 
+
+  <<void.monadic-22.3>>
+
+  [[https://eel.is/c++draft/expected#void.monadic-22.3][(22.3)]]
+
+  <<void.monadic-22.3.sentence-1>>
+  Otherwise, evaluates invoke(std​::​forward<F>(f)) and then returns
+  expected<U,
+  E>()[[https://eel.is/c++draft/expected#void.monadic-22.3.sentence-1][.]]
+
+<<lib:expected<void>,transform_error>>
+
+<<lib:transform_error,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:transform_error,expected%3cvoid%3e][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== transform_error==(==F==&==&== f==)== ==&==; ==template==<==class== F==>== ==constexpr== ==auto== transform_error==(==F==&==&== f==)== ==const== ==&==; =
+
+<<void.monadic-23>>
+
+[[https://eel.is/c++draft/expected#void.monadic-23][23]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10759][#]]
+
+<<void.monadic-23.sentence-1>>
+Let G be remove_cv_t<invoke_result_t<F,
+decltype(error())>>[[https://eel.is/c++draft/expected#void.monadic-23.sentence-1][.]]
+
+<<void.monadic-24>>
+
+[[https://eel.is/c++draft/expected#void.monadic-24][24]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10762][#]]
+
+<<void.monadic-24.sentence-1>>
+/Mandates/: G is a valid template argument for unexpected
+([[https://eel.is/c++draft/expected#un.general][[expected.un.general]]])
+and the declaration G g(invoke(std::forward<F>(f), error())); is
+well-formed[[https://eel.is/c++draft/expected#void.monadic-24.sentence-1][.]]
+
+<<void.monadic-25>>
+
+[[https://eel.is/c++draft/expected#void.monadic-25][25]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10771][#]]
+
+<<void.monadic-25.sentence-1>>
+/Returns/: If has_value() is true, expected<T, G>(); otherwise, an
+expected<T, G> object whose /has_val/ member is false and /unex/ member
+is direct-non-list-initialized with invoke(std​::​forward<F>(f),
+error())[[https://eel.is/c++draft/expected#void.monadic-25.sentence-1][.]]
+
+<<lib:expected<void>,transform_error_>>
+
+<<lib:transform_error,expected<void>_>>
+
+[[https://eel.is/c++draft/expected#lib:transform_error,expected%3cvoid%3e_][🔗]]
+
+=template==<==class== F==>== ==constexpr== ==auto== transform_error==(==F==&==&== f==)== ==&==&==; ==template==<==class== F==>== ==constexpr== ==auto== transform_error==(==F==&==&== f==)== ==const== ==&==&==; =
+
+<<void.monadic-26>>
+
+[[https://eel.is/c++draft/expected#void.monadic-26][26]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10786][#]]
+
+<<void.monadic-26.sentence-1>>
+Let G be remove_cv_t<invoke_result_t<F,
+decltype(std​::​move(error()))>>[[https://eel.is/c++draft/expected#void.monadic-26.sentence-1][.]]
+
+<<void.monadic-27>>
+
+[[https://eel.is/c++draft/expected#void.monadic-27][27]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10790][#]]
+
+<<void.monadic-27.sentence-1>>
+/Mandates/: G is a valid template argument for unexpected
+([[https://eel.is/c++draft/expected#un.general][[expected.un.general]]])
+and the declaration G g(invoke(std::forward<F>(f), std::move(error())));
+is
+well-formed[[https://eel.is/c++draft/expected#void.monadic-27.sentence-1][.]]
+
+<<void.monadic-28>>
+
+[[https://eel.is/c++draft/expected#void.monadic-28][28]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10799][#]]
+
+<<void.monadic-28.sentence-1>>
+/Returns/: If has_value() is true, expected<T, G>(); otherwise, an
+expected<T, G> object whose /has_val/ member is false and /unex/ member
+is direct-non-list-initialized with invoke(std​::​forward<F>(f),
+std​::​move(error()))[[https://eel.is/c++draft/expected#void.monadic-28.sentence-1][.]]
+
+<<void.eq>>
+**** [[https://eel.is/c++draft/expected#void.eq][22.8.7.8]] Equality operators [[https://eel.is/c++draft/expected.void.eq][[expected.void.eq]]]
+:PROPERTIES:
+:CUSTOM_ID: equality-operators-expected.void.eq-1
+:END:
+
+<<lib:expected<void>,operator==>>
+
+<<lib:operator==,expected<void>>>
+
+[[https://eel.is/c++draft/expected#lib:operator==,expected%3cvoid%3e][🔗]]
+
+=template==<==class== T2, ==class== E2==>== ==requires== is_void_v==<==T2==>== ==friend== ==constexpr== ==bool== ==operator========(==const== expected==&== x, ==const== expected==<==T2, E2==>==&== y==)==; =
+
+<<void.eq-1>>
+
+[[https://eel.is/c++draft/expected#void.eq-1][1]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10816][#]]
+
+<<void.eq-1.sentence-1>>
+/Constraints/: The expression x.error() == y.error() is well-formed and
+its result is convertible to
+bool[[https://eel.is/c++draft/expected#void.eq-1.sentence-1][.]]
+
+<<void.eq-2>>
+
+[[https://eel.is/c++draft/expected#void.eq-2][2]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10821][#]]
+
+<<void.eq-2.sentence-1>>
+/Returns/: If x.has_value() does not equal y.has_value(), false;
+otherwise if x.has_value() is true, true; otherwise x.error() ==
+y.error()[[https://eel.is/c++draft/expected#void.eq-2.sentence-1][.]]
+
+<<lib:expected<void>,operator==_>>
+
+<<lib:operator==,expected<void>_>>
+
+[[https://eel.is/c++draft/expected#lib:operator==,expected%3cvoid%3e_][🔗]]
+
+=template==<==class== E2==>== ==friend== ==constexpr== ==bool== ==operator========(==const== expected==&== x, ==const== unexpected==<==E2==>==&== e==)==; =
+
+<<void.eq-3>>
+
+[[https://eel.is/c++draft/expected#void.eq-3][3]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10835][#]]
+
+<<void.eq-3.sentence-1>>
+/Constraints/: The expression x.error() == e.error() is well-formed and
+its result is convertible to
+bool[[https://eel.is/c++draft/expected#void.eq-3.sentence-1][.]]
+
+<<void.eq-4>>
+
+[[https://eel.is/c++draft/expected#void.eq-4][4]]
+
+[[http://github.com/Eelis/draft/tree/035bb8d03914a966a280f6398e27cc4739587a0b/source/utilities.tex#L10840][#]]
+
+<<void.eq-4.sentence-1>>
+/Returns/: If !x.has_value() is true, x.error() == e.error(); otherwise
+false[[https://eel.is/c++draft/expected#void.eq-4.sentence-1][.]]
