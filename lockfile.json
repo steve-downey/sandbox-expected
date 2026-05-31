@@ -1,12 +1,13 @@
 {
   "dependencies": [
     {
-      "name": "googletest",
-      "package_name": "GTest",
-      "git_repository": "https://github.com/google/googletest.git",
-      "git_tag": "6910c9d9165801d8827d628cb72eb7ea9dd538c5",
+      "name": "catch2",
+      "package_name": "Catch2",
+      "git_repository": "https://github.com/catchorg/Catch2.git",
+      "git_tag": "fee81626d2a4811095c3a39d20fb355eeb954101",
       "cmake_args": {
-        "INSTALL_GTEST": "OFF"
+        "CATCH_INSTALL_DOCS": "OFF",
+        "CATCH_BUILD_TESTING": "OFF"
       }
     }
   ]
