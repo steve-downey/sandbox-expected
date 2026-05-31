@@ -1,87 +1,62 @@
-# Handoff: After Fix 2
+# Handoff: After Fix 3
 
 ## What Was Done
 
-Fix 2 is complete. Trivial special member functions were added to the primary
-template `expected<T, E>` and the void specialization `expected<void, E>`.
-Branch `fix2-trivial-smfs` was merged (--no-ff) into `expected-over-references`.
+Fix 3 is complete. SFINAE-friendly `requires` clauses added to all monadic
+operations per standard Constraints. Branch `fix3-monadic-constraints` merged
+(--no-ff) into `expected-over-references`.
 
 ### Changes in `include/beman/expected/expected.hpp`
 
-1. **Primary template: trivial copy constructor** — new `= default` overload
-   constrained by `is_trivially_copy_constructible_v<T> && is_trivially_copy_constructible_v<E>`.
-   Non-trivial overload gains negated triviality guard.
+**Primary template (16 overloads — 4 operations × 4 ref-qualifiers):**
+- `and_then` / `transform`: `requires std::is_constructible_v<E, E-ref>`
+  (E& for &, E&& for &&, const E& for const&, const E&& for const&&)
+- `or_else` / `transform_error`: `requires std::is_constructible_v<T, T-ref>`
+  (same ref-qualifier pattern)
 
-2. **Primary template: trivial move constructor** — same pattern with move traits.
+**Void specialization (8 of 16 overloads):**
+- `and_then` / `transform`: same E-constructibility constraints as primary
+- `or_else` / `transform_error`: NO constraints (standard specifies none)
 
-3. **Primary template: trivial copy assignment** — `= default` overload
-   constrained by trivially copy constructible/assignable/destructible for both T and E.
-   Non-trivial overload gains negated guard.
-
-4. **Primary template: trivial move assignment** — same pattern with move traits.
-
-5. **Void specialization: trivial copy assignment** — `= default` overload
-   constrained by trivially copy constructible/assignable/destructible for E.
-   Non-trivial overload gains negated guard.
-
-6. **Void specialization: trivial move assignment** — same pattern.
-
-The void specialization already had trivial copy/move constructors (from Step 4).
+Both in-class declarations and out-of-line definitions updated.
 
 ### Tests added
 
-- `tests/beman/expected/expected_trivial.test.cpp` — beman-only:
-  - `static_assert` checks for `expected<int, int>` (trivially copy/move constructible,
-    copy/move assignable, destructible)
-  - `static_assert` checks for `expected<void, int>` (same)
-  - Negative `static_assert` checks for `expected<std::string, int>` (not trivial)
-  - Two Catch2 runtime tests verifying copy/move construction and assignment
+- `tests/beman/expected/expected_monadic_constraints.test.cpp` — beman-only:
+  - Concept detectors using `std::declval<X>()` to preserve value category
+  - MoveOnly type (deleted copy ctor) as E: verifies `and_then`/`transform`
+    lvalue overloads are SFINAE-removed, rvalue overloads remain available
+  - MoveOnly type as T: verifies `or_else`/`transform_error` same pattern
+  - Void specialization: same E-constructibility tests for `and_then`/`transform`
+  - Void specialization: `or_else`/`transform_error` unconstrained (always available)
+  - Normal types: all operations remain available on all overloads
+  - 6 Catch2 runtime tests exercising rvalue monadic chains with move-only types
 
 ### Test count
 
-241 tests total, all passing (was 241 before; 2 new runtime tests + static_asserts
-at compile time).
+247 tests total, all passing.
 
 ## Build Commands
 
 ```bash
-make TOOLCHAIN=gcc-16 test   # 241 tests, all passing
+make TOOLCHAIN=gcc-16 test   # 247 tests, all passing
 make lint                    # all linters pass (beman-tidy crash is pre-existing)
 ```
-
-## Current Branch State
-
-- Feature branch: `expected-over-references`
-- Worktree `../fix2-trivial-smfs/` contains the fix branch
 
 ## Conformance Fix Checklist
 
 - [x] Fix 1: Constructor/assignment/equality constraints
-- [x] Fix 2: Trivial special member functions  ← just done
-- [ ] Fix 3: Monadic operation constraints
+- [x] Fix 2: Trivial special member functions
+- [x] Fix 3: Monadic operation constraints  ← just done
 - [ ] Fix 4: Mandates static_asserts
 - [ ] Fix 5: Hardened preconditions and minor fixes
 
-## Next Step: Fix 3
+## Next Step: Fix 4
 
-Fix 3 adds `requires` clauses to all monadic operations. The standard specifies
-these as *Constraints* (SFINAE), but the implementation currently has no
-constraints — calling a monadic operation when the constraint isn't met produces
-a hard error instead of graceful overload failure.
+Fix 4 adds `static_assert` Mandates to observers and monadic operations.
+These go on the same functions that just received requires clauses (Fix 3),
+plus `value()`, `value_or()`, and `error_or()` observers.
 
-### Primary template (16 overloads: 4 operations × 4 ref-qualifiers)
-
-- `and_then`: needs `is_constructible_v<E, decltype(error())>` (& and const& overloads)
-  or `is_constructible_v<E, decltype(std::move(error()))>` (&& and const&& overloads)
-- `or_else`: needs `is_constructible_v<T, decltype(*this)>` variant per ref-qualifier
-- `transform`: needs `is_constructible_v<E, decltype(error())>` variant
-- `transform_error`: needs `is_constructible_v<T, decltype(*this)>` variant
-
-### Void specialization (8 overloads: and_then + transform × 4)
-
-- `and_then`: same E-constructibility constraints
-- `transform`: same E-constructibility constraints
-- `or_else` and `transform_error` have no Constraints in the standard for the void
-  specialization (only Mandates)
-
-See `docs/conformance-fixes/fix3-monadic-constraints.md` for full details.
+The Mandates are compile-time checks that produce clear diagnostics when
+violated, as opposed to Constraints which affect overload resolution.
+See `docs/conformance-fixes/fix4-mandates.md`.

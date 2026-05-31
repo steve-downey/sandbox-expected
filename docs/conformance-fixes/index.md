@@ -62,7 +62,7 @@ constraint that libstdc++ doesn't enforce, put it in the beman-only target.
 
 - [x] Fix 1: Constructor/assignment/equality constraints
 - [x] Fix 2: Trivial special member functions
-- [ ] Fix 3: Monadic operation constraints
+- [x] Fix 3: Monadic operation constraints
 - [ ] Fix 4: Mandates static_asserts
 - [ ] Fix 5: Hardened preconditions and minor fixes
 
