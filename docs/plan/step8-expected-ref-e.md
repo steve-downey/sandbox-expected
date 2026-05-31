@@ -65,7 +65,7 @@ Same rebind semantics as Step 7, applied to the error side:
   For `E& = G&`, we'd need the unexpected to provide a non-const reference.
   This means construction from `unexpected<G>&` (non-const) works when
   `E` is non-const, and from `const unexpected<G>&` when `E` is const.
-  
+
   Alternative: the `expected<T, E&>` can also be constructed directly with
   `(unexpect_t, E& ref)` to bind the error reference.
 

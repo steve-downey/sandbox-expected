@@ -1,32 +1,38 @@
-# Handoff: After Step 1
+# Handoff: After Step 2
 
 ## What Was Done
 
-Step 1 is complete. `unexpected<E>` is fully implemented and tested on branch
-`step1-unexpected`.
+Step 2 is complete. `bad_expected_access<void>` and `bad_expected_access<E>` are
+fully implemented and tested on branch `step2-bad-expected-access`.
 
 ### Files changed
 
-- `include/beman/expected/unexpected.hpp` — replaced the empty namespace with:
-  - `unexpect_t` struct and `unexpect` inline constexpr instance
-  - `unexpected<E>` class template with all standard members:
-    - Copy/move constructors (= default)
-    - Converting constructor with `requires` constraints (excludes `unexpected`
-      and `in_place_t` as `Err`, mandates `is_constructible_v<E, Err>`)
-    - Two in-place constructors (`in_place_t, Args...` and
-      `in_place_t, initializer_list<U>, Args...`)
-    - Copy/move assignment (= default)
-    - Four ref-qualified `error()` observers
-    - `swap()` member (noexcept conditional on `is_nothrow_swappable_v<E>`)
-    - `operator==` hidden friend (cross-type `E2`)
-    - `swap()` hidden friend (ADL)
-  - CTAD deduction guide: `template<class E> unexpected(E) -> unexpected<E>`
-  - All function bodies defined out-of-line after the class
+- `cmake/gcc-flags.cmake` — raised C++ standard from C++20 to C++26 (`-std=gnu++26`,
+  `CMAKE_CXX_STANDARD 26`). The build baseline is now **GCC-16 / C++26**.
+  Use `make TOOLCHAIN=gcc-16 test` to build and test.
 
-- `tests/beman/expected/unexpected.test.cpp` — 22 tests covering all of the above
+- `include/beman/expected/bad_expected_access.hpp` — replaced the empty namespace with:
+  - Forward declaration `template<class E> class bad_expected_access;`
+  - `bad_expected_access<void>` explicit specialization (base class):
+    - Inherits from `std::exception`
+    - Protected default/copy/move constructors and assignment operators (`= default`)
+    - Protected `constexpr ~bad_expected_access() = default`
+    - Public `constexpr const char* what() const noexcept override`
+  - `bad_expected_access<E>` primary template (derived):
+    - `constexpr explicit bad_expected_access(E e)` — stores via `std::move`
+    - `constexpr const char* what() const noexcept override`
+    - Four ref-qualified `error()` observers (`&`, `const&`, `&&`, `const&&`)
+    - Private `E unex` member
+  - All function bodies defined out-of-line after the classes
+  - Include guard fixed to `BEMAN_EXPECTED_BAD_EXPECTED_ACCESS_HPP` (was missing `_HPP`)
 
-- `examples/CMakeLists.txt` — extra blank line removed by gersemi (CMake
-  formatter), no semantic change
+- `tests/beman/expected/bad_expected_access.test.cpp` — 11 tests covering:
+  - Basic construction and `error()` access
+  - `what()` returns `"bad expected access"`
+  - Inherits from `std::exception` (slice to reference)
+  - All four ref-qualified `error()` overloads
+  - `std::string` with move semantics
+  - Catchable as `std::exception&` and `bad_expected_access<void>&`
 
 ### Known pre-existing issue
 
@@ -35,24 +41,39 @@ Step 1 is complete. `unexpected<E>` is fully implemented and tested on branch
 This is pre-existing on `main` and unrelated to our changes.
 All other linters (clang-format, gersemi, codespell) pass.
 
+## Build Baseline Change
+
+The project now requires **GCC-16** and **C++26**. Run all builds as:
+
+```
+make TOOLCHAIN=gcc-16 test
+make lint
+```
+
+Plain `make` (system `cc`/`c++` = GCC 13) will fail because GCC 13 does not
+support `-std=gnu++26`.
+
 ## Next Step
 
-Step 2: Implement `bad_expected_access<E>` — see
-`docs/plan/step2-bad-expected-access.md`.
+Steps 1 and 2 must both be merged (no-ff) to `main` before Step 3 can start.
 
-Steps 1 and 2 were independent; Step 2 branches from `main` (not from
-`step1-unexpected`). After Step 2 is done, both Step 1 and Step 2 must be
-merged (no-ff) to `main` before Step 3 can start.
+- Step 1 is on branch `step1-unexpected`
+- Step 2 is on branch `step2-bad-expected-access`
 
-## Key context for Step 2
+Once both are merged, proceed to **Step 3**: `expected<T, E>` primary template.
+See `docs/plan/step3-expected-primary.md`.
 
-- The header `include/beman/expected/bad_expected_access.hpp` exists with the
-  full specification in a comment block — same skeleton pattern as Step 1.
-- The exception types are needed so that `expected::value()` can throw when
-  there's no value.
-- `bad_expected_access<void>` is the base (protected ctors, public `what()`).
-- `bad_expected_access<E>` derives from it and stores the error value.
-- `what()` should return `"bad expected access"` (libstdc++/libc++ convention).
-- Use `<exception>` and `<utility>`; no other new includes should be needed.
-- Follow the same conventions: `constexpr` everywhere, out-of-line definitions,
-  angle-bracket includes, `#ifndef`/`#define`/`#endif` guards.
+## Key context for Step 3
+
+- `unexpected<E>` (Step 1) and `bad_expected_access<E>` (Step 2) are now available
+- `expected<T, E>` stores either a `T` value or an `unexpected<E>` error in a union
+- The primary template is for non-reference, non-void `T` and `E`
+- `expected::value()` must throw `bad_expected_access<E>` when there is no value
+- The header `include/beman/expected/expected.hpp` exists with the full specification
+  in a comment block — same skeleton pattern as Steps 1 and 2
+- Key storage: `union { T val_; E unex_; }` with a `bool has_val_` flag
+- The reference implementation in `~/src/steve-downey/optional/main` shows patterns
+  for the union storage and special member function constraints
+- Step 3 does NOT include monadic operations (and_then, or_else, transform,
+  transform_error) — those come in Step 5
+- Build with `make TOOLCHAIN=gcc-16 test` throughout
