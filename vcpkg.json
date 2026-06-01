@@ -3,7 +3,7 @@
   "version-semver": "0.1.0",
   "dependencies": [
     {
-      "name": "gtest",
+      "name": "catch2",
       "host": true
     }
   ]

@@ -82,11 +82,14 @@ beman_install_library(beman.expected TARGETS beman.expected)
 configure_build_telemetry()
 
 if(BEMAN_EXPECTED_BUILD_TESTS)
-    find_package(GTest CONFIG REQUIRED)
-endif()
-
-if(BEMAN_EXPECTED_BUILD_TESTS)
-    find_package(GTest CONFIG REQUIRED)
+    find_package(Catch2 CONFIG REQUIRED)
+    # When Catch2 is fetched via FetchContent, its extras dir needs to be on the module path.
+    # FetchContent_GetProperties reads global state set during fetch, so works from any scope.
+    include(FetchContent)
+    FetchContent_GetProperties(catch2)
+    if(catch2_POPULATED AND catch2_SOURCE_DIR)
+        list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+    endif()
 endif()
 
 if(BEMAN_EXPECTED_BUILD_TESTS)

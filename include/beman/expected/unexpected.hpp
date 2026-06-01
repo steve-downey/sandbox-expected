@@ -3,53 +3,137 @@
 #ifndef BEMAN_EXPECTED_UNEXPECTED_HPP
 #define BEMAN_EXPECTED_UNEXPECTED_HPP
 
-/***
-22.8.3 Class template unexpected[expected.unexpected]
-22.8.3.1 General[expected.un.general]
-1
-#
-Subclause [expected.unexpected] describes the class template unexpected that represents unexpected objects stored in
-expected objects.
-
-namespace std {
-  template<class E>
-  class unexpected {
-  public:
-    // [expected.un.cons], constructors
-    constexpr unexpected(const unexpected&) = default;
-    constexpr unexpected(unexpected&&) = default;
-    template<class Err = E>
-      constexpr explicit unexpected(Err&&);
-    template<class... Args>
-      constexpr explicit unexpected(in_place_t, Args&&...);
-    template<class U, class... Args>
-      constexpr explicit unexpected(in_place_t, initializer_list<U>, Args&&...);
-
-    constexpr unexpected& operator=(const unexpected&) = default;
-    constexpr unexpected& operator=(unexpected&&) = default;
-
-    constexpr const E& error() const & noexcept;
-    constexpr E& error() & noexcept;
-    constexpr const E&& error() const && noexcept;
-    constexpr E&& error() && noexcept;
-
-    constexpr void swap(unexpected& other) noexcept(see below);
-
-    template<class E2>
-      friend constexpr bool operator==(const unexpected&, const unexpected<E2>&);
-
-    friend constexpr void swap(unexpected& x, unexpected& y) noexcept(noexcept(x.swap(y)));
-
-  private:
-    E unex;             // exposition only
-  };
-
-  template<class E> unexpected(E) -> unexpected<E>;
-}
-*/
+#include <initializer_list>
+#include <type_traits>
+#include <utility>
 
 namespace beman {
-namespace expected {}
+namespace expected {
+
+// [expected.unexpect]
+struct unexpect_t {
+    explicit unexpect_t() = default;
+};
+inline constexpr unexpect_t unexpect{};
+
+// Forward declaration for is_unexpected_specialization trait
+template <class E>
+class unexpected;
+
+namespace detail {
+template <class T>
+struct is_unexpected_specialization : std::false_type {};
+template <class E>
+struct is_unexpected_specialization<unexpected<E>> : std::true_type {};
+} // namespace detail
+
+// [expected.unexpected]
+template <class E>
+class unexpected {
+    // [expected.un.general] para 2: ill-formed instantiations
+    static_assert(std::is_object_v<E>, "unexpected<E>: E must be an object type (not void, reference, or function)");
+    static_assert(!std::is_array_v<E>, "unexpected<E>: E must not be an array type");
+    static_assert(std::is_same_v<E, std::remove_cv_t<E>>, "unexpected<E>: E must not be cv-qualified");
+    static_assert(!detail::is_unexpected_specialization<E>::value,
+                  "unexpected<E>: E must not be a specialization of unexpected");
+
+  public:
+    constexpr unexpected(const unexpected&) = default;
+    constexpr unexpected(unexpected&&)      = default;
+
+    template <class Err = E>
+        requires(!std::is_same_v<std::remove_cvref_t<Err>, unexpected> &&
+                 !std::is_same_v<std::remove_cvref_t<Err>, std::in_place_t> && std::is_constructible_v<E, Err>)
+    constexpr explicit unexpected(Err&& e) noexcept(std::is_nothrow_constructible_v<E, Err>);
+
+    template <class... Args>
+        requires std::is_constructible_v<E, Args...>
+    constexpr explicit unexpected(std::in_place_t,
+                                  Args&&... args) noexcept(std::is_nothrow_constructible_v<E, Args...>);
+
+    template <class U, class... Args>
+        requires std::is_constructible_v<E, std::initializer_list<U>&, Args...>
+    constexpr explicit unexpected(std::in_place_t, std::initializer_list<U> il, Args&&... args) noexcept(
+        std::is_nothrow_constructible_v<E, std::initializer_list<U>&, Args...>);
+
+    constexpr unexpected& operator=(const unexpected&) = default;
+    constexpr unexpected& operator=(unexpected&&)      = default;
+
+    constexpr const E&  error() const& noexcept;
+    constexpr E&        error() & noexcept;
+    constexpr const E&& error() const&& noexcept;
+    constexpr E&&       error() && noexcept;
+
+    constexpr void swap(unexpected& other) noexcept(std::is_nothrow_swappable_v<E>);
+
+    template <class E2>
+    friend constexpr bool operator==(const unexpected& x, const unexpected<E2>& y) {
+        return x.unex_ == y.error();
+    }
+
+    friend constexpr void swap(unexpected& x, unexpected& y) noexcept(noexcept(x.swap(y)))
+        requires std::is_swappable_v<E>
+    {
+        x.swap(y);
+    }
+
+  private:
+    E unex_;
+};
+
+template <class E>
+unexpected(E) -> unexpected<E>;
+
+// --- out-of-line definitions ---
+
+template <class E>
+template <class Err>
+    requires(!std::is_same_v<std::remove_cvref_t<Err>, unexpected<E>> &&
+             !std::is_same_v<std::remove_cvref_t<Err>, std::in_place_t> && std::is_constructible_v<E, Err>)
+constexpr unexpected<E>::unexpected(Err&& e) noexcept(std::is_nothrow_constructible_v<E, Err>)
+    : unex_(std::forward<Err>(e)) {}
+
+template <class E>
+template <class... Args>
+    requires std::is_constructible_v<E, Args...>
+constexpr unexpected<E>::unexpected(std::in_place_t,
+                                    Args&&... args) noexcept(std::is_nothrow_constructible_v<E, Args...>)
+    : unex_(std::forward<Args>(args)...) {}
+
+template <class E>
+template <class U, class... Args>
+    requires std::is_constructible_v<E, std::initializer_list<U>&, Args...>
+constexpr unexpected<E>::unexpected(std::in_place_t, std::initializer_list<U> il, Args&&... args) noexcept(
+    std::is_nothrow_constructible_v<E, std::initializer_list<U>&, Args...>)
+    : unex_(il, std::forward<Args>(args)...) {}
+
+template <class E>
+constexpr const E& unexpected<E>::error() const& noexcept {
+    return unex_;
+}
+
+template <class E>
+constexpr E& unexpected<E>::error() & noexcept {
+    return unex_;
+}
+
+template <class E>
+constexpr const E&& unexpected<E>::error() const&& noexcept {
+    return std::move(unex_);
+}
+
+template <class E>
+constexpr E&& unexpected<E>::error() && noexcept {
+    return std::move(unex_);
+}
+
+template <class E>
+constexpr void unexpected<E>::swap(unexpected& other) noexcept(std::is_nothrow_swappable_v<E>) {
+    using std::swap;
+    swap(unex_, other.unex_);
+}
+
+} // namespace expected
 } // namespace beman
 
 #endif
