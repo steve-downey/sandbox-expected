@@ -1,51 +1,40 @@
-# Handoff: After Fix 4
+# Handoff: After Fix 5 (All Conformance Fixes Complete)
 
 ## What Was Done
 
-Fix 4 is complete. `static_assert` Mandates added to observers and monadic
-operations per standard wording. Branch `fix4-mandates` merged (--no-ff) into
-`expected-over-references`.
+Fix 5 is complete. Branch `fix5-preconditions-and-minor` merged (--no-ff) into
+`expected-over-references`. All conformance fixes (F1–F5) are now merged.
 
-### Changes in `include/beman/expected/expected.hpp`
+### Changes in Fix 5
 
-**Primary template class-level:**
-- `static_assert(!detail::is_unexpected_specialization<remove_cv_t<T>>::value, ...)`
+**`include/beman/expected/expected.hpp`:**
+- Added `BEMAN_EXPECTED_HARDENED` precondition guards (`__builtin_trap()`) to:
+  - `operator->()` (both const and non-const) — checks `has_val_`
+  - `operator*()` (all 4 overloads) — checks `has_val_`
+  - `error()` (all 4 overloads, primary template) — checks `!has_val_`
+  - `operator*()` (void specialization) — checks `has_val_`
+  - `error()` (all 4 overloads, void specialization) — checks `!has_val_`
+- Void `or_else` (4 overloads): changed `is_void_v<G::value_type>` to
+  `is_same_v<G::value_type, T>` — correct for `const void` etc.
+- Void `transform_error` (4 overloads): changed `expected<void, G>` to
+  `expected<T, G>` — matches standard wording
 
-**Primary template `value()` (4 overloads):**
-- `const&` / `&`: `is_copy_constructible_v<E>`
-- `&&` / `const&&`: `is_copy_constructible_v<E> && is_constructible_v<E, decltype(std::move(error()))>`
+**`include/beman/expected/unexpected.hpp`:**
+- Added `requires std::is_swappable_v<E>` to friend swap
 
-**Primary template `value_or()` (2 overloads):**
-- `const&`: `is_copy_constructible_v<T>`, `is_convertible_v<U, T>`
-- `&&`: `is_move_constructible_v<T>`, `is_convertible_v<U, T>`
-
-**`error_or()` (4 overloads — both primary and void):**
-- `const&`: `is_copy_constructible_v<E>`, `is_convertible_v<G, E>`
-- `&&`: `is_move_constructible_v<E>`, `is_convertible_v<G, E>`
-
-**Void specialization `value()` (2 overloads):**
-- `const&`: `is_copy_constructible_v<E>`
-- `&&`: `is_copy_constructible_v<E> && is_move_constructible_v<E>`
-
-**`transform()` (8 overloads — both primary and void):**
-- In `if constexpr (!is_void_v<U>)` block: U not array, not in_place_t, not unexpect_t, not unexpected<>
-
-**`transform_error()` (8 overloads — both primary and void):**
-- G is object, not array, not cv-qualified, not unexpected<>
-
-### Tests added
-
-- `tests/beman/expected/expected_unexpected_value_type_fail.cpp` — negative compile
-  test verifying `expected<unexpected<int>, int>` is ill-formed
+**Tests added:**
+- `tests/beman/expected/expected_hardened.test.cpp` — compiled with
+  `-DBEMAN_EXPECTED_HARDENED`, verifies happy paths and swap constraint
+- New CMake target `beman.expected.tests.hardened`
 
 ### Test count
 
-248 tests total, all passing.
+253 tests total, all passing.
 
 ## Build Commands
 
 ```bash
-make TOOLCHAIN=gcc-16 test   # 248 tests, all passing
+make TOOLCHAIN=gcc-16 test   # 253 tests, all passing
 make lint                    # all linters pass (beman-tidy crash is pre-existing)
 ```
 
@@ -54,13 +43,21 @@ make lint                    # all linters pass (beman-tidy crash is pre-existin
 - [x] Fix 1: Constructor/assignment/equality constraints
 - [x] Fix 2: Trivial special member functions
 - [x] Fix 3: Monadic operation constraints
-- [x] Fix 4: Mandates static_asserts  ← just done
-- [ ] Fix 5: Hardened preconditions and minor fixes
+- [x] Fix 4: Mandates static_asserts
+- [x] Fix 5: Hardened preconditions and minor fixes  ← just done
 
-## Next Step: Fix 5
+## All Conformance Fixes Complete
 
-Fix 5 adds hardened precondition checks to observers (`operator->`, `operator*`,
-`error()`) and miscellaneous minor fixes (friend swap constraint on
-`unexpected<E>`, etc.).
+The conformance fixes phase is finished. Per `docs/conformance-fixes/index.md`,
+the next actions are:
 
-See `docs/conformance-fixes/fix5-preconditions-and-minor.md`.
+1. Update `docs/conformance-audit.md` to mark resolved items
+2. Update this handoff for the post-fix state
+3. Proceed to Step 7: `docs/plan/step7-expected-ref-t.md`
+
+## State of the Implementation
+
+The `expected-over-references` branch now has a fully conformant `expected<T,E>`
+and `expected<void,E>` (modulo the extensions noted in the audit as conforming).
+All constraint, Mandates, trivial SMF, monadic SFINAE, and precondition gaps
+identified in the audit are resolved.
