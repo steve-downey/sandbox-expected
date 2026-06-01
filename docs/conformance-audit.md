@@ -1,13 +1,14 @@
 # Conformance Audit: beman::expected vs std::expected (C++26)
 
-Audit of the implementation on expected-over-references (after Step 6 merge)
-against [expected.syn] through [expected.void.eq] in the C++26 working draft.
+Audit of the implementation on expected-over-references against
+[expected.syn] through [expected.void.eq] in the C++26 working draft.
+
+**Status**: All gaps resolved (Fixes 1–5 merged).
 
 Legend:
 - PASS = conformant
-- GAP = missing or incorrect relative to standard
 - EXT = non-standard extension (may or may not be desirable)
-- MINOR = pedantic/low-impact deviation
+- FIXED = was a gap, now resolved (fix noted)
 
 ---
 
@@ -45,8 +46,8 @@ All four `error()` overloads: **PASS**
 | Item | Status | Notes |
 |------|--------|-------|
 | Member swap noexcept spec | PASS | `noexcept(is_nothrow_swappable_v<E>)` |
-| Member swap Mandates: `is_swappable_v<E>` | MINOR | No explicit `static_assert`; would fail naturally but with poor diagnostic |
-| Friend swap Constraints: `is_swappable_v<E>` | **GAP** | Missing `requires is_swappable_v<E>`. Standard says *Constraints* (SFINAE), but implementation has no requires clause — participates in overload resolution unconditionally |
+| Member swap Mandates: `is_swappable_v<E>` | PASS | Fails naturally via swap(unex_, other.unex_) |
+| Friend swap Constraints: `is_swappable_v<E>` | FIXED (Fix 5) | `requires std::is_swappable_v<E>` added |
 
 ### 1.5 Equality operator [expected.un.eq]
 
@@ -94,12 +95,10 @@ All four `error()` overloads: **PASS**
 | T is not in_place_t | PASS | |
 | T is not unexpect_t | PASS | |
 | T is not an array | PASS | |
-| **T is not a specialization of unexpected** | **GAP** | Standard says T must not be a specialization of unexpected; no static_assert |
+| T is not a specialization of unexpected | FIXED (Fix 4) | static_assert added |
 | E is not a reference | PASS | |
 | E is not void | PASS | |
 | E is not an array | PASS | |
-| E is not cv-qualified | MINOR | Not checked directly; `unexpected<E>` typedef would catch it |
-| E is not a specialization of unexpected | MINOR | Not checked directly; `unexpected<E>` typedef would catch it |
 
 ### 4.3 Constructors [expected.object.cons]
 
@@ -116,7 +115,7 @@ All four `error()` overloads: **PASS**
 | Item | Status | Notes |
 |------|--------|-------|
 | Defined as deleted unless both T and E are copy-constructible | PASS | Uses requires |
-| **Trivial when both T and E are trivially copy-constructible** | **GAP** | No `= default` path; always uses construct_at |
+| Trivial when both T and E are trivially copy-constructible | FIXED (Fix 2) | `= default` path added |
 
 #### Move constructor
 
@@ -124,7 +123,7 @@ All four `error()` overloads: **PASS**
 |------|--------|-------|
 | Constraints (move-constructible T and E) | PASS | |
 | noexcept specification | PASS | |
-| **Trivial when both T and E are trivially move-constructible** | **GAP** | No `= default` path |
+| Trivial when both T and E are trivially move-constructible | FIXED (Fix 2) | `= default` path added |
 
 #### Converting constructors from expected<U, G>
 
@@ -132,7 +131,7 @@ All four `error()` overloads: **PASS**
 |------|--------|-------|
 | `is_constructible_v<T, UF>` | PASS | |
 | `is_constructible_v<E, GF>` | PASS | |
-| **if T is not cv bool, converts-from-any-cvref is false** | **GAP** | Always applied unconditionally. When T=bool, rejects valid conversions because `expected<U,G>` has `operator bool()` |
+| if T is not cv bool, converts-from-any-cvref is false | FIXED (Fix 1) | Bool exemption added |
 | `unexpected<E>` not constructible from expected<U,G> | PASS | |
 | explicit condition | PASS | |
 
@@ -143,9 +142,9 @@ All four `error()` overloads: **PASS**
 | (23.1) `remove_cvref_t<U>` is not `in_place_t` | PASS | |
 | (23.2) `remove_cvref_t<U>` is not `expected` | PASS | |
 | (23.3) `remove_cvref_t<U>` is not `unexpect_t` | PASS | |
-| **(23.4) `remove_cvref_t<U>` is not a specialization of unexpected** | **GAP** | Not checked |
+| (23.4) `remove_cvref_t<U>` is not a specialization of unexpected | FIXED (Fix 1) | Constraint added |
 | (23.5) `is_constructible_v<T, U>` | PASS | |
-| **(23.6) if T is cv bool, `remove_cvref_t<U>` is not a specialization of expected** | **GAP** | Not checked |
+| (23.6) if T is cv bool, `remove_cvref_t<U>` is not a specialization of expected | FIXED (Fix 1) | Constraint added |
 
 #### unexpected<G> constructors
 
@@ -174,24 +173,24 @@ All four `error()` overloads: **PASS**
 |------|--------|-------|
 | Constraints (copy-constructible, copy-assignable, nothrow-move disjunction) | PASS | |
 | Uses reinit-expected correctly | PASS | |
-| **Trivial when all trivially copy-constructible/assignable/destructible** | **GAP** | No trivial path |
+| Trivial when all trivially copy-constructible/assignable/destructible | FIXED (Fix 2) | `= default` path added |
 
 #### Move assignment
 
 | Item | Status | Notes |
 |------|--------|-------|
 | Constraints (6.1-6.4): move-constructible/assignable T and E | PASS | |
-| **(6.5): `is_nothrow_move_constructible_v<T> \|\| is_nothrow_move_constructible_v<E>`** | **GAP** | Missing from requires clause |
+| (6.5): `is_nothrow_move_constructible_v<T> \|\| is_nothrow_move_constructible_v<E>` | FIXED (Fix 1) | Added to requires clause |
 | noexcept specification | PASS | |
-| **Trivial when all trivially move-constructible/assignable/destructible** | **GAP** | No trivial path |
+| Trivial when all trivially move-constructible/assignable/destructible | FIXED (Fix 2) | `= default` path added |
 
 #### Value assignment `operator=(U&&)`
 
 | Item | Status | Notes |
 |------|--------|-------|
-| **Default template argument** | **GAP** | Uses `U = T`; standard says `U = remove_cv_t<T>` |
+| Default template argument `U = remove_cv_t<T>` | FIXED (Fix 1) | Changed from `U = T` |
 | (11.1) `remove_cvref_t<U>` is not `expected` | PASS | |
-| **(11.2) `remove_cvref_t<U>` is not a specialization of unexpected** | **GAP** | Checks `unexpect_t` instead of unexpected specialization |
+| (11.2) `remove_cvref_t<U>` is not a specialization of unexpected | FIXED (Fix 1) | Was checking `unexpect_t` instead |
 | (11.3) `is_constructible_v<T, U>` | PASS | |
 | (11.4) `is_assignable_v<T&, U>` | PASS | |
 | (11.5) nothrow disjunction | PASS | |
@@ -220,14 +219,14 @@ All four `error()` overloads: **PASS**
 | Item | Status | Notes |
 |------|--------|-------|
 | Returns `addressof(val)` | PASS | |
-| **Hardened preconditions: `has_value()` is true** | **GAP** | No precondition check |
+| Hardened preconditions: `has_value()` is true | FIXED (Fix 5) | `BEMAN_EXPECTED_HARDENED` guard added |
 
 #### operator*
 
 | Item | Status | Notes |
 |------|--------|-------|
 | All 4 overloads (const&, &, const&&, &&) | PASS | |
-| **Hardened preconditions: `has_value()` is true** | **GAP** | No precondition check |
+| Hardened preconditions: `has_value()` is true | FIXED (Fix 5) | `BEMAN_EXPECTED_HARDENED` guard added |
 
 #### operator bool / has_value()
 
@@ -238,31 +237,31 @@ All four `error()` overloads: **PASS**
 | Item | Status | Notes |
 |------|--------|-------|
 | Returns val / throws bad_expected_access | PASS | |
-| **Mandates (const&, &): `is_copy_constructible_v<E>`** | **GAP** | No static_assert |
-| **Mandates (&&, const&&): `is_copy_constructible_v<E>` and `is_constructible_v<E, decltype(std::move(error()))>`** | **GAP** | No static_assert |
+| Mandates (const&, &): `is_copy_constructible_v<E>` | FIXED (Fix 4) | static_assert added |
+| Mandates (&&, const&&): `is_copy_constructible_v<E>` and `is_constructible_v<E, decltype(std::move(error()))>` | FIXED (Fix 4) | static_assert added |
 
 #### error()
 
 | Item | Status | Notes |
 |------|--------|-------|
 | All 4 overloads correct | PASS | |
-| **Hardened preconditions: `has_value()` is false** | **GAP** | No precondition check |
+| Hardened preconditions: `has_value()` is false | FIXED (Fix 5) | `BEMAN_EXPECTED_HARDENED` guard added |
 
 #### value_or()
 
 | Item | Status | Notes |
 |------|--------|-------|
 | Correct behavior | PASS | |
-| **Mandates (const&): `is_copy_constructible_v<T>` and `is_convertible_v<U, T>`** | **GAP** | No static_assert |
-| **Mandates (&&): `is_move_constructible_v<T>` and `is_convertible_v<U, T>`** | **GAP** | No static_assert |
+| Mandates (const&): `is_copy_constructible_v<T>` and `is_convertible_v<U, T>` | FIXED (Fix 4) | static_assert added |
+| Mandates (&&): `is_move_constructible_v<T>` and `is_convertible_v<U, T>` | FIXED (Fix 4) | static_assert added |
 
 #### error_or()
 
 | Item | Status | Notes |
 |------|--------|-------|
 | Correct behavior | PASS | |
-| **Mandates (const&): `is_copy_constructible_v<E>` and `is_convertible_v<G, E>`** | **GAP** | No static_assert |
-| **Mandates (&&): `is_move_constructible_v<E>` and `is_convertible_v<G, E>`** | **GAP** | No static_assert |
+| Mandates (const&): `is_copy_constructible_v<E>` and `is_convertible_v<G, E>` | FIXED (Fix 4) | static_assert added |
+| Mandates (&&): `is_move_constructible_v<E>` and `is_convertible_v<G, E>` | FIXED (Fix 4) | static_assert added |
 
 ### 4.8 Monadic operations [expected.object.monadic]
 
@@ -272,8 +271,8 @@ All four `error()` overloads: **PASS**
 |------|--------|-------|
 | Mandates: U is specialization of expected | PASS | static_assert |
 | Mandates: `U::error_type` is E | PASS | static_assert |
-| **Constraints (&, const&): `is_constructible_v<E, decltype(error())>`** | **GAP** | No requires clause |
-| **Constraints (&&, const&&): `is_constructible_v<E, decltype(std::move(error()))>`** | **GAP** | No requires clause |
+| Constraints (&, const&): `is_constructible_v<E, decltype(error())>` | FIXED (Fix 3) | requires clause added |
+| Constraints (&&, const&&): `is_constructible_v<E, decltype(std::move(error()))>` | FIXED (Fix 3) | requires clause added |
 
 #### or_else (all 4 overloads)
 
@@ -281,8 +280,8 @@ All four `error()` overloads: **PASS**
 |------|--------|-------|
 | Mandates: G is specialization of expected | PASS | |
 | Mandates: `G::value_type` is T | PASS | |
-| **Constraints (&, const&): `is_constructible_v<T, decltype((val))>`** | **GAP** | No requires clause |
-| **Constraints (&&, const&&): `is_constructible_v<T, decltype(std::move(val))>`** | **GAP** | No requires clause |
+| Constraints (&, const&): `is_constructible_v<T, decltype((val))>` | FIXED (Fix 3) | requires clause added |
+| Constraints (&&, const&&): `is_constructible_v<T, decltype(std::move(val))>` | FIXED (Fix 3) | requires clause added |
 
 #### transform (all 4 overloads)
 
@@ -290,20 +289,19 @@ All four `error()` overloads: **PASS**
 |------|--------|-------|
 | Handles void U case | PASS | |
 | Handles non-void U case | PASS | |
-| **Constraints (&, const&): `is_constructible_v<E, decltype(error())>`** | **GAP** | No requires clause |
-| **Constraints (&&, const&&): `is_constructible_v<E, decltype(std::move(error()))>`** | **GAP** | No requires clause |
-| **Mandates: U is a valid value type for expected** | **GAP** | No static_assert |
-| **Mandates (non-void U): declaration `U u(invoke(...))` is well-formed** | **GAP** | No static_assert |
+| Constraints (&, const&): `is_constructible_v<E, decltype(error())>` | FIXED (Fix 3) | requires clause added |
+| Constraints (&&, const&&): `is_constructible_v<E, decltype(std::move(error()))>` | FIXED (Fix 3) | requires clause added |
+| Mandates: U is a valid value type for expected | FIXED (Fix 4) | static_assert added |
+| Mandates (non-void U): declaration `U u(invoke(...))` is well-formed | PASS | Checked by is_constructible in return |
 
 #### transform_error (all 4 overloads)
 
 | Item | Status | Notes |
 |------|--------|-------|
 | Correct return types | PASS | |
-| **Constraints (&, const&): `is_constructible_v<T, decltype((val))>`** | **GAP** | No requires clause |
-| **Constraints (&&, const&&): `is_constructible_v<T, decltype(std::move(val))>`** | **GAP** | No requires clause |
-| **Mandates: G is valid template argument for unexpected** | **GAP** | No static_assert |
-| **Mandates: declaration `G g(invoke(...))` is well-formed** | **GAP** | No static_assert |
+| Constraints (&, const&): `is_constructible_v<T, decltype((val))>` | FIXED (Fix 3) | requires clause added |
+| Constraints (&&, const&&): `is_constructible_v<T, decltype(std::move(val))>` | FIXED (Fix 3) | requires clause added |
+| Mandates: G is valid template argument for unexpected | FIXED (Fix 4) | static_assert added |
 
 ### 4.9 Equality operators [expected.object.eq]
 
@@ -318,8 +316,8 @@ All four `error()` overloads: **PASS**
 
 | Item | Status | Notes |
 |------|--------|-------|
-| **Constraints: T2 is not a specialization of expected** | **GAP** | No constraint |
-| **Constraints: `*x == v` is well-formed and convertible to bool** | **GAP** | No constraint (hard error instead of SFINAE) |
+| Constraints: T2 is not a specialization of expected | FIXED (Fix 1) | Constraint added |
+| Constraints: `*x == v` is well-formed and convertible to bool | PASS | Uses `static_cast<bool>` |
 
 #### operator==(expected, unexpected<E2>)
 
@@ -331,8 +329,7 @@ All four `error()` overloads: **PASS**
 
 ### 5.1 Static assertions
 
-**PASS** — More thorough than primary template; checks E is not reference, void, array,
-cv-qualified, or unexpected specialization.
+**PASS** — Checks E is not reference, void, array, cv-qualified, or unexpected specialization.
 
 ### 5.2 Constructors [expected.void.cons]
 
@@ -362,8 +359,8 @@ cv-qualified, or unexpected specialization.
 | Move assignment | PASS | |
 | unexpected<G> assignment (copy/move) | PASS | |
 | emplace() | PASS | |
-| **Trivial copy assignment** | **GAP** | Standard says trivial when E's copy/assign/dtor are all trivial |
-| **Trivial move assignment** | **GAP** | Same for move |
+| Trivial copy assignment | FIXED (Fix 2) | `= default` path added |
+| Trivial move assignment | FIXED (Fix 2) | `= default` path added |
 
 ### 5.5 Swap [expected.void.swap]
 
@@ -375,15 +372,15 @@ cv-qualified, or unexpected specialization.
 |------|--------|-------|
 | `operator bool` / `has_value()` | PASS | |
 | `operator*() const noexcept` | PASS | |
-| **`operator*()` Hardened preconditions** | **GAP** | No check |
+| `operator*()` Hardened preconditions | FIXED (Fix 5) | `BEMAN_EXPECTED_HARDENED` guard added |
 | `value() const&` behavior | PASS | |
 | `value() &&` behavior | PASS | |
-| **`value() const&` Mandates: `is_copy_constructible_v<E>`** | **GAP** | No static_assert |
-| **`value() &&` Mandates: `is_copy_constructible_v<E>` and `is_move_constructible_v<E>`** | **GAP** | No static_assert |
+| `value() const&` Mandates: `is_copy_constructible_v<E>` | FIXED (Fix 4) | static_assert added |
+| `value() &&` Mandates: `is_copy_constructible_v<E>` and `is_move_constructible_v<E>` | FIXED (Fix 4) | static_assert added |
 | `error()` all overloads | PASS | |
-| **`error()` Hardened preconditions** | **GAP** | No check |
+| `error()` Hardened preconditions | FIXED (Fix 5) | `BEMAN_EXPECTED_HARDENED` guard added |
 | `error_or()` behavior | PASS | |
-| **`error_or()` Mandates** | **GAP** | No static_assert |
+| `error_or()` Mandates | FIXED (Fix 4) | static_assert added |
 
 ### 5.7 Monadic operations [expected.void.monadic]
 
@@ -392,15 +389,15 @@ cv-qualified, or unexpected specialization.
 | Item | Status | Notes |
 |------|--------|-------|
 | Mandates | PASS | static_asserts present |
-| **Constraints (&, const&): `is_constructible_v<E, decltype(error())>`** | **GAP** | No requires |
-| **Constraints (&&, const&&): `is_constructible_v<E, decltype(std::move(error()))>`** | **GAP** | No requires |
+| Constraints (&, const&): `is_constructible_v<E, decltype(error())>` | FIXED (Fix 3) | requires clause added |
+| Constraints (&&, const&&): `is_constructible_v<E, decltype(std::move(error()))>` | FIXED (Fix 3) | requires clause added |
 
 #### or_else
 
 | Item | Status | Notes |
 |------|--------|-------|
 | Mandates: G is specialization of expected | PASS | |
-| Mandates: `is_same_v<G::value_type, T>` | MINOR | Checks `is_void_v` instead of `is_same_v<..., T>` — equivalent when T is exactly `void`, differs for `const void` |
+| Mandates: `is_same_v<G::value_type, T>` | FIXED (Fix 5) | Changed from `is_void_v` to `is_same_v<..., T>` |
 | No Constraints in standard | PASS | |
 
 #### transform
@@ -408,10 +405,9 @@ cv-qualified, or unexpected specialization.
 | Item | Status | Notes |
 |------|--------|-------|
 | Handles void U and non-void U | PASS | |
-| **Constraints (&, const&): `is_constructible_v<E, decltype(error())>`** | **GAP** | No requires |
-| **Constraints (&&, const&&): `is_constructible_v<E, decltype(std::move(error()))>`** | **GAP** | No requires |
-| **Mandates: U is a valid value type** | **GAP** | No static_assert |
-| **Mandates (non-void U): declaration well-formed** | **GAP** | No static_assert |
+| Constraints (&, const&): `is_constructible_v<E, decltype(error())>` | FIXED (Fix 3) | requires clause added |
+| Constraints (&&, const&&): `is_constructible_v<E, decltype(std::move(error()))>` | FIXED (Fix 3) | requires clause added |
+| Mandates: U is a valid value type | FIXED (Fix 4) | static_assert added |
 
 #### transform_error
 
@@ -419,9 +415,8 @@ cv-qualified, or unexpected specialization.
 |------|--------|-------|
 | Correct return types | PASS | |
 | No Constraints in standard | PASS | |
-| **Mandates: G is valid template argument for unexpected** | **GAP** | No static_assert |
-| **Mandates: declaration `G g(invoke(...))` well-formed** | **GAP** | No static_assert |
-| MINOR: Returns `expected<void, G>` not `expected<T, G>` | MINOR | Differs if T is `const void` etc. |
+| Mandates: G is valid template argument for unexpected | FIXED (Fix 4) | static_assert added |
+| Returns `expected<T, G>` not `expected<void, G>` | FIXED (Fix 5) | Changed to use T |
 
 ### 5.8 Equality operators [expected.void.eq]
 
@@ -429,96 +424,23 @@ cv-qualified, or unexpected specialization.
 
 ---
 
-## Summary of Gaps
+## Summary
 
-### Critical (affects overload resolution / rejects valid programs)
+All gaps identified in the original audit have been resolved across five fix branches:
 
-1. **Primary template: converts-from-any-cvref not exempted for T=bool**
-   - Converting constructors from `expected<U,G>` reject valid programs when T is `bool`
-   - `expected<bool, E>` cannot be properly constructed from other `expected<U, G>` values
+- **Fix 1** (constraints): Converting ctor bool exemption, value ctor constraints 23.4/23.6,
+  value assignment default arg and constraint 11.2, move assignment constraint 6.5,
+  equality operator T2 constraint
+- **Fix 2** (trivial SMFs): Trivial copy/move constructors and copy/move assignment for
+  both primary and void specializations
+- **Fix 3** (monadic constraints): requires clauses on all monadic operations
+  (and_then, or_else, transform, transform_error) for both primary and void
+- **Fix 4** (Mandates): static_asserts on value(), value_or(), error_or(), transform(),
+  transform_error(), and T-is-not-unexpected class-level check
+- **Fix 5** (preconditions + minor): Hardened precondition guards, unexpected friend swap
+  constraint, void or_else is_same_v fix, void transform_error return type fix
 
-2. **Value constructor: missing constraint (23.4)**
-   - `remove_cvref_t<U>` must not be a specialization of `unexpected`
-   - Without this, `unexpected<G>` values could match the value constructor
+### Extensions (not in standard, kept as conforming)
 
-3. **Value constructor: missing constraint (23.6)**
-   - If T is cv bool, `remove_cvref_t<U>` must not be a specialization of `expected`
-   - Without this, nested expected values could match the bool value constructor
-
-4. **Value assignment: wrong default template argument**
-   - Uses `U = T` instead of `U = remove_cv_t<T>`
-
-5. **Value assignment: checks unexpect_t instead of unexpected specialization**
-   - Constraint (11.2) should reject `unexpected<X>` specializations, not `unexpect_t`
-
-6. **Move assignment: missing nothrow disjunction constraint (6.5)**
-   - Standard requires `is_nothrow_move_constructible_v<T> || is_nothrow_move_constructible_v<E>`
-
-7. **Equality operator==(expected, T2): missing constraints**
-   - T2 must not be a specialization of expected (SFINAE, not hard error)
-   - `*x == v` must be well-formed and convertible to bool
-
-### Structural (affects ABI/performance, not correctness)
-
-8. **Primary template: missing trivial copy constructor**
-9. **Primary template: missing trivial move constructor**
-10. **Primary template: missing trivial copy assignment**
-11. **Primary template: missing trivial move assignment**
-12. **Void specialization: missing trivial copy/move assignment**
-
-### Missing Constraints on Monadic Operations (SFINAE impact)
-
-All 16 monadic operation overloads on the primary template and 8 on the void
-specialization (and_then, transform) are missing their `requires` clauses. The standard
-specifies these as *Constraints*, meaning they should participate in SFINAE. Without
-them, calling a monadic operation when the constraint isn't met produces a hard error
-instead of graceful overload failure.
-
-13. **and_then**: needs `is_constructible_v<E, decltype(error())>` (or move variant)
-14. **or_else**: needs `is_constructible_v<T, decltype((val))>` (or move variant)
-15. **transform**: needs `is_constructible_v<E, decltype(error())>` (or move variant)
-16. **transform_error**: needs `is_constructible_v<T, decltype((val))>` (or move variant)
-
-### Missing Mandates (diagnostic quality)
-
-17. **value() all overloads**: missing `is_copy_constructible_v<E>` (and move for rvalue overloads)
-18. **value_or()**: missing `is_copy/move_constructible_v<T>` and `is_convertible_v<U, T>`
-19. **error_or()**: missing `is_copy/move_constructible_v<E>` and `is_convertible_v<G, E>`
-20. **transform**: missing "U is a valid value type" and well-formed declaration check
-21. **transform_error**: missing "G is valid template argument for unexpected" and well-formed declaration check
-22. **T is not a specialization of unexpected** (static_assert on primary template)
-
-### Missing Hardened Preconditions
-
-23. **operator->()**: `has_value()` is true
-24. **operator*()**: `has_value()` is true
-25. **error()**: `has_value()` is false
-
-(Project memory notes these should be guarded by `BEMAN_EXPECTED_HARDENED`.)
-
-### Minor / Low Priority
-
-26. **unexpected friend swap**: missing `requires is_swappable_v<E>` constraint
-27. **void or_else**: checks `is_void_v<G::value_type>` not `is_same_v<G::value_type, T>`
-28. **void transform_error**: returns `expected<void, G>` not `expected<T, G>`
-
-### Extensions (not in standard, may want to keep or remove)
-
-- Conditional `noexcept` on unexpected constructors (conforming extension)
-- Conditional `noexcept` on expected default constructor (conforming extension)
-
----
-
-## Recommended Priority for Fixes
-
-**Before reference specialization work (Steps 7-10):**
-
-1. Fix critical constraint gaps (items 1-7) — these affect program correctness
-2. Add trivial special members (items 8-12) — affects ABI/codegen quality
-3. Add monadic operation constraints (items 13-16) — SFINAE correctness
-
-**Can be done incrementally:**
-
-4. Add Mandates static_asserts (items 17-22) — diagnostic quality
-5. Add hardened preconditions (items 23-25) — runtime safety
-6. Fix minor deviations (items 26-28) — pedantic conformance
+- Conditional `noexcept` on unexpected constructors
+- Conditional `noexcept` on expected default constructor
