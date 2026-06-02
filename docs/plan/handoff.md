@@ -27,7 +27,7 @@ tests are breathing tests only (`EXPECT_EQ(true, true)`).
 ### Build System
 
 - CMake 3.30+, Ninja Multi-Config
-- GoogleTest via vcpkg or FetchContent
+- Catch2 via FetchContent
 - `make test` to build and run, `make lint` for pre-commit hooks
 - Header-only INTERFACE library (unless modules enabled)
 - Default config: Asan
@@ -40,7 +40,7 @@ tests are breathing tests only (`EXPECT_EQ(true, true)`).
 - Angle-bracket includes with full paths: `<beman/expected/unexpected.hpp>`
 - Functions defined out-of-line within the header (body after class)
 - `constexpr` everything
-- Test includes: header under test twice (idempotence), then gtest, then std
+- Test includes: header under test twice (idempotence), then Catch2, then std
 
 ### Reference Implementation
 

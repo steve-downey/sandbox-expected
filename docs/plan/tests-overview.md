@@ -9,8 +9,6 @@ corresponding `tests-stepN.md` file for that step.
 ## Test Framework
 
 **Catch2** (`catch2/catch_test_macros.hpp`, `Catch2::Catch2WithMain`).
-The project switched from GoogleTest to Catch2 (commit `cde76dd`). The
-index.md reference to GoogleTest is stale.
 
 ---
 
@@ -31,31 +29,59 @@ Every test file includes the header under test **twice**:
 | **Mandate** | "Mandates: X is true" | Ill-formed at instantiation → `static_assert(!std::is_invocable_v<...>)` or a negative compile file |
 | **Hardened precondition** | "Hardened preconditions: X" | Runtime UB without contracts; if the implementation enforces contracts, use `REQUIRE_THROWS` under `#if defined(BEMAN_EXPECTED_HARDENED)` |
 
-### 3. Negative compile test pattern (from transcode)
+### 3. Negative compile test pattern
 
-Each negative compile test is a `.cpp` file that **must not compile**.
-In CMakeLists:
+Each negative compile test is a `.cpp` file that **must not compile**, and
+its failure must be verified against a **specific diagnostic** to confirm
+the failure is the intended constraint/mandate, not an unrelated build error.
+
+#### Source file format
+
+Every `_fail.cpp` must have these comment lines near the top:
+
+```cpp
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+// NEGATIVE: <human-readable description of what must not compile>
+// EXPECT: "<regex that matches the compiler diagnostic>"
+```
+
+The `EXPECT` string is the same regex passed to `add_fail_test()` in CMake.
+It should match:
+- The `static_assert` message string for **mandates**
+  (e.g. `"E must not be void"`)
+- `"delete"` for **deleted function** diagnostics
+- `"no matching function"` for **SFINAE / constraint** failures where no
+  overload is viable
+- `"no matching function|delete"` when either form is possible depending
+  on compiler
+
+#### CMakeLists pattern
+
+Use the `add_fail_test(name source reason)` macro, which registers the
+test with `PASS_REGULAR_EXPRESSION`:
 
 ```cmake
-add_library(beman.expected.tests.<name>_fail OBJECT)
-target_sources(beman.expected.tests.<name>_fail PRIVATE <name>_fail.cpp)
-target_link_libraries(beman.expected.tests.<name>_fail PRIVATE beman::expected)
+add_fail_test(expected_ref_e_void_fail expected_ref_e_void_fail.cpp
+    "E must not be void"
+)
+```
+
+The macro expands to:
+
+```cmake
+add_library(beman.expected.tests.<name> OBJECT)
+target_sources(beman.expected.tests.<name> PRIVATE <source>)
+target_link_libraries(beman.expected.tests.<name> PRIVATE beman::expected)
 set_target_properties(
-    beman.expected.tests.<name>_fail
+    beman.expected.tests.<name>
     PROPERTIES EXCLUDE_FROM_ALL true EXCLUDE_FROM_DEFAULT_BUILD true
 )
 add_test(
-    NAME <name>_fail
+    NAME <name>
     COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}"
-            --target beman.expected.tests.<name>_fail --config $<CONFIGURATION>
+            --target beman.expected.tests.<name> --config $<CONFIGURATION>
 )
-set_tests_properties(<name>_fail PROPERTIES WILL_FAIL TRUE)
-```
-
-If the diagnostic message is reliable, replace `WILL_FAIL TRUE` with:
-```cmake
-set_tests_properties(<name>_fail PROPERTIES
-    PASS_REGULAR_EXPRESSION "specific error text")
+set_tests_properties(<name> PROPERTIES PASS_REGULAR_EXPRESSION "<reason>")
 ```
 
 ### 4. Type-trait / static_assert tests
@@ -117,6 +143,72 @@ TEST_CASE("hardened: operator* on empty terminates", "[hardened]") {
 | 8 | `expected<T,E&>` | `expected_ref_e.test.cpp` | `expected_ref_e_temporary_error_fail.cpp`, `expected_ref_e_const_lvalue_assignment_fail.cpp` |
 | 9 | `expected<T&,E&>` | `expected_ref_both.test.cpp` | `expected_ref_both_temp_value_fail.cpp`, `expected_ref_both_temp_error_fail.cpp`, `expected_ref_both_no_default_fail.cpp` |
 | 10 | `expected<void,E&>` | `expected_void_ref_e.test.cpp` | `expected_void_ref_e_temporary_fail.cpp`, `expected_void_ref_e_const_lvalue_fail.cpp`, `expected_void_ref_e_no_value_or_fail.cpp` |
+
+### 6. Constraint and mandate coverage requirement
+
+**Every `requires` clause, concept constraint, and `static_assert` mandate
+in the implementation must have a corresponding negative test.** This is a
+standing rule — not optional per step.
+
+#### How to cover each kind:
+
+**Constraints (requires clauses / SFINAE-friendly):**
+
+Write `static_assert(!trait_v<...>)` in a `*_constraints.test.cpp` file.
+For operations that need a callable argument (monadic ops, etc.), use a
+concept detector:
+
+```cpp
+template <class X, class F>
+concept has_and_then = requires(F f) { std::declval<X>().and_then(f); };
+
+// Negative: lvalue overload constrained out when E is move-only
+static_assert(!has_and_then<expected<int, MoveOnly>&, decltype(lambda)>);
+
+// Positive: rvalue overload works (E is move-constructible)
+static_assert(has_and_then<expected<int, MoveOnly>&&, decltype(lambda)>);
+```
+
+For rvalue-argument constraints (dangling prevention, emplace from rvalue),
+use `std::declval` to force the argument category:
+
+```cpp
+template <class X, class U>
+concept has_emplace_from = requires { std::declval<X&>().emplace(std::declval<U>()); };
+```
+
+**Mandates (static_assert — ill-formed on instantiation):**
+
+Write a `*_fail.cpp` negative compile test registered with `add_fail_test()`
+in CMakeLists. The file should be minimal — just `#include` the header and
+attempt the ill-formed instantiation:
+
+```cpp
+#include <beman/expected/expected.hpp>
+void test() {
+    beman::expected::expected<int&, void> e; // must not compile
+}
+```
+
+**Hardened preconditions:**
+
+Write runtime tests under `#if defined(BEMAN_EXPECTED_HARDENED)` in a
+`*_hardened.test.cpp` file compiled with `-DBEMAN_EXPECTED_HARDENED`.
+
+#### What to cover for each step:
+
+- Class-level `static_assert`s (E/T type requirements) → negative compile tests
+- Constructor `requires` clauses → `static_assert(!is_constructible_v<...>)`
+- Assignment `requires` clauses → `static_assert(!is_assignable_v<...>)`
+- Member function `requires` clauses (swap, emplace, monadic) → concept detectors
+- Triviality (`= default` paths) → `static_assert(is_trivially_*_v<...>)`
+- Non-triviality → `static_assert(!is_trivially_*_v<...>)` with non-trivial E/T
+
+#### Naming convention:
+
+- `<specialization>_constraints.test.cpp` — SFINAE/requires tests
+- `<specialization>_<what>_fail.cpp` — negative compile tests
+- `<specialization>_hardened.test.cpp` — runtime precondition tests
 
 ---
 
