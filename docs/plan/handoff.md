@@ -13,17 +13,32 @@ the integration branch for this work.
 
 ## Current State
 
-Steps 1–7 are complete and merged into `expected-over-references`.
+Steps 1–8 are complete and merged into `expected-over-references`
+(Step 8 is on branch `step8-expected-ref-e`, ready to merge).
 The implementation includes the full conformant `expected<T,E>` primary template,
-`expected<void,E>`, monadic operations for both, and `expected<T&,E>` (P2988
-reference-value specialization). 313 tests pass.
+`expected<void,E>`, monadic operations for both, `expected<T&,E>` (P2988
+reference-value specialization), and `expected<T,E&>` (P2988 reference-error
+specialization). 349 tests pass.
 
 ### Key Files
 
 - `include/beman/expected/expected.hpp` — full implementation:
   `unexpected<E>`, `bad_expected_access`, `expected<T,E>`, `expected<void,E>`,
-  `expected<T&,E>` (with monadic ops for all three)
-- `tests/beman/expected/` — comprehensive test suite (313 tests)
+  `expected<T&,E>`, `expected<T,E&>` (with monadic ops for all four)
+- `tests/beman/expected/` — comprehensive test suite (349 tests)
+
+### Step 8 Design Notes
+
+- `expected<T, E&>` stores the error as `E*` (pointer to the referent); value T
+  is owned (same as primary template)
+- `error()` returns `E&` with **shallow const** — `const expected<T,E&>` still
+  permits mutation of the error referent through `.error()`
+- Assignment between `expected<T,E&>` objects rebinds the error pointer, never
+  assigns through the reference
+- `(unexpect_t, E&&)` constructor is deleted to prevent binding temporaries
+- `unexpected<int,int&>` forms (where both T and E are references) are ambiguous
+  between `expected<T&,E>` and `expected<T,E&>`; the negative test for this was
+  updated to match the "ambiguous" diagnostic
 
 ### Build System
 
@@ -80,5 +95,6 @@ worked before writing any tests.
 
 ## What Comes Next
 
-Step 8: `expected<T, E&>` error-reference specialization — see `docs/plan/step8-expected-ref-e.md`.
-Create branch `step8-expected-ref-e` from `expected-over-references`.
+Step 9: `expected<T&, E&>` both-reference specialization — see `docs/plan/step9-expected-ref-both.md`.
+Create branch `step9-expected-ref-both` from `expected-over-references` (after merging
+`step8-expected-ref-e` into `expected-over-references`).
