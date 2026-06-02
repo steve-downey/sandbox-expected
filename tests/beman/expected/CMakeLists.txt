@@ -135,6 +135,11 @@ add_fail_test(expected_ref_e_const_lvalue_fail expected_ref_e_const_lvalue_fail.
     "no matching function|cannot bind"
 )
 
+# Step 7/8 parity — expected<T&,E> or_else value_type mandate (added in Step 8 review)
+add_fail_test(expected_ref_or_else_wrong_value_type_fail expected_ref_or_else_wrong_value_type_fail.cpp
+    "F must return expected with the same value_type"
+)
+
 # Step 7 — expected<T&, E> Mandates: E constraints
 add_fail_test(expected_ref_e_ref_fail   expected_ref_e_ref_fail.cpp
     "ambiguous|E must not be a reference"

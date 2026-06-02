@@ -52,6 +52,9 @@ static_assert(!std::is_trivially_destructible_v<expected<std::string, int&>>);
 // Cannot construct from temporary error (rvalue deleted)
 static_assert(!std::is_constructible_v<expected<int, int&>, unexpect_t, int&&>);
 
+// Converting construction from expected<U, G&>
+static_assert(std::is_constructible_v<expected<int, int&>, const expected<long, int&>&>);
+
 // =============================================================================
 // Construction — value side (same as primary template)
 // =============================================================================
@@ -122,7 +125,7 @@ TEST_CASE("expected<T,E&>: rebind does NOT assign through error reference", "[ex
     expected<int, int&> a(unexpect, err1);
     expected<int, int&> b(unexpect, err2);
     a = b;
-    CHECK(err1 == 10);  // err1 unchanged
+    CHECK(err1 == 10); // err1 unchanged
     CHECK(a.error() == 20);
 }
 
@@ -333,9 +336,44 @@ TEST_CASE("expected<T,E&>: transform_error transforms E&", "[expected_ref_e]") {
 
 TEST_CASE("expected<T,E&>: transform_error propagates value", "[expected_ref_e]") {
     expected<int, int&> e(42);
-    auto r = e.transform_error([](int& v) -> std::string { return std::to_string(v); });
+    auto                r = e.transform_error([](int& v) -> std::string { return std::to_string(v); });
     REQUIRE(r.has_value());
     CHECK(*r == 42);
+}
+
+// =============================================================================
+// Converting construction from expected<U, G&>
+// =============================================================================
+
+TEST_CASE("expected<T,E&>: converting copy construct from expected<U,G&> with value", "[expected_ref_e]") {
+    expected<long, int&> src(42L);
+    expected<int, int&>  e(src);
+    REQUIRE(e.has_value());
+    CHECK(*e == 42);
+}
+
+TEST_CASE("expected<T,E&>: converting copy construct from expected<U,G&> with error", "[expected_ref_e]") {
+    int                  err = 7;
+    expected<long, int&> src(unexpect, err);
+    expected<int, int&>  e(src);
+    REQUIRE(!e.has_value());
+    CHECK(&e.error() == &err);
+}
+
+TEST_CASE("expected<T,E&>: converting move construct from expected<U,G&> with value", "[expected_ref_e]") {
+    expected<long, int&> src(99L);
+    expected<int, int&>  e(std::move(src));
+    REQUIRE(e.has_value());
+    CHECK(*e == 99);
+}
+
+TEST_CASE("expected<T,E&>: converting move construct from expected<U,G&> preserves error pointer",
+          "[expected_ref_e]") {
+    int                  err = 5;
+    expected<long, int&> src(unexpect, err);
+    expected<int, int&>  e(std::move(src));
+    REQUIRE(!e.has_value());
+    CHECK(&e.error() == &err);
 }
 
 // =============================================================================
