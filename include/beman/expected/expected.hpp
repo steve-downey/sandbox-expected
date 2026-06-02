@@ -6,11 +6,22 @@
 #include <beman/expected/unexpected.hpp>
 #include <beman/expected/bad_expected_access.hpp>
 
-#include <functional>
-#include <initializer_list>
-#include <memory>
-#include <type_traits>
-#include <utility>
+#ifndef BEMAN_EXPECTED_INCLUDED_FROM_INTERFACE_UNIT
+    #include <cstdlib>
+    #include <functional>
+    #include <initializer_list>
+    #include <memory>
+    #include <type_traits>
+    #include <utility>
+#endif
+
+#if defined(_MSC_VER)
+    #define BEMAN_EXPECTED_TRAP() __debugbreak()
+#elif defined(__has_builtin) && __has_builtin(__builtin_trap)
+    #define BEMAN_EXPECTED_TRAP() __builtin_trap()
+#else
+    #define BEMAN_EXPECTED_TRAP() std::abort()
+#endif
 
 /***
 22.8.2 Header <expected> synopsis[expected.syn]
@@ -171,7 +182,9 @@ class expected {
                  !detail::is_unexpected_specialization<std::remove_cvref_t<U>>::value &&
                  (!std::is_same_v<bool, std::remove_cv_t<T>> ||
                   !detail::is_expected_specialization<std::remove_cvref_t<U>>::value))
-    constexpr explicit(!std::is_convertible_v<U, T>) expected(U&& v);
+    constexpr explicit(!std::is_convertible_v<U, T>) expected(U&& v) : has_val_(true) {
+        std::construct_at(std::addressof(val_), std::forward<U>(v));
+    }
 
     // Constructor from unexpected<G> const&
     template <class G>
@@ -260,7 +273,15 @@ class expected {
                  std::is_constructible_v<T, U> && std::is_assignable_v<T&, U> &&
                  (std::is_nothrow_constructible_v<T, U> || std::is_nothrow_move_constructible_v<T> ||
                   std::is_nothrow_move_constructible_v<E>))
-    constexpr expected& operator=(U&& v);
+    constexpr expected& operator=(U&& v) {
+        if (has_val_) {
+            val_ = std::forward<U>(v);
+        } else {
+            detail::reinit_expected(val_, unex_, std::forward<U>(v));
+            has_val_ = true;
+        }
+        return *this;
+    }
 
     // Assignment from unexpected<G> const&
     template <class G>
@@ -489,18 +510,6 @@ constexpr expected<T, E>::expected(expected<U, G>&& rhs) : has_val_(rhs.has_valu
 }
 
 template <class T, class E>
-template <class U>
-    requires(!std::is_same_v<std::remove_cvref_t<U>, std::in_place_t> &&
-             !std::is_same_v<std::remove_cvref_t<U>, unexpect_t> &&
-             !std::is_same_v<std::remove_cvref_t<U>, expected<T, E>> && std::is_constructible_v<T, U> &&
-             !detail::is_unexpected_specialization<std::remove_cvref_t<U>>::value &&
-             (!std::is_same_v<bool, std::remove_cv_t<T>> ||
-              !detail::is_expected_specialization<std::remove_cvref_t<U>>::value))
-constexpr expected<T, E>::expected(U&& v) : has_val_(true) {
-    std::construct_at(std::addressof(val_), std::forward<U>(v));
-}
-
-template <class T, class E>
 template <class G>
     requires std::is_constructible_v<E, const G&>
 constexpr expected<T, E>::expected(const unexpected<G>& e) : has_val_(false) {
@@ -606,23 +615,6 @@ constexpr expected<T, E>& expected<T, E>::operator=(expected&& rhs) noexcept(std
         has_val_ = false;
     } else {
         detail::reinit_expected(val_, unex_, std::move(rhs.val_));
-        has_val_ = true;
-    }
-    return *this;
-}
-
-template <class T, class E>
-template <class U>
-    requires(!std::is_same_v<expected<T, E>, std::remove_cvref_t<U>> &&
-             !detail::is_unexpected_specialization<std::remove_cvref_t<U>>::value && std::is_constructible_v<T, U> &&
-             std::is_assignable_v<T&, U> &&
-             (std::is_nothrow_constructible_v<T, U> || std::is_nothrow_move_constructible_v<T> ||
-              std::is_nothrow_move_constructible_v<E>))
-constexpr expected<T, E>& expected<T, E>::operator=(U&& v) {
-    if (has_val_) {
-        val_ = std::forward<U>(v);
-    } else {
-        detail::reinit_expected(val_, unex_, std::forward<U>(v));
         has_val_ = true;
     }
     return *this;
@@ -754,7 +746,7 @@ template <class T, class E>
 constexpr const T* expected<T, E>::operator->() const noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
     if (!has_val_)
-        __builtin_trap();
+        BEMAN_EXPECTED_TRAP();
 #endif
     return std::addressof(val_);
 }
@@ -763,7 +755,7 @@ template <class T, class E>
 constexpr T* expected<T, E>::operator->() noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
     if (!has_val_)
-        __builtin_trap();
+        BEMAN_EXPECTED_TRAP();
 #endif
     return std::addressof(val_);
 }
@@ -772,7 +764,7 @@ template <class T, class E>
 constexpr const T& expected<T, E>::operator*() const& noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
     if (!has_val_)
-        __builtin_trap();
+        BEMAN_EXPECTED_TRAP();
 #endif
     return val_;
 }
@@ -781,7 +773,7 @@ template <class T, class E>
 constexpr T& expected<T, E>::operator*() & noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
     if (!has_val_)
-        __builtin_trap();
+        BEMAN_EXPECTED_TRAP();
 #endif
     return val_;
 }
@@ -790,7 +782,7 @@ template <class T, class E>
 constexpr const T&& expected<T, E>::operator*() const&& noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
     if (!has_val_)
-        __builtin_trap();
+        BEMAN_EXPECTED_TRAP();
 #endif
     return std::move(val_);
 }
@@ -799,7 +791,7 @@ template <class T, class E>
 constexpr T&& expected<T, E>::operator*() && noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
     if (!has_val_)
-        __builtin_trap();
+        BEMAN_EXPECTED_TRAP();
 #endif
     return std::move(val_);
 }
@@ -852,7 +844,7 @@ template <class T, class E>
 constexpr const E& expected<T, E>::error() const& noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
     if (has_val_)
-        __builtin_trap();
+        BEMAN_EXPECTED_TRAP();
 #endif
     return unex_;
 }
@@ -861,7 +853,7 @@ template <class T, class E>
 constexpr E& expected<T, E>::error() & noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
     if (has_val_)
-        __builtin_trap();
+        BEMAN_EXPECTED_TRAP();
 #endif
     return unex_;
 }
@@ -870,7 +862,7 @@ template <class T, class E>
 constexpr const E&& expected<T, E>::error() const&& noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
     if (has_val_)
-        __builtin_trap();
+        BEMAN_EXPECTED_TRAP();
 #endif
     return std::move(unex_);
 }
@@ -879,7 +871,7 @@ template <class T, class E>
 constexpr E&& expected<T, E>::error() && noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
     if (has_val_)
-        __builtin_trap();
+        BEMAN_EXPECTED_TRAP();
 #endif
     return std::move(unex_);
 }
@@ -1347,7 +1339,7 @@ class expected<T, E> {
     constexpr void operator*() const noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
         if (!has_val_)
-            __builtin_trap();
+            BEMAN_EXPECTED_TRAP();
 #endif
     }
 
@@ -1357,28 +1349,28 @@ class expected<T, E> {
     constexpr const E& error() const& noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
         if (has_val_)
-            __builtin_trap();
+            BEMAN_EXPECTED_TRAP();
 #endif
         return unex_;
     }
     constexpr E& error() & noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
         if (has_val_)
-            __builtin_trap();
+            BEMAN_EXPECTED_TRAP();
 #endif
         return unex_;
     }
     constexpr const E&& error() const&& noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
         if (has_val_)
-            __builtin_trap();
+            BEMAN_EXPECTED_TRAP();
 #endif
         return std::move(unex_);
     }
     constexpr E&& error() && noexcept {
 #if defined(BEMAN_EXPECTED_HARDENED)
         if (has_val_)
-            __builtin_trap();
+            BEMAN_EXPECTED_TRAP();
 #endif
         return std::move(unex_);
     }
@@ -1996,5 +1988,7 @@ constexpr auto expected<T, E>::transform_error(F&& f) const&& {
 
 } // namespace expected
 } // namespace beman
+
+#undef BEMAN_EXPECTED_TRAP
 
 #endif
