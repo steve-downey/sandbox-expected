@@ -146,6 +146,17 @@ TEST_CASE("expected<T,E&>: assign to error state via expected copy", "[expected_
     CHECK(&e.error() == &err);
 }
 
+// Safe alternative to e = unexpected(err): move-assign from a named expected.
+// This is the correct idiom when E is a reference — no operator=(unexpected<G>)
+// exists for expected<T, E&> because it would bind E& to temporary storage.
+TEST_CASE("expected<T,E&>: rebind error via move-assign from temporary expected", "[expected_ref_e]") {
+    int                 new_err = 7;
+    expected<int, int&> e(42);
+    e = expected<int, int&>(unexpect, new_err);
+    REQUIRE(!e.has_value());
+    CHECK(&e.error() == &new_err);
+}
+
 // =============================================================================
 // Shallow const on error
 // =============================================================================

@@ -136,6 +136,17 @@ add_fail_test(expected_ref_e_const_lvalue_fail expected_ref_e_const_lvalue_fail.
     "no matching function|cannot bind"
 )
 
+# Step 8 — expected<T, E&>: no constructor or assignment from unexpected<G>
+# (would bind E& to storage inside the temporary unexpected — dangling)
+add_fail_test(expected_ref_e_construct_from_unexpected_fail
+    expected_ref_e_construct_from_unexpected_fail.cpp
+    "conversion from|no matching function"
+)
+add_fail_test(expected_ref_e_assign_unexpected_fail
+    expected_ref_e_assign_unexpected_fail.cpp
+    "no match for|no matching function"
+)
+
 # Step 7/8 parity — expected<T&,E> or_else value_type mandate (added in Step 8 review)
 add_fail_test(expected_ref_or_else_wrong_value_type_fail expected_ref_or_else_wrong_value_type_fail.cpp
     "F must return expected with the same value_type"
@@ -150,6 +161,23 @@ add_fail_test(expected_ref_both_temporary_err_fail expected_ref_both_temporary_e
 )
 add_fail_test(expected_ref_both_no_default_fail expected_ref_both_no_default_fail.cpp
     "delete|no matching function"
+)
+
+# Step 9 — expected<T&, E&>: no constructor or assignment from unexpected<G>
+# (would bind E& to storage inside the temporary unexpected — dangling)
+add_fail_test(expected_ref_both_construct_from_unexpected_fail
+    expected_ref_both_construct_from_unexpected_fail.cpp
+    "conversion from|no matching function"
+)
+add_fail_test(expected_ref_both_assign_unexpected_fail
+    expected_ref_both_assign_unexpected_fail.cpp
+    "no match for|no matching function"
+)
+
+# Step 9 — expected<T&, E&>: or_else value_type mandate
+add_fail_test(expected_ref_both_or_else_wrong_value_type_fail
+    expected_ref_both_or_else_wrong_value_type_fail.cpp
+    "F must return expected with the same value_type"
 )
 
 # Step 7 — expected<T&, E> Mandates: E constraints

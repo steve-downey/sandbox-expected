@@ -62,7 +62,7 @@ static_assert(std::is_constructible_v<expected<int&, int&>, const expected<int&,
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: construct from lvalue reference (value)", "[expected_ref_both]") {
-    int               x = 42;
+    int                  x = 42;
     expected<int&, int&> e(x);
     REQUIRE(e.has_value());
     CHECK(&*e == &x);
@@ -70,7 +70,7 @@ TEST_CASE("expected<T&,E&>: construct from lvalue reference (value)", "[expected
 }
 
 TEST_CASE("expected<T&,E&>: operator-> returns T*", "[expected_ref_both]") {
-    std::string               s = "hello";
+    std::string                  s = "hello";
     expected<std::string&, int&> e(s);
     REQUIRE(e.has_value());
     CHECK(e->size() == 5);
@@ -81,7 +81,7 @@ TEST_CASE("expected<T&,E&>: operator-> returns T*", "[expected_ref_both]") {
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: construct from error lvalue reference", "[expected_ref_both]") {
-    int               err = 7;
+    int                  err = 7;
     expected<int&, int&> e(unexpect, err);
     REQUIRE(!e.has_value());
     CHECK(&e.error() == &err);
@@ -93,7 +93,7 @@ TEST_CASE("expected<T&,E&>: construct from error lvalue reference", "[expected_r
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: copy construct preserves value pointer", "[expected_ref_both]") {
-    int               x = 42;
+    int                  x = 42;
     expected<int&, int&> a(x);
     expected<int&, int&> b = a;
     REQUIRE(b.has_value());
@@ -101,7 +101,7 @@ TEST_CASE("expected<T&,E&>: copy construct preserves value pointer", "[expected_
 }
 
 TEST_CASE("expected<T&,E&>: copy construct preserves error pointer", "[expected_ref_both]") {
-    int               err = 5;
+    int                  err = 5;
     expected<int&, int&> a(unexpect, err);
     expected<int&, int&> b = a;
     REQUIRE(!b.has_value());
@@ -109,7 +109,7 @@ TEST_CASE("expected<T&,E&>: copy construct preserves error pointer", "[expected_
 }
 
 TEST_CASE("expected<T&,E&>: move construct preserves value pointer", "[expected_ref_both]") {
-    int               x = 42;
+    int                  x = 42;
     expected<int&, int&> a(x);
     expected<int&, int&> b = std::move(a);
     REQUIRE(b.has_value());
@@ -117,7 +117,7 @@ TEST_CASE("expected<T&,E&>: move construct preserves value pointer", "[expected_
 }
 
 TEST_CASE("expected<T&,E&>: move construct preserves error pointer", "[expected_ref_both]") {
-    int               err = 5;
+    int                  err = 5;
     expected<int&, int&> a(unexpect, err);
     expected<int&, int&> b = std::move(a);
     REQUIRE(!b.has_value());
@@ -129,7 +129,7 @@ TEST_CASE("expected<T&,E&>: move construct preserves error pointer", "[expected_
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: value rebind via copy assignment", "[expected_ref_both]") {
-    int               x1 = 1, x2 = 2;
+    int                  x1 = 1, x2 = 2;
     expected<int&, int&> a(x1);
     expected<int&, int&> b(x2);
     a = b;
@@ -140,25 +140,25 @@ TEST_CASE("expected<T&,E&>: value rebind via copy assignment", "[expected_ref_bo
 }
 
 TEST_CASE("expected<T&,E&>: rebind does NOT assign through value reference", "[expected_ref_both]") {
-    int               x1 = 10, x2 = 20;
+    int                  x1 = 10, x2 = 20;
     expected<int&, int&> a(x1);
     expected<int&, int&> b(x2);
     a = b;
-    CHECK(x1 == 10);  // x1 unchanged
+    CHECK(x1 == 10); // x1 unchanged
     CHECK(*a == 20);
 }
 
 TEST_CASE("expected<T&,E&>: value rebind operator=(U&&)", "[expected_ref_both]") {
-    int               x1 = 1, x2 = 99;
+    int                  x1 = 1, x2 = 99;
     expected<int&, int&> e(x1);
     e = x2;
     REQUIRE(e.has_value());
     CHECK(&*e == &x2);
-    CHECK(x1 == 1);  // x1 unchanged
+    CHECK(x1 == 1); // x1 unchanged
 }
 
 TEST_CASE("expected<T&,E&>: transition from error to value via rebind", "[expected_ref_both]") {
-    int               x = 42, err = 5;
+    int                  x = 42, err = 5;
     expected<int&, int&> e(unexpect, err);
     REQUIRE(!e.has_value());
     e = x;
@@ -171,7 +171,7 @@ TEST_CASE("expected<T&,E&>: transition from error to value via rebind", "[expect
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: error rebind via copy assignment", "[expected_ref_both]") {
-    int               e1 = 1, e2 = 2;
+    int                  e1 = 1, e2 = 2;
     expected<int&, int&> a(unexpect, e1);
     expected<int&, int&> b(unexpect, e2);
     a = b;
@@ -182,7 +182,7 @@ TEST_CASE("expected<T&,E&>: error rebind via copy assignment", "[expected_ref_bo
 }
 
 TEST_CASE("expected<T&,E&>: transition from value to error via copy assignment", "[expected_ref_both]") {
-    int               x = 42, err = 5;
+    int                  x = 42, err = 5;
     expected<int&, int&> a(x);
     expected<int&, int&> b(unexpect, err);
     a = b;
@@ -190,22 +190,33 @@ TEST_CASE("expected<T&,E&>: transition from value to error via copy assignment",
     CHECK(&a.error() == &err);
 }
 
+// Safe alternative to e = unexpected(err): move-assign from a named expected.
+// No operator=(unexpected<G>) exists for expected<T&, E&> — it would bind E&
+// to temporary storage creating a dangling reference.
+TEST_CASE("expected<T&,E&>: rebind error via move-assign from temporary expected", "[expected_ref_both]") {
+    int                  x = 1, new_err = 7;
+    expected<int&, int&> e(x);
+    e = expected<int&, int&>(unexpect, new_err);
+    REQUIRE(!e.has_value());
+    CHECK(&e.error() == &new_err);
+}
+
 // =============================================================================
 // emplace
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: emplace rebinds value reference", "[expected_ref_both]") {
-    int               x1 = 1, x2 = 99;
+    int                  x1 = 1, x2 = 99;
     expected<int&, int&> e(x1);
-    int& r = e.emplace(x2);
+    int&                 r = e.emplace(x2);
     REQUIRE(e.has_value());
     CHECK(&r == &x2);
     CHECK(&*e == &x2);
-    CHECK(x1 == 1);  // x1 unchanged
+    CHECK(x1 == 1); // x1 unchanged
 }
 
 TEST_CASE("expected<T&,E&>: emplace from error state", "[expected_ref_both]") {
-    int               x = 42, err = 5;
+    int                  x = 42, err = 5;
     expected<int&, int&> e(unexpect, err);
     e.emplace(x);
     REQUIRE(e.has_value());
@@ -217,14 +228,14 @@ TEST_CASE("expected<T&,E&>: emplace from error state", "[expected_ref_both]") {
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: shallow const allows mutation of value referent", "[expected_ref_both]") {
-    int                     x = 10;
+    int                        x = 10;
     const expected<int&, int&> e(x);
     *e = 20;
     CHECK(x == 20);
 }
 
 TEST_CASE("expected<T&,E&>: shallow const allows mutation of error referent", "[expected_ref_both]") {
-    int                     err = 10;
+    int                        err = 10;
     const expected<int&, int&> e(unexpect, err);
     e.error() = 20;
     CHECK(err == 20);
@@ -235,27 +246,27 @@ TEST_CASE("expected<T&,E&>: shallow const allows mutation of error referent", "[
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: operator*() returns T& (mutation visible)", "[expected_ref_both]") {
-    int               x = 42;
+    int                  x = 42;
     expected<int&, int&> e(x);
     *e = 99;
     CHECK(x == 99);
 }
 
 TEST_CASE("expected<T&,E&>: value() returns T& (throws on error)", "[expected_ref_both]") {
-    int               x = 42;
+    int                  x = 42;
     expected<int&, int&> e(x);
     static_assert(std::is_same_v<decltype(e.value()), int&>);
     CHECK(&e.value() == &x);
 }
 
 TEST_CASE("expected<T&,E&>: value() throws bad_expected_access on error", "[expected_ref_both]") {
-    int               err = 5;
+    int                  err = 5;
     expected<int&, int&> e(unexpect, err);
     REQUIRE_THROWS_AS(e.value(), beman::expected::bad_expected_access<int>);
 }
 
 TEST_CASE("expected<T&,E&>: error() returns E& (mutation visible)", "[expected_ref_both]") {
-    int               err = 7;
+    int                  err = 7;
     expected<int&, int&> e(unexpect, err);
     static_assert(std::is_same_v<decltype(e.error()), int&>);
     e.error() = 99;
@@ -263,7 +274,7 @@ TEST_CASE("expected<T&,E&>: error() returns E& (mutation visible)", "[expected_r
 }
 
 TEST_CASE("expected<T&,E&>: value_or returns T by value", "[expected_ref_both]") {
-    int               x = 42, err = 0;
+    int                  x = 42, err = 0;
     expected<int&, int&> a(x);
     expected<int&, int&> b(unexpect, err);
     CHECK(a.value_or(0) == 42);
@@ -271,7 +282,7 @@ TEST_CASE("expected<T&,E&>: value_or returns T by value", "[expected_ref_both]")
 }
 
 TEST_CASE("expected<T&,E&>: error_or returns E by value", "[expected_ref_both]") {
-    int               err = 7, x = 0;
+    int                  err = 7, x = 0;
     expected<int&, int&> a(unexpect, err);
     expected<int&, int&> b(x);
     CHECK(a.error_or(0) == 7);
@@ -283,17 +294,17 @@ TEST_CASE("expected<T&,E&>: error_or returns E by value", "[expected_ref_both]")
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: swap value-value rebinds pointers", "[expected_ref_both]") {
-    int               x1 = 1, x2 = 2;
+    int                  x1 = 1, x2 = 2;
     expected<int&, int&> a(x1), b(x2);
     a.swap(b);
     CHECK(&*a == &x2);
     CHECK(&*b == &x1);
-    CHECK(x1 == 1);  // values unchanged — just rebind
+    CHECK(x1 == 1); // values unchanged — just rebind
     CHECK(x2 == 2);
 }
 
 TEST_CASE("expected<T&,E&>: swap error-error rebinds pointers", "[expected_ref_both]") {
-    int               e1 = 1, e2 = 2;
+    int                  e1 = 1, e2 = 2;
     expected<int&, int&> a(unexpect, e1), b(unexpect, e2);
     a.swap(b);
     CHECK(&a.error() == &e2);
@@ -301,7 +312,7 @@ TEST_CASE("expected<T&,E&>: swap error-error rebinds pointers", "[expected_ref_b
 }
 
 TEST_CASE("expected<T&,E&>: swap value-error", "[expected_ref_both]") {
-    int               x = 42, err = 5;
+    int                  x = 42, err = 5;
     expected<int&, int&> a(x), b(unexpect, err);
     a.swap(b);
     REQUIRE(!a.has_value());
@@ -311,7 +322,7 @@ TEST_CASE("expected<T&,E&>: swap value-error", "[expected_ref_both]") {
 }
 
 TEST_CASE("expected<T&,E&>: swap error-value", "[expected_ref_both]") {
-    int               x = 42, err = 5;
+    int                  x = 42, err = 5;
     expected<int&, int&> a(unexpect, err), b(x);
     a.swap(b);
     REQUIRE(a.has_value());
@@ -325,33 +336,33 @@ TEST_CASE("expected<T&,E&>: swap error-value", "[expected_ref_both]") {
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: equality of two value-holding instances", "[expected_ref_both]") {
-    int               x1 = 42, x2 = 42;
+    int                  x1 = 42, x2 = 42;
     expected<int&, int&> a(x1), b(x2);
     CHECK(a == b);
 }
 
 TEST_CASE("expected<T&,E&>: inequality when values differ", "[expected_ref_both]") {
-    int               x1 = 1, x2 = 2;
+    int                  x1 = 1, x2 = 2;
     expected<int&, int&> a(x1), b(x2);
     CHECK(!(a == b));
 }
 
 TEST_CASE("expected<T&,E&>: equality with value type", "[expected_ref_both]") {
-    int               x = 42;
+    int                  x = 42;
     expected<int&, int&> e(x);
     CHECK(e == 42);
     CHECK(!(e == 99));
 }
 
 TEST_CASE("expected<T&,E&>: equality with unexpected (compares error values)", "[expected_ref_both]") {
-    int               err = 7;
+    int                  err = 7;
     expected<int&, int&> e(unexpect, err);
     CHECK(e == unexpected(7));
     CHECK(!(e == unexpected(8)));
 }
 
 TEST_CASE("expected<T&,E&>: value vs error always unequal", "[expected_ref_both]") {
-    int               x = 0, err = 0;
+    int                  x = 0, err = 0;
     expected<int&, int&> a(x), b(unexpect, err);
     CHECK(!(a == b));
 }
@@ -361,26 +372,26 @@ TEST_CASE("expected<T&,E&>: value vs error always unequal", "[expected_ref_both]
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: and_then works on value side", "[expected_ref_both]") {
-    int               x = 5;
+    int                  x = 5;
     expected<int&, int&> e(x);
-    auto r = e.and_then([](int& v) -> expected<int, int&> { return v * 2; });
+    auto                 r = e.and_then([](int& v) -> expected<int, int&> { return v * 2; });
     REQUIRE(r.has_value());
     CHECK(*r == 10);
 }
 
 TEST_CASE("expected<T&,E&>: and_then propagates error ref", "[expected_ref_both]") {
-    int               err = 3;
+    int                  err = 3;
     expected<int&, int&> e(unexpect, err);
-    auto r = e.and_then([](int& v) -> expected<int&, int&> { return v; });
+    auto                 r = e.and_then([](int& v) -> expected<int&, int&> { return v; });
     REQUIRE(!r.has_value());
     CHECK(&r.error() == &err);
 }
 
 TEST_CASE("expected<T&,E&>: or_else receives E& and can inspect error", "[expected_ref_both]") {
-    int               err = 3;
+    int                  err = 3;
     expected<int&, int&> e(unexpect, err);
-    int result_val = 0;
-    auto r = e.or_else([&result_val](int& v) -> expected<int&, int&> {
+    int                  result_val = 0;
+    auto                 r          = e.or_else([&result_val](int& v) -> expected<int&, int&> {
         result_val = v * 10;
         return result_val;
     });
@@ -389,44 +400,43 @@ TEST_CASE("expected<T&,E&>: or_else receives E& and can inspect error", "[expect
 }
 
 TEST_CASE("expected<T&,E&>: or_else propagates value ref", "[expected_ref_both]") {
-    int               x = 42;
+    int                  x = 42;
     expected<int&, int&> e(x);
-    int other_err = 0;
-    auto r = e.or_else([&other_err](int&) -> expected<int&, int&> {
-        return expected<int&, int&>(unexpect, other_err);
-    });
+    int                  other_err = 0;
+    auto                 r =
+        e.or_else([&other_err](int&) -> expected<int&, int&> { return expected<int&, int&>(unexpect, other_err); });
     REQUIRE(r.has_value());
     CHECK(&*r == &x);
 }
 
 TEST_CASE("expected<T&,E&>: transform transforms value", "[expected_ref_both]") {
-    int               x = 5;
+    int                  x = 5;
     expected<int&, int&> e(x);
-    auto r = e.transform([](int& v) { return v * 2; });
+    auto                 r = e.transform([](int& v) { return v * 2; });
     REQUIRE(r.has_value());
     CHECK(*r == 10);
 }
 
 TEST_CASE("expected<T&,E&>: transform propagates error ref", "[expected_ref_both]") {
-    int               err = 5;
+    int                  err = 5;
     expected<int&, int&> e(unexpect, err);
-    auto r = e.transform([](int& v) { return v * 2; });
+    auto                 r = e.transform([](int& v) { return v * 2; });
     REQUIRE(!r.has_value());
     CHECK(&r.error() == &err);
 }
 
 TEST_CASE("expected<T&,E&>: transform_error transforms E&", "[expected_ref_both]") {
-    int               err = 5;
+    int                  err = 5;
     expected<int&, int&> e(unexpect, err);
-    auto r = e.transform_error([](int& v) -> std::string { return std::to_string(v); });
+    auto                 r = e.transform_error([](int& v) -> std::string { return std::to_string(v); });
     REQUIRE(!r.has_value());
     CHECK(r.error() == "5");
 }
 
 TEST_CASE("expected<T&,E&>: transform_error propagates value ref", "[expected_ref_both]") {
-    int               x = 42;
+    int                  x = 42;
     expected<int&, int&> e(x);
-    auto r = e.transform_error([](int& v) -> std::string { return std::to_string(v); });
+    auto                 r = e.transform_error([](int& v) -> std::string { return std::to_string(v); });
     REQUIRE(r.has_value());
     CHECK(&*r == &x);
 }
@@ -436,17 +446,17 @@ TEST_CASE("expected<T&,E&>: transform_error propagates value ref", "[expected_re
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: converting copy construct with value", "[expected_ref_both]") {
-    int                    x = 42;
-    expected<int&, int&>   src(x);
-    expected<int&, int&>   e(src);
+    int                  x = 42;
+    expected<int&, int&> src(x);
+    expected<int&, int&> e(src);
     REQUIRE(e.has_value());
     CHECK(&*e == &x);
 }
 
 TEST_CASE("expected<T&,E&>: converting copy construct with error", "[expected_ref_both]") {
-    int                   err = 7;
-    expected<int&, int&>  src(unexpect, err);
-    expected<int&, int&>  e(src);
+    int                  err = 7;
+    expected<int&, int&> src(unexpect, err);
+    expected<int&, int&> e(src);
     REQUIRE(!e.has_value());
     CHECK(&e.error() == &err);
 }
@@ -456,13 +466,13 @@ TEST_CASE("expected<T&,E&>: converting copy construct with error", "[expected_re
 // =============================================================================
 
 TEST_CASE("expected<T&,E&>: lvalue value reference compiles and is addressable", "[expected_ref_both]") {
-    int               x = 1;
+    int                  x = 1;
     expected<int&, int&> e(x);
     CHECK(&*e == &x);
 }
 
 TEST_CASE("expected<T&,E&>: lvalue error reference compiles and is addressable", "[expected_ref_both]") {
-    int               err = 1;
+    int                  err = 1;
     expected<int&, int&> e(unexpect, err);
     CHECK(&e.error() == &err);
 }
