@@ -13,32 +13,43 @@ the integration branch for this work.
 
 ## Current State
 
-Steps 1–8 are complete and merged into `expected-over-references`
-(Step 8 is on branch `step8-expected-ref-e`, ready to merge).
+Steps 1–9 are complete. Steps 1–8 are merged into `expected-over-references`.
+Step 9 is on branch `step9-expected-ref-both`, ready to merge.
 The implementation includes the full conformant `expected<T,E>` primary template,
 `expected<void,E>`, monadic operations for both, `expected<T&,E>` (P2988
-reference-value specialization), and `expected<T,E&>` (P2988 reference-error
-specialization). 349 tests pass.
+reference-value specialization), `expected<T,E&>` (P2988 reference-error
+specialization), and `expected<T&,E&>` (P2988 both-reference specialization).
+401 tests pass.
 
 ### Key Files
 
 - `include/beman/expected/expected.hpp` — full implementation:
   `unexpected<E>`, `bad_expected_access`, `expected<T,E>`, `expected<void,E>`,
-  `expected<T&,E>`, `expected<T,E&>` (with monadic ops for all four)
-- `tests/beman/expected/` — comprehensive test suite (349 tests)
+  `expected<T&,E>`, `expected<T,E&>`, `expected<T&,E&>` (with monadic ops for all)
+- `tests/beman/expected/` — comprehensive test suite (401 tests)
 
-### Step 8 Design Notes
+### Step 9 Design Notes
 
-- `expected<T, E&>` stores the error as `E*` (pointer to the referent); value T
-  is owned (same as primary template)
-- `error()` returns `E&` with **shallow const** — `const expected<T,E&>` still
-  permits mutation of the error referent through `.error()`
-- Assignment between `expected<T,E&>` objects rebinds the error pointer, never
-  assigns through the reference
-- `(unexpect_t, E&&)` constructor is deleted to prevent binding temporaries
-- `unexpected<int,int&>` forms (where both T and E are references) are ambiguous
-  between `expected<T&,E>` and `expected<T,E&>`; the negative test for this was
-  updated to match the "ambiguous" diagnostic
+- `expected<T&, E&>` stores both sides as pointers: `T* val_`, `E* unex_`
+  in a union with `bool has_val_`
+- **Fully trivial**: both union members are pointers (same size, trivially
+  copyable), so copy, move, destructor are all `= default`
+- **No default constructor**: deleted (T& cannot be default-initialized)
+- **Shallow const on both sides**: `operator*()`, `error()` return the
+  underlying reference regardless of const on the `expected` object
+- **Value rebind**: `operator=(U&&)` rebinds the T* pointer; no destructor call
+- **Error rebind**: done via copy/move assignment of another `expected<T&,E&>`
+  (assigning from `unexpected<G>` was not added — `unexpected` stores by value
+  so its `error()` returns `const G&` which can't bind to non-const `E&`)
+- The `expected_ref_e_ref_fail.cpp` negative compile test was updated: it now
+  tests `expected<int&, int&&>` (rvalue reference as E, still invalid in
+  `expected<T&,E>`) instead of the previously-tested `expected<int&,int&>`
+  which is now valid via the `expected<T&,E&>` specialization
+- `transform_error(F)` returns `expected<T&, G>` — the step-7 specialization
+  which accepts T& in its constructor
+- `transform(F)` returns `expected<U, E&>` — step-8 specialization;
+  void-return case returns `expected<void, E&>` (step 10's specialization,
+  not yet implemented but won't fail until actually instantiated with void F)
 
 ### Build System
 
@@ -95,6 +106,7 @@ worked before writing any tests.
 
 ## What Comes Next
 
-Step 9: `expected<T&, E&>` both-reference specialization — see `docs/plan/step9-expected-ref-both.md`.
-Create branch `step9-expected-ref-both` from `expected-over-references` (after merging
-`step8-expected-ref-e` into `expected-over-references`).
+Step 10: `expected<void, E&>` void+reference-error specialization — see
+`docs/plan/step10-expected-void-ref-e.md`.
+Create branch `step10-expected-void-ref-e` from `expected-over-references`
+(after merging `step9-expected-ref-both` into `expected-over-references`).

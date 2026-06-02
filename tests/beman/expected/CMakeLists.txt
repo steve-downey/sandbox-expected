@@ -17,6 +17,7 @@ target_sources(
         expected_ref.test.cpp
         expected_ref_constraints.test.cpp
         expected_ref_e.test.cpp
+        expected_ref_both.test.cpp
         todo.test.cpp
 )
 target_link_libraries(
@@ -138,6 +139,17 @@ add_fail_test(expected_ref_e_const_lvalue_fail expected_ref_e_const_lvalue_fail.
 # Step 7/8 parity — expected<T&,E> or_else value_type mandate (added in Step 8 review)
 add_fail_test(expected_ref_or_else_wrong_value_type_fail expected_ref_or_else_wrong_value_type_fail.cpp
     "F must return expected with the same value_type"
+)
+
+# Step 9 — expected<T&, E&> dangling prevention and no-default constraint
+add_fail_test(expected_ref_both_temporary_val_fail expected_ref_both_temporary_val_fail.cpp
+    "delete|no matching function"
+)
+add_fail_test(expected_ref_both_temporary_err_fail expected_ref_both_temporary_err_fail.cpp
+    "delete|no matching function"
+)
+add_fail_test(expected_ref_both_no_default_fail expected_ref_both_no_default_fail.cpp
+    "delete|no matching function"
 )
 
 # Step 7 — expected<T&, E> Mandates: E constraints
