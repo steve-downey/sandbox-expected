@@ -37,16 +37,33 @@ Steps 7-10 are the reference specializations (the novel work in this proposal).
 
 ## Standing Conventions
 
+### Code
+
 - Include guards: `#ifndef`/`#define`/`#endif` (never `#pragma once`)
 - Format: `BEMAN_EXPECTED_<PATH>_HPP` (uppercase, path separators to `_`)
 - Includes: angle brackets, full paths from include root
 - SPDX license: `// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception`
 - Functions defined out-of-line in headers (body after class)
 - `constexpr` everything possible
-- Test framework: GoogleTest
-- Test files include the header under test twice (idempotence check)
-- Each step runs `make test` and `make lint` before completion
 - Namespace: `beman::expected`
+
+### Testing
+
+- Test framework: Catch2 (`Catch2::Catch2WithMain`)
+- Test files include the header under test twice (idempotence check)
+- Each step runs `make TOOLCHAIN=gcc-16 test` and `make lint` before
+  completion
+- **Every constraint and mandate must have a negative test.** See
+  `docs/plan/tests-overview.md` §6 for full rules. In short:
+  - **Constraint** (`requires` clause) → SFINAE-friendly; test with
+    `static_assert(!std::is_constructible_v<...>)` or a concept detector
+    in a `*_constraints.test.cpp` file
+  - **Mandate** (`static_assert` inside a function/class body) → ill-formed
+    on instantiation; test with a `*_fail.cpp` negative compile test
+  - **Hardened precondition** → runtime trap; test under
+    `#if defined(BEMAN_EXPECTED_HARDENED)`
+  - Each negative test should have a matching positive test confirming the
+    operation works for conforming types
 
 ## Step Details
 
