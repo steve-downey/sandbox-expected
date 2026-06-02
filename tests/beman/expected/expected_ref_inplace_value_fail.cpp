@@ -4,6 +4,6 @@
 // EXPECT: "no matching function"
 #include <beman/expected/expected.hpp>
 void test() {
-    int x = 5;
+    int                                  x = 5;
     beman::expected::expected<int&, int> e(std::in_place, x); // must not compile
 }

@@ -26,12 +26,12 @@ struct MoveOnly {
 };
 
 struct NotSwappable {
-    NotSwappable()                               = default;
-    NotSwappable(NotSwappable&&)                 = default;
-    NotSwappable& operator=(NotSwappable&&)      = default;
-    NotSwappable(const NotSwappable&)            = default;
-    NotSwappable& operator=(const NotSwappable&) = default;
-    friend void swap(NotSwappable&, NotSwappable&) = delete;
+    NotSwappable()                                   = default;
+    NotSwappable(NotSwappable&&)                     = default;
+    NotSwappable& operator=(NotSwappable&&)          = default;
+    NotSwappable(const NotSwappable&)                = default;
+    NotSwappable& operator=(const NotSwappable&)     = default;
+    friend void   swap(NotSwappable&, NotSwappable&) = delete;
 };
 
 // Concept detectors
@@ -68,10 +68,8 @@ static_assert(!std::is_copy_constructible_v<expected<int&, MoveOnly>>,
 static_assert(std::is_move_constructible_v<expected<int&, MoveOnly>>,
               "expected<T&, MoveOnly> must be move-constructible");
 
-static_assert(std::is_copy_constructible_v<expected<int&, int>>,
-              "expected<T&, int> must be copy-constructible");
-static_assert(std::is_move_constructible_v<expected<int&, int>>,
-              "expected<T&, int> must be move-constructible");
+static_assert(std::is_copy_constructible_v<expected<int&, int>>, "expected<T&, int> must be copy-constructible");
+static_assert(std::is_move_constructible_v<expected<int&, int>>, "expected<T&, int> must be move-constructible");
 
 // ===========================================================================
 // A1/A2: Copy/move assignment require E to be copy/move constructible+assignable
@@ -79,13 +77,10 @@ static_assert(std::is_move_constructible_v<expected<int&, int>>,
 
 static_assert(!std::is_copy_assignable_v<expected<int&, MoveOnly>>,
               "expected<T&, MoveOnly> must not be copy-assignable");
-static_assert(std::is_move_assignable_v<expected<int&, MoveOnly>>,
-              "expected<T&, MoveOnly> must be move-assignable");
+static_assert(std::is_move_assignable_v<expected<int&, MoveOnly>>, "expected<T&, MoveOnly> must be move-assignable");
 
-static_assert(std::is_copy_assignable_v<expected<int&, int>>,
-              "expected<T&, int> must be copy-assignable");
-static_assert(std::is_move_assignable_v<expected<int&, int>>,
-              "expected<T&, int> must be move-assignable");
+static_assert(std::is_copy_assignable_v<expected<int&, int>>, "expected<T&, int> must be copy-assignable");
+static_assert(std::is_move_assignable_v<expected<int&, int>>, "expected<T&, int> must be move-assignable");
 
 // ===========================================================================
 // C5/C6: Value ctor excludes expected self-type and unexpected specializations
@@ -126,7 +121,7 @@ static_assert(std::is_constructible_v<expected<int&, int>, const expected<int&, 
 
 // Cannot convert when E is not constructible from G
 struct Unconstructible {
-    Unconstructible() = default;
+    Unconstructible()    = default;
     Unconstructible(int) = delete;
 };
 
@@ -138,8 +133,7 @@ static_assert(!std::is_constructible_v<expected<int&, Unconstructible>, const ex
 // ===========================================================================
 
 // Value assignment from int& works
-static_assert(std::is_assignable_v<expected<int&, int>&, int&>,
-              "expected<int&, int> must be assignable from int&");
+static_assert(std::is_assignable_v<expected<int&, int>&, int&>, "expected<int&, int> must be assignable from int&");
 
 // Value assignment from unrelated type that can't bind to int& is blocked
 static_assert(!std::is_assignable_v<expected<int&, int>&, std::string&>,
@@ -156,18 +150,15 @@ static_assert(std::is_assignable_v<expected<int&, int>&, unexpected<int>>,
 // S1: swap requires E swappable and move-constructible
 // ===========================================================================
 
-static_assert(has_swap<expected<int&, int>>,
-              "expected<int&, int> must be swappable");
+static_assert(has_swap<expected<int&, int>>, "expected<int&, int> must be swappable");
 
-static_assert(!has_swap<expected<int&, NotSwappable>>,
-              "expected<int&, NotSwappable> must not be swappable");
+static_assert(!has_swap<expected<int&, NotSwappable>>, "expected<int&, NotSwappable> must not be swappable");
 
 // ===========================================================================
 // E1: emplace requires constructible and no dangling
 // ===========================================================================
 
-static_assert(has_emplace<expected<int&, int>, int&>,
-              "expected<int&, int> must support emplace from int&");
+static_assert(has_emplace<expected<int&, int>, int&>, "expected<int&, int> must support emplace from int&");
 
 // emplace from an rvalue int — should be blocked (can't bind int& to rvalue)
 static_assert(!has_emplace_from<expected<int&, int>, int>,
@@ -177,8 +168,7 @@ static_assert(!has_emplace_from<expected<int&, int>, int>,
 // V1: value_or requires is_object_v<T> && !is_array_v<T> (LWG4304)
 // ===========================================================================
 
-static_assert(has_value_or<const expected<int&, int>, int>,
-              "expected<int&, int> must support value_or");
+static_assert(has_value_or<const expected<int&, int>, int>, "expected<int&, int> must support value_or");
 
 // Function type: int(int) is not an object type
 // Note: expected<int(&)(int), E> would require T = int(int), which is a function type.
@@ -189,7 +179,7 @@ static_assert(has_value_or<const expected<int&, int>, int>,
 // MC1/MC2: and_then/transform constrained by E constructibility
 // ===========================================================================
 
-using RefMoveOnlyErr                    = expected<int&, MoveOnly>;
+using RefMoveOnlyErr                     = expected<int&, MoveOnly>;
 [[maybe_unused]] auto ref_dummy_and_then = [](int&) { return expected<int, MoveOnly>(); };
 
 static_assert(!has_and_then<RefMoveOnlyErr&, decltype(ref_dummy_and_then)>,
@@ -231,8 +221,8 @@ static_assert(has_transform_error<RefMoveOnlyErr&&, decltype(ref_dummy_transform
 
 using NormalRef = expected<int&, int>;
 
-[[maybe_unused]] auto ref_normal_and_then      = [](int&) { return expected<int, int>(42); };
-[[maybe_unused]] auto ref_normal_or_else       = [](int) -> expected<int&, int> {
+[[maybe_unused]] auto ref_normal_and_then = [](int&) { return expected<int, int>(42); };
+[[maybe_unused]] auto ref_normal_or_else  = [](int) -> expected<int&, int> {
     static int x = 0;
     return expected<int&, int>(x);
 };
@@ -253,17 +243,17 @@ static_assert(has_transform_error<NormalRef&, decltype(ref_normal_transform_err)
 // ===========================================================================
 
 TEST_CASE("ref constraint: rvalue and_then works with move-only error", "[ref_constraints]") {
-    int                     x = 42;
+    int                      x = 42;
     expected<int&, MoveOnly> e(x);
-    auto r = std::move(e).and_then([](int& v) { return expected<int, MoveOnly>(v + 1); });
+    auto                     r = std::move(e).and_then([](int& v) { return expected<int, MoveOnly>(v + 1); });
     REQUIRE(r.has_value());
     CHECK(*r == 43);
 }
 
 TEST_CASE("ref constraint: rvalue transform works with move-only error", "[ref_constraints]") {
-    int                     x = 42;
+    int                      x = 42;
     expected<int&, MoveOnly> e(x);
-    auto r = std::move(e).transform([](int& v) { return v * 2; });
+    auto                     r = std::move(e).transform([](int& v) { return v * 2; });
     REQUIRE(r.has_value());
     CHECK(*r == 84);
 }

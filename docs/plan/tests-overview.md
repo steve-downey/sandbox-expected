@@ -29,31 +29,59 @@ Every test file includes the header under test **twice**:
 | **Mandate** | "Mandates: X is true" | Ill-formed at instantiation → `static_assert(!std::is_invocable_v<...>)` or a negative compile file |
 | **Hardened precondition** | "Hardened preconditions: X" | Runtime UB without contracts; if the implementation enforces contracts, use `REQUIRE_THROWS` under `#if defined(BEMAN_EXPECTED_HARDENED)` |
 
-### 3. Negative compile test pattern (from transcode)
+### 3. Negative compile test pattern
 
-Each negative compile test is a `.cpp` file that **must not compile**.
-In CMakeLists:
+Each negative compile test is a `.cpp` file that **must not compile**, and
+its failure must be verified against a **specific diagnostic** to confirm
+the failure is the intended constraint/mandate, not an unrelated build error.
+
+#### Source file format
+
+Every `_fail.cpp` must have these comment lines near the top:
+
+```cpp
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+// NEGATIVE: <human-readable description of what must not compile>
+// EXPECT: "<regex that matches the compiler diagnostic>"
+```
+
+The `EXPECT` string is the same regex passed to `add_fail_test()` in CMake.
+It should match:
+- The `static_assert` message string for **mandates**
+  (e.g. `"E must not be void"`)
+- `"delete"` for **deleted function** diagnostics
+- `"no matching function"` for **SFINAE / constraint** failures where no
+  overload is viable
+- `"no matching function|delete"` when either form is possible depending
+  on compiler
+
+#### CMakeLists pattern
+
+Use the `add_fail_test(name source reason)` macro, which registers the
+test with `PASS_REGULAR_EXPRESSION`:
 
 ```cmake
-add_library(beman.expected.tests.<name>_fail OBJECT)
-target_sources(beman.expected.tests.<name>_fail PRIVATE <name>_fail.cpp)
-target_link_libraries(beman.expected.tests.<name>_fail PRIVATE beman::expected)
+add_fail_test(expected_ref_e_void_fail expected_ref_e_void_fail.cpp
+    "E must not be void"
+)
+```
+
+The macro expands to:
+
+```cmake
+add_library(beman.expected.tests.<name> OBJECT)
+target_sources(beman.expected.tests.<name> PRIVATE <source>)
+target_link_libraries(beman.expected.tests.<name> PRIVATE beman::expected)
 set_target_properties(
-    beman.expected.tests.<name>_fail
+    beman.expected.tests.<name>
     PROPERTIES EXCLUDE_FROM_ALL true EXCLUDE_FROM_DEFAULT_BUILD true
 )
 add_test(
-    NAME <name>_fail
+    NAME <name>
     COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}"
-            --target beman.expected.tests.<name>_fail --config $<CONFIGURATION>
+            --target beman.expected.tests.<name> --config $<CONFIGURATION>
 )
-set_tests_properties(<name>_fail PROPERTIES WILL_FAIL TRUE)
-```
-
-If the diagnostic message is reliable, replace `WILL_FAIL TRUE` with:
-```cmake
-set_tests_properties(<name>_fail PROPERTIES
-    PASS_REGULAR_EXPRESSION "specific error text")
+set_tests_properties(<name> PROPERTIES PASS_REGULAR_EXPRESSION "<reason>")
 ```
 
 ### 4. Type-trait / static_assert tests

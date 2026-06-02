@@ -4,6 +4,6 @@
 // EXPECT: "E must not be void"
 #include <beman/expected/expected.hpp>
 void test() {
-    int x = 0;
+    int                                   x = 0;
     beman::expected::expected<int&, void> e(x); // must not compile
 }

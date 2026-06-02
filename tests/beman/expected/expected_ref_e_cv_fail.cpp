@@ -4,6 +4,6 @@
 // EXPECT: "E must not be cv-qualified"
 #include <beman/expected/expected.hpp>
 void test() {
-    int x = 0;
+    int                                        x = 0;
     beman::expected::expected<int&, const int> e(x); // must not compile
 }

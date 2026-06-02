@@ -4,6 +4,6 @@
 // EXPECT: "E must not be an array type"
 #include <beman/expected/expected.hpp>
 void test() {
-    int x = 0;
+    int                                     x = 0;
     beman::expected::expected<int&, int[5]> e(x); // must not compile
 }
