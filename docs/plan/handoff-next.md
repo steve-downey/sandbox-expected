@@ -1,63 +1,106 @@
-# Handoff: After Fix 5 (All Conformance Fixes Complete)
+# Handoff: After Step 7 (expected<T&, E> Complete)
 
 ## What Was Done
 
-Fix 5 is complete. Branch `fix5-preconditions-and-minor` merged (--no-ff) into
-`expected-over-references`. All conformance fixes (F1–F5) are now merged.
+Step 7 is complete. Branch `step7-expected-ref-t` implements
+`expected<T&, E>` — the reference-value partial specialization (P2988).
+313 tests pass, lint clean.
 
-### Changes in Fix 5
+### Changes in Step 7
 
 **`include/beman/expected/expected.hpp`:**
-- Added `BEMAN_EXPECTED_HARDENED` precondition guards (`__builtin_trap()`) to:
-  - `operator->()` (both const and non-const) — checks `has_val_`
-  - `operator*()` (all 4 overloads) — checks `has_val_`
-  - `error()` (all 4 overloads, primary template) — checks `!has_val_`
-  - `operator*()` (void specialization) — checks `has_val_`
-  - `error()` (all 4 overloads, void specialization) — checks `!has_val_`
-- Void `or_else` (4 overloads): changed `is_void_v<G::value_type>` to
-  `is_same_v<G::value_type, T>` — correct for `const void` etc.
-- Void `transform_error` (4 overloads): changed `expected<void, G>` to
-  `expected<T, G>` — matches standard wording
+- Added `detail::reference_constructs_from_temporary_v` (portable fallback
+  using `__cpp_lib_reference_from_temporary` when available, otherwise
+  approximation via `is_convertible_v`)
+- Added `expected<T&, E>` partial specialization (~670 lines) after the void
+  specialization, with:
+  - Storage: `union { T* val_; E unex_; }` + `bool has_val_`
+  - No default constructor (`= delete`)
+  - Copy/move constructors (trivial + non-trivial paths)
+  - Value constructor with dangling-prevention delete overload
+  - Converting constructors from `expected<U&, G>` (copy and move)
+  - Error constructors from `unexpected<G>` (copy and move)
+  - `unexpect_t` in-place error constructors
+  - Rebind assignment (`operator=`) — rebinds pointer, never assigns through
+  - Assignment from `unexpected<G>` (rebinds error)
+  - Observers: `operator*()` → `T&`, `operator->()` → `T*`, `value()` → `T&`
+  - Shallow const: `const expected<T&, E>` still gives `T*`/`T&` (not const)
+  - `value_or()`, `error_or()`, `error()`
+  - `swap()`, equality operators
+  - Monadic ops: `and_then`, `or_else`, `transform`, `transform_error`
+    (2 ref-qualified overloads each — `&` and `&&`)
+  - Mandate static_asserts: E must not be reference, void, array, or cv-qual
 
-**`include/beman/expected/unexpected.hpp`:**
-- Added `requires std::is_swappable_v<E>` to friend swap
+**New test files:**
+- `tests/beman/expected/expected_ref.test.cpp` — 477 lines of runtime tests
+- `tests/beman/expected/expected_ref_constraints.test.cpp` — 259 lines of
+  static_assert / type-trait checks
+- Negative compile tests:
+  - `expected_ref_temporary_fail.cpp` — binding temporary to T& is deleted
+  - `expected_ref_no_default_fail.cpp` — no default constructor
+  - `expected_ref_inplace_value_fail.cpp` — no in_place_t value constructor
+  - `expected_ref_e_ref_fail.cpp` — E must not be reference
+  - `expected_ref_e_void_fail.cpp` — E must not be void
+  - `expected_ref_e_array_fail.cpp` — E must not be array
+  - `expected_ref_e_cv_fail.cpp` — E must not be cv-qualified
 
-**Tests added:**
-- `tests/beman/expected/expected_hardened.test.cpp` — compiled with
-  `-DBEMAN_EXPECTED_HARDENED`, verifies happy paths and swap constraint
-- New CMake target `beman.expected.tests.hardened`
+**`tests/beman/expected/CMakeLists.txt`:**
+- Added `beman.expected.tests.expected_ref` target
+- Added `beman.expected.tests.expected_ref_constraints` target
+- Added all 7 negative-compile fail targets
 
 ### Test count
 
-253 tests total, all passing.
+313 tests total, all passing.
 
 ## Build Commands
 
 ```bash
-make TOOLCHAIN=gcc-16 test   # 253 tests, all passing
-make lint                    # all linters pass (beman-tidy crash is pre-existing)
+make TOOLCHAIN=gcc-16 test   # 313 tests, all passing
+make lint                    # all linters pass
 ```
 
-## Conformance Fix Checklist
+## Step 7 Checklist
 
-- [x] Fix 1: Constructor/assignment/equality constraints
-- [x] Fix 2: Trivial special member functions
-- [x] Fix 3: Monadic operation constraints
-- [x] Fix 4: Mandates static_asserts
-- [x] Fix 5: Hardened preconditions and minor fixes  ← just done
+- [x] Step 7: `expected<T&, E>` — pointer storage, rebind assignment,
+  observers returning T&, value_or, monadic ops, dangling prevention
 
-## All Conformance Fixes Complete
+## What Comes Next
 
-The conformance fixes phase is finished. Per `docs/conformance-fixes/index.md`,
-the next actions are:
+**Step 8: `expected<T, E&>` error-reference specialization.**
 
-1. Update `docs/conformance-audit.md` to mark resolved items
-2. Update this handoff for the post-fix state
-3. Proceed to Step 7: `docs/plan/step7-expected-ref-t.md`
+Read `docs/plan/step8-expected-ref-e.md` for the full specification.
 
-## State of the Implementation
+### Key differences from Step 7
 
-The `expected-over-references` branch now has a fully conformant `expected<T,E>`
-and `expected<void,E>` (modulo the extensions noted in the audit as conforming).
-All constraint, Mandates, trivial SMF, monadic SFINAE, and precondition gaps
-identified in the audit are resolved.
+Step 8 is the mirror image: value is owned (same as primary template), error
+is a reference (pointer to error object). The union is:
+
+```cpp
+union {
+    T val_;       // active when has_val_ == true
+    E* unex_ptr_; // active when has_val_ == false
+};
+bool has_val_;
+```
+
+### What to reuse from Step 7
+
+- `detail::reference_constructs_from_temporary_v` — already exists, reuse for
+  preventing temporaries binding to `E&`
+- Mandate static_asserts pattern for T (T must not be reference, void, array,
+  cv-qual — same as primary template); add E constraints for reference case
+- Same monadic operation structure (2 ref-qual overloads each)
+- Same negative-compile test pattern (CMakeLists, WILL_FAIL)
+
+### New test file
+
+`tests/beman/expected/expected_ref_e.test.cpp` — analogous to expected_ref.test.cpp
+but testing the error-reference behavior:
+- Error rebind: assigning `unexpected(new_err)` changes what error is pointed
+  to, does not assign through the error reference
+- `error()` returns `E&` (dereferencing `unex_ptr_`)
+- Shallow const on error: `const expected<T, int&>` still lets you mutate
+  through `.error()`
+- Default constructor: works (has_value == true, value-inits T)
+- Dangling: construction from temporary via `unexpect_t` must be deleted
