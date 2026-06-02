@@ -61,3 +61,22 @@ The `expected-over-references` branch now has a fully conformant `expected<T,E>`
 and `expected<void,E>` (modulo the extensions noted in the audit as conforming).
 All constraint, Mandates, trivial SMF, monadic SFINAE, and precondition gaps
 identified in the audit are resolved.
+
+## Upstream Merge (2026-06-02)
+
+Branch `merge-upstream` merged 94 commits from `bemanproject/sandbox-expected`
+main and landed portability fixes for the full CI matrix. Now merged to `main`.
+
+Key changes in the merge:
+- Upstream dependabot bumps (harden-runner v2.19.4, codeql-action v4.36.0)
+- `BEMAN_EXPECTED_CONSTEXPR_EXCEPTION` macro gating constexpr on
+  `__cpp_lib_constexpr_exceptions` (std::exception not yet constexpr)
+- `BEMAN_EXPECTED_TRAP()` macro for MSVC portability (`__debugbreak`)
+- Module include guards (`BEMAN_EXPECTED_INCLUDED_FROM_INTERFACE_UNIT`)
+- Inlined `unexpected<E>` bodies and `expected(U&&)` / `operator=(U&&)` for
+  MSVC out-of-line requires-clause matching
+- MSVC presets bumped to C++23 (avoids deprecated `std::unexpected` conflict)
+- Dropped C++17 from CI matrix (implementation requires C++20 concepts)
+- ASCII test names (MSVC/CTest garbles UTF-8 in filters)
+
+**Start the next worktree from `origin/main` (post-merge).** All CI is green.
