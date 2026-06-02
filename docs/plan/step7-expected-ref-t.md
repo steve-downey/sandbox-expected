@@ -202,7 +202,7 @@ using `is_convertible_v` checks.
 
 ## Procedure
 
-1. Create branch from `main` (with Steps 1-5 merged)
+1. Create branch from `expected-over-references`
 2. Add `reference_constructs_from_temporary_v` concept (portable fallback) in
    a `detail` namespace within `beman::expected`
 3. Add `expected<T&, E>` partial specialization with `requires std::is_lvalue_reference_v<...>`

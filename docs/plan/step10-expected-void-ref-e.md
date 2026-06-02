@@ -120,7 +120,7 @@ Combine void-value patterns (Step 6) with error-reference patterns (Step 8):
 
 ## Procedure
 
-1. Create branch from `main` (with Steps 4, 6, 8 merged)
+1. Create branch from `expected-over-references`
 2. Add `expected<void, E&>` specialization (or T, E& with void constraint)
 3. Implement with pointer-only error storage
 4. Implement constructors with dangling prevention

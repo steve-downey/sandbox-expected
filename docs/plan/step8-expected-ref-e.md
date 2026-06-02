@@ -129,7 +129,7 @@ Same as primary but `error()` returns `E&`:
 
 ## Procedure
 
-1. Create branch from `main` (with Steps 1-5 merged)
+1. Create branch from `expected-over-references`
 2. Add `expected<T, E&>` partial specialization
 3. Implement storage (value union member + error pointer + bool)
 4. Implement constructors with dangling prevention on error side

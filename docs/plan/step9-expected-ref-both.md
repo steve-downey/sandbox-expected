@@ -116,7 +116,7 @@ Same structure as primary but with reference semantics on both sides:
 
 ## Procedure
 
-1. Create branch from `main` (with Steps 7-8 merged)
+1. Create branch from `expected-over-references`
 2. Add `expected<T&, E&>` partial specialization
 3. Implement with dual-pointer storage
 4. Implement constructors (combine patterns from Steps 7 and 8)

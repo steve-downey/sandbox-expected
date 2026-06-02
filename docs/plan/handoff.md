@@ -1,28 +1,29 @@
-# Handoff: Starting State
+# Handoff: Current State
 
 ## Repository
 
 `beman.expected` — a Beman C++ Standards track reference implementation for
 `std::expected` with reference support (P2988 / targeting C++29).
 
+## Working Branch
+
+All step branches are created from and merged back into **`expected-over-references`**
+(not `main`). The `main` branch tracks upstream; `expected-over-references` is
+the integration branch for this work.
+
 ## Current State
 
-The repository has a complete skeleton: all standard interface declarations
-exist as comments in the header files, but no actual C++ class definitions
-have been written. The headers compile (they're empty namespaces), and the
-tests are breathing tests only (`EXPECT_EQ(true, true)`).
+Steps 1–7 are complete and merged into `expected-over-references`.
+The implementation includes the full conformant `expected<T,E>` primary template,
+`expected<void,E>`, monadic operations for both, and `expected<T&,E>` (P2988
+reference-value specialization). 313 tests pass.
 
-### Files
+### Key Files
 
-- `include/beman/expected/expected.hpp` — commented-out specification for
-  `expected<T,E>` and `expected<void,E>`, empty `beman::expected` namespace
-- `include/beman/expected/unexpected.hpp` — commented-out specification for
-  `unexpected<E>`, empty namespace
-- `include/beman/expected/bad_expected_access.hpp` — commented-out specification
-  for `bad_expected_access<E>` and `bad_expected_access<void>`, empty namespace
-- `tests/beman/expected/expected.test.cpp` — breathing test only
-- `tests/beman/expected/unexpected.test.cpp` — breathing test only
-- `tests/beman/expected/bad_expected_access.test.cpp` — breathing test
+- `include/beman/expected/expected.hpp` — full implementation:
+  `unexpected<E>`, `bad_expected_access`, `expected<T,E>`, `expected<void,E>`,
+  `expected<T&,E>` (with monadic ops for all three)
+- `tests/beman/expected/` — comprehensive test suite (313 tests)
 
 ### Build System
 
@@ -79,4 +80,5 @@ worked before writing any tests.
 
 ## What Comes Next
 
-Step 1: Implement `unexpected<E>` — see `docs/plan/step1-unexpected.md`.
+Step 8: `expected<T, E&>` error-reference specialization — see `docs/plan/step8-expected-ref-e.md`.
+Create branch `step8-expected-ref-e` from `expected-over-references`.
