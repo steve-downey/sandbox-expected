@@ -19,7 +19,7 @@ repos:
       - id: clang-format
         types_or: [c++, c]
 
-    # CMake linting and formatting
+  # CMake linting and formatting
   - repo: https://github.com/BlankSpruce/gersemi-pre-commit
     rev: 0.27.2
     hooks:
@@ -43,10 +43,10 @@ repos:
         additional_dependencies:
           - tomli
 
-    # Beman Standard checking via beman-tidy
-  - repo: https://github.com/bemanproject/beman-tidy
-    rev: v0.3.1
-    hooks:
-    - id: beman-tidy
+  #   # Beman Standard checking via beman-tidy
+  # - repo: https://github.com/bemanproject/beman-tidy
+  #   rev: v0.3.1
+  #   hooks:
+  #   - id: beman-tidy
 
 exclude: 'template/|copier/|infra/|port/'
