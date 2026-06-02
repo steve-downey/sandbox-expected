@@ -16,6 +16,7 @@ target_sources(
         expected_monadic_constraints.test.cpp
         expected_ref.test.cpp
         expected_ref_constraints.test.cpp
+        expected_ref_e.test.cpp
         todo.test.cpp
 )
 target_link_libraries(
@@ -65,9 +66,7 @@ add_fail_test(unexpected_self_fail  unexpected_self_fail.cpp
 add_fail_test(expected_t_ref_fail   expected_t_ref_fail.cpp
     "delete"
 )
-add_fail_test(expected_e_ref_fail   expected_e_ref_fail.cpp
-    "E must not be a reference"
-)
+# Note: expected_e_ref_fail removed — expected<int, int&> is now valid via expected<T,E&>
 add_fail_test(expected_t_array_fail expected_t_array_fail.cpp
     "T must not be an array type"
 )
@@ -79,7 +78,7 @@ add_fail_test(expected_emplace_throwing_fail expected_emplace_throwing_fail.cpp
 
 # Step 4 — expected<void,E> ill-formed E [expected.void.general]
 add_fail_test(expected_void_ref_fail   expected_void_ref_fail.cpp
-    "E must not be a reference"
+    "T must not be void"
 )
 add_fail_test(expected_void_array_fail expected_void_array_fail.cpp
     "E must not be an array type"
@@ -128,9 +127,22 @@ add_fail_test(expected_ref_inplace_value_fail expected_ref_inplace_value_fail.cp
     "no matching function"
 )
 
+# Step 8 — expected<T, E&> reference error: dangling prevention
+add_fail_test(expected_ref_e_temporary_error_fail expected_ref_e_temporary_error_fail.cpp
+    "delete|no matching function"
+)
+add_fail_test(expected_ref_e_const_lvalue_fail expected_ref_e_const_lvalue_fail.cpp
+    "no matching function|cannot bind"
+)
+
+# Step 7/8 parity — expected<T&,E> or_else value_type mandate (added in Step 8 review)
+add_fail_test(expected_ref_or_else_wrong_value_type_fail expected_ref_or_else_wrong_value_type_fail.cpp
+    "F must return expected with the same value_type"
+)
+
 # Step 7 — expected<T&, E> Mandates: E constraints
 add_fail_test(expected_ref_e_ref_fail   expected_ref_e_ref_fail.cpp
-    "E must not be a reference"
+    "ambiguous|E must not be a reference"
 )
 add_fail_test(expected_ref_e_void_fail  expected_ref_e_void_fail.cpp
     "E must not be void"
