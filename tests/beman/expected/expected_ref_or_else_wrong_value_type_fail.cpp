@@ -8,8 +8,8 @@ using E = beman::expected::expected<int&, int>;
 using G = beman::expected::expected<double&, int>;
 } // namespace
 void test() {
-    double               d = 0;
-    E                    e = beman::expected::unexpected(0);
+    double d = 0;
+    E      e = beman::expected::unexpected(0);
     // F returns G (value_type == double&), but e has value_type == int&
     e.or_else([&](int) -> G { return d; });
 }

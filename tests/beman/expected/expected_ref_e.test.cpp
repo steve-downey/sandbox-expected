@@ -49,8 +49,12 @@ static_assert(!std::is_trivially_copy_constructible_v<expected<std::string, int&
 static_assert(!std::is_trivially_move_constructible_v<expected<std::string, int&>>);
 static_assert(!std::is_trivially_destructible_v<expected<std::string, int&>>);
 
-// Cannot construct from temporary error (rvalue deleted)
+// Cannot construct from temporary error (rvalue deleted, or any type creating a temp E)
 static_assert(!std::is_constructible_v<expected<int, int&>, unexpect_t, int&&>);
+// Cross-type temporary: float would create a temp double when binding const double&
+static_assert(!std::is_constructible_v<expected<int, const double&>, unexpect_t, float>);
+// Lvalue of same type is fine
+static_assert(std::is_constructible_v<expected<int, const double&>, unexpect_t, const double&>);
 
 // Converting construction from expected<U, G&>
 static_assert(std::is_constructible_v<expected<int, int&>, const expected<long, int&>&>);
@@ -144,6 +148,17 @@ TEST_CASE("expected<T,E&>: assign to error state via expected copy", "[expected_
     e = src;
     REQUIRE(!e.has_value());
     CHECK(&e.error() == &err);
+}
+
+// Safe alternative to e = unexpected(err): move-assign from a named expected.
+// This is the correct idiom when E is a reference — no operator=(unexpected<G>)
+// exists for expected<T, E&> because it would bind E& to temporary storage.
+TEST_CASE("expected<T,E&>: rebind error via move-assign from temporary expected", "[expected_ref_e]") {
+    int                 new_err = 7;
+    expected<int, int&> e(42);
+    e = expected<int, int&>(unexpect, new_err);
+    REQUIRE(!e.has_value());
+    CHECK(&e.error() == &new_err);
 }
 
 // =============================================================================

@@ -17,6 +17,7 @@ target_sources(
         expected_ref.test.cpp
         expected_ref_constraints.test.cpp
         expected_ref_e.test.cpp
+        expected_ref_both.test.cpp
         todo.test.cpp
 )
 target_link_libraries(
@@ -135,8 +136,47 @@ add_fail_test(expected_ref_e_const_lvalue_fail expected_ref_e_const_lvalue_fail.
     "no matching function|cannot bind"
 )
 
+# Step 8 — expected<T, E&>: no constructor or assignment from unexpected<G>
+# (would bind E& to storage inside the temporary unexpected — dangling)
+add_fail_test(expected_ref_e_construct_from_unexpected_fail
+    expected_ref_e_construct_from_unexpected_fail.cpp
+    "conversion from|no matching function"
+)
+add_fail_test(expected_ref_e_assign_unexpected_fail
+    expected_ref_e_assign_unexpected_fail.cpp
+    "no match for|no matching function"
+)
+
 # Step 7/8 parity — expected<T&,E> or_else value_type mandate (added in Step 8 review)
 add_fail_test(expected_ref_or_else_wrong_value_type_fail expected_ref_or_else_wrong_value_type_fail.cpp
+    "F must return expected with the same value_type"
+)
+
+# Step 9 — expected<T&, E&> dangling prevention and no-default constraint
+add_fail_test(expected_ref_both_temporary_val_fail expected_ref_both_temporary_val_fail.cpp
+    "delete|no matching function"
+)
+add_fail_test(expected_ref_both_temporary_err_fail expected_ref_both_temporary_err_fail.cpp
+    "delete|no matching function"
+)
+add_fail_test(expected_ref_both_no_default_fail expected_ref_both_no_default_fail.cpp
+    "delete|no matching function"
+)
+
+# Step 9 — expected<T&, E&>: no constructor or assignment from unexpected<G>
+# (would bind E& to storage inside the temporary unexpected — dangling)
+add_fail_test(expected_ref_both_construct_from_unexpected_fail
+    expected_ref_both_construct_from_unexpected_fail.cpp
+    "conversion from|no matching function"
+)
+add_fail_test(expected_ref_both_assign_unexpected_fail
+    expected_ref_both_assign_unexpected_fail.cpp
+    "no match for|no matching function"
+)
+
+# Step 9 — expected<T&, E&>: or_else value_type mandate
+add_fail_test(expected_ref_both_or_else_wrong_value_type_fail
+    expected_ref_both_or_else_wrong_value_type_fail.cpp
     "F must return expected with the same value_type"
 )
 
@@ -152,6 +192,88 @@ add_fail_test(expected_ref_e_array_fail expected_ref_e_array_fail.cpp
 )
 add_fail_test(expected_ref_e_cv_fail    expected_ref_e_cv_fail.cpp
     "E must not be cv-qualified"
+)
+
+# Step 7 — expected<T&, E> monadic mandates
+add_fail_test(expected_ref_and_then_wrong_error_type_fail
+    expected_ref_and_then_wrong_error_type_fail.cpp
+    "F must return expected with the same error_type"
+)
+add_fail_test(expected_ref_transform_error_ref_result_fail
+    expected_ref_transform_error_ref_result_fail.cpp
+    "G must be an object type"
+)
+
+# Step 8 — expected<T, E&> Mandates: T and E type constraints
+add_fail_test(expected_ref_e_t_array_fail
+    expected_ref_e_t_array_fail.cpp
+    "T must not be an array type"
+)
+add_fail_test(expected_ref_e_e_array_fail
+    expected_ref_e_e_array_fail.cpp
+    "E must not be an array type"
+)
+add_fail_test(expected_ref_e_t_inplace_fail
+    expected_ref_e_t_inplace_fail.cpp
+    "T must not be in_place_t"
+)
+add_fail_test(expected_ref_e_t_unexpect_fail
+    expected_ref_e_t_unexpect_fail.cpp
+    "T must not be unexpect_t"
+)
+add_fail_test(expected_ref_e_t_unexpected_fail
+    expected_ref_e_t_unexpected_fail.cpp
+    "T must not be a specialization of unexpected"
+)
+
+# Step 8 — expected<T, E&> monadic mandates
+add_fail_test(expected_ref_e_and_then_wrong_error_type_fail
+    expected_ref_e_and_then_wrong_error_type_fail.cpp
+    "F must return expected with the same error_type"
+)
+add_fail_test(expected_ref_e_or_else_wrong_value_type_fail
+    expected_ref_e_or_else_wrong_value_type_fail.cpp
+    "F must return expected with the same value_type"
+)
+add_fail_test(expected_ref_e_transform_error_ref_result_fail
+    expected_ref_e_transform_error_ref_result_fail.cpp
+    "G must be an object type"
+)
+
+# Step 9 — expected<T&, E&> Mandates: T and E type constraints
+add_fail_test(expected_ref_both_t_array_fail
+    expected_ref_both_t_array_fail.cpp
+    "T must not be an array type"
+)
+add_fail_test(expected_ref_both_e_array_fail
+    expected_ref_both_e_array_fail.cpp
+    "E must not be an array type"
+)
+add_fail_test(expected_ref_both_t_inplace_fail
+    expected_ref_both_t_inplace_fail.cpp
+    "T must not be in_place_t"
+)
+add_fail_test(expected_ref_both_t_unexpect_fail
+    expected_ref_both_t_unexpect_fail.cpp
+    "T must not be unexpect_t"
+)
+add_fail_test(expected_ref_both_t_unexpected_fail
+    expected_ref_both_t_unexpected_fail.cpp
+    "T must not be a specialization of unexpected"
+)
+add_fail_test(expected_ref_both_inplace_value_fail
+    expected_ref_both_inplace_value_fail.cpp
+    "no matching function"
+)
+
+# Step 9 — expected<T&, E&> monadic mandates
+add_fail_test(expected_ref_both_and_then_wrong_error_type_fail
+    expected_ref_both_and_then_wrong_error_type_fail.cpp
+    "F must return expected with the same error_type"
+)
+add_fail_test(expected_ref_both_transform_error_ref_result_fail
+    expected_ref_both_transform_error_ref_result_fail.cpp
+    "G must be an object type"
 )
 
 # =============================================================================
