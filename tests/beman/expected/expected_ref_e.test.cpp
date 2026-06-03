@@ -49,8 +49,12 @@ static_assert(!std::is_trivially_copy_constructible_v<expected<std::string, int&
 static_assert(!std::is_trivially_move_constructible_v<expected<std::string, int&>>);
 static_assert(!std::is_trivially_destructible_v<expected<std::string, int&>>);
 
-// Cannot construct from temporary error (rvalue deleted)
+// Cannot construct from temporary error (rvalue deleted, or any type creating a temp E)
 static_assert(!std::is_constructible_v<expected<int, int&>, unexpect_t, int&&>);
+// Cross-type temporary: float would create a temp double when binding const double&
+static_assert(!std::is_constructible_v<expected<int, const double&>, unexpect_t, float>);
+// Lvalue of same type is fine
+static_assert(std::is_constructible_v<expected<int, const double&>, unexpect_t, const double&>);
 
 // Converting construction from expected<U, G&>
 static_assert(std::is_constructible_v<expected<int, int&>, const expected<long, int&>&>);

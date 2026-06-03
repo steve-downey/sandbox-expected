@@ -2774,11 +2774,18 @@ class expected<T, E&> {
         std::construct_at(std::addressof(val_), il, std::forward<Args>(args)...);
     }
 
-    // Error constructor — binds E& from lvalue (prevents temporaries via deleted rvalue overload)
-    constexpr explicit expected(unexpect_t, E& err) noexcept : has_val_(false) { unex_ptr_ = std::addressof(err); }
+    // Error constructor — binds E& (no temporary allowed)
+    template <class G = E>
+        requires(std::is_constructible_v<E&, G &&> && !detail::reference_constructs_from_temporary_v<E&, G>)
+    constexpr explicit expected(unexpect_t, G&& err) noexcept : has_val_(false) {
+        E& r      = std::forward<G>(err);
+        unex_ptr_ = std::addressof(r);
+    }
 
-    // Deleted: prevent binding rvalue (temporary) to E&
-    constexpr expected(unexpect_t, std::remove_const_t<E>&&) = delete;
+    // Deleted: prevent binding temporaries to E&
+    template <class G>
+        requires(detail::reference_constructs_from_temporary_v<E&, G>)
+    constexpr expected(unexpect_t, G&&) = delete;
 
     // Converting constructor from expected<U, G&> (copy) — mirrors expected<T&,E>'s from expected<U&,G>
     template <class U, class G>
@@ -3399,11 +3406,18 @@ class expected<T&, E&> {
         requires(detail::reference_constructs_from_temporary_v<T&, U>)
     constexpr expected(U&&) = delete;
 
-    // Error constructor — binds E& from lvalue (prevents temporaries via deleted rvalue overload)
-    constexpr explicit expected(unexpect_t, E& err) noexcept : has_val_(false) { unex_ = std::addressof(err); }
+    // Error constructor — binds E& (no temporary allowed)
+    template <class G = E>
+        requires(std::is_constructible_v<E&, G &&> && !detail::reference_constructs_from_temporary_v<E&, G>)
+    constexpr explicit expected(unexpect_t, G&& err) noexcept : has_val_(false) {
+        E& r  = std::forward<G>(err);
+        unex_ = std::addressof(r);
+    }
 
-    // Deleted: prevent binding rvalue (temporary) to E&
-    constexpr expected(unexpect_t, std::remove_const_t<E>&&) = delete;
+    // Deleted: prevent binding temporaries to E&
+    template <class G>
+        requires(detail::reference_constructs_from_temporary_v<E&, G>)
+    constexpr expected(unexpect_t, G&&) = delete;
 
     // Converting constructor from expected<U&, G&> (copy)
     template <class U, class G>

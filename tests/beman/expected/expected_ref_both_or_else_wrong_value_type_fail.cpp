@@ -7,9 +7,9 @@ using E = beman::expected::expected<int&, int&>;
 using G = beman::expected::expected<double&, int&>; // value_type double& != int&
 } // namespace
 void test() {
-    double d    = 0;
-    int    err  = 0;
-    E      e    = E(beman::expected::unexpect, err);
+    double d   = 0;
+    int    err = 0;
+    E      e   = E(beman::expected::unexpect, err);
     // F returns G (value_type == double&), but e has value_type == int&
     e.or_else([&](int&) -> G { return d; });
 }
