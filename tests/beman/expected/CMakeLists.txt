@@ -18,6 +18,7 @@ target_sources(
         expected_ref_constraints.test.cpp
         expected_ref_e.test.cpp
         expected_ref_both.test.cpp
+        expected_void_ref_e.test.cpp
         todo.test.cpp
 )
 target_link_libraries(
@@ -78,9 +79,8 @@ add_fail_test(expected_emplace_throwing_fail expected_emplace_throwing_fail.cpp
 )
 
 # Step 4 — expected<void,E> ill-formed E [expected.void.general]
-add_fail_test(expected_void_ref_fail   expected_void_ref_fail.cpp
-    "T must not be void"
-)
+# Note: expected_void_ref_fail.cpp is removed — expected<void, E&> is now valid via
+# the expected<void, E&> specialization added in Step 10.
 add_fail_test(expected_void_array_fail expected_void_array_fail.cpp
     "E must not be an array type"
 )
@@ -274,6 +274,20 @@ add_fail_test(expected_ref_both_and_then_wrong_error_type_fail
 add_fail_test(expected_ref_both_transform_error_ref_result_fail
     expected_ref_both_transform_error_ref_result_fail.cpp
     "G must be an object type"
+)
+
+# Step 10 — expected<void, E&> dangling prevention and no value_or
+add_fail_test(expected_void_ref_e_temporary_fail
+    expected_void_ref_e_temporary_fail.cpp
+    "no matching function|call to deleted"
+)
+add_fail_test(expected_void_ref_e_const_lvalue_fail
+    expected_void_ref_e_const_lvalue_fail.cpp
+    "no matching function|call to deleted|cannot bind"
+)
+add_fail_test(expected_void_ref_e_no_value_or_fail
+    expected_void_ref_e_no_value_or_fail.cpp
+    "no member named"
 )
 
 # =============================================================================

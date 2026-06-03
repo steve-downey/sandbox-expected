@@ -4,8 +4,8 @@
 #include <beman/expected/expected.hpp>
 #include <string>
 void test() {
-    int                                    x = 0;
-    beman::expected::expected<int&, int>   e(x);
+    int                                  x = 0;
+    beman::expected::expected<int&, int> e(x);
     // F returns expected<int&, std::string> but error_type must be int
     e.and_then([](int& v) -> beman::expected::expected<int&, std::string> {
         return beman::expected::unexpected<std::string>("err");

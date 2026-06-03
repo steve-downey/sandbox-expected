@@ -3865,6 +3865,433 @@ class expected<T&, E&> {
     };
 };
 
+// =============================================================================
+// Partial specialization: expected<void, E&> — void value + reference error type (P2988)
+// =============================================================================
+
+template <class E>
+class expected<void, E&> {
+    static_assert(std::is_object_v<E>, "E must be an object type in expected<void, E&>");
+    static_assert(!std::is_array_v<E>, "E must not be an array type in expected<void, E&>");
+
+  public:
+    using value_type      = void;
+    using error_type      = E&;
+    using unexpected_type = unexpected<std::remove_cv_t<E>>;
+
+    template <class U>
+    using rebind = expected<U, E&>;
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    // Default constructor — void/success state
+    constexpr expected() noexcept : unex_ptr_(nullptr), has_val_(true) {}
+
+    // Copy/move — trivial (just pointer + bool)
+    constexpr expected(const expected&)     = default;
+    constexpr expected(expected&&) noexcept = default;
+
+    // In-place value constructor
+    constexpr explicit expected(std::in_place_t) noexcept : unex_ptr_(nullptr), has_val_(true) {}
+
+    // Error constructor from unexpected<G> const& — E& binds to G's stored value via its lvalue accessor
+    template <class G>
+        requires(std::is_constructible_v<E&, G&> && !detail::reference_constructs_from_temporary_v<E&, G>)
+    constexpr explicit(!std::is_convertible_v<G&, E&>) expected(const unexpected<G>& e) noexcept : has_val_(false) {
+        E& r      = const_cast<G&>(e.error());
+        unex_ptr_ = std::addressof(r);
+    }
+
+    // Error constructor from unexpected<G>&& (non-const lvalue accessor gives G&, binds to E&)
+    template <class G>
+        requires(std::is_constructible_v<E&, G&> && !detail::reference_constructs_from_temporary_v<E&, G>)
+    constexpr explicit(!std::is_convertible_v<G&, E&>) expected(unexpected<G>&& e) noexcept : has_val_(false) {
+        E& r      = e.error();
+        unex_ptr_ = std::addressof(r);
+    }
+
+    // In-place error constructor — binds E& directly (no temporary allowed)
+    template <class G = E>
+        requires(std::is_constructible_v<E&, G &&> && !detail::reference_constructs_from_temporary_v<E&, G>)
+    constexpr explicit expected(unexpect_t, G&& err) noexcept : has_val_(false) {
+        E& r      = std::forward<G>(err);
+        unex_ptr_ = std::addressof(r);
+    }
+
+    // Deleted: prevent binding temporaries to E&
+    template <class G>
+        requires(detail::reference_constructs_from_temporary_v<E&, G>)
+    constexpr expected(unexpect_t, G&&) = delete;
+
+    // Converting constructor from expected<void, G&>
+    template <class G>
+        requires std::is_convertible_v<G&, E&>
+    constexpr explicit(!std::is_convertible_v<G&, E&>) expected(const expected<void, G&>& rhs)
+        : has_val_(rhs.has_value()) {
+        if (!has_val_) {
+            E& r      = rhs.error();
+            unex_ptr_ = std::addressof(r);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Destructor — trivial (pointer + bool only)
+    // -------------------------------------------------------------------------
+
+    constexpr ~expected() = default;
+
+    // -------------------------------------------------------------------------
+    // Assignment
+    // -------------------------------------------------------------------------
+
+    // Copy/move — trivial
+    constexpr expected& operator=(const expected&)     = default;
+    constexpr expected& operator=(expected&&) noexcept = default;
+
+    // emplace — transition to void success state (always noexcept)
+    constexpr void emplace() noexcept { has_val_ = true; }
+
+    // -------------------------------------------------------------------------
+    // Swap
+    // -------------------------------------------------------------------------
+
+    constexpr void swap(expected& rhs) noexcept {
+        if (has_val_ && rhs.has_val_) {
+            // both success: nothing to do
+        } else if (!has_val_ && !rhs.has_val_) {
+            std::swap(unex_ptr_, rhs.unex_ptr_);
+        } else if (has_val_) {
+            unex_ptr_     = rhs.unex_ptr_;
+            rhs.unex_ptr_ = nullptr;
+            has_val_      = false;
+            rhs.has_val_  = true;
+        } else {
+            rhs.swap(*this);
+        }
+    }
+
+    friend constexpr void swap(expected& x, expected& y) noexcept { x.swap(y); }
+
+    // -------------------------------------------------------------------------
+    // Observers
+    // -------------------------------------------------------------------------
+
+    constexpr explicit operator bool() const noexcept { return has_val_; }
+    constexpr bool     has_value() const noexcept { return has_val_; }
+
+    constexpr void operator*() const noexcept {
+#if defined(BEMAN_EXPECTED_HARDENED)
+        if (!has_val_)
+            BEMAN_EXPECTED_TRAP();
+#endif
+    }
+
+    constexpr void value() const& {
+        static_assert(std::is_copy_constructible_v<std::remove_cv_t<E>>,
+                      "value() requires E to be copy constructible");
+        if (!has_val_)
+            throw bad_expected_access<std::remove_cv_t<E>>(*unex_ptr_);
+    }
+
+    constexpr void value() && {
+        static_assert(std::is_copy_constructible_v<std::remove_cv_t<E>> &&
+                          std::is_move_constructible_v<std::remove_cv_t<E>>,
+                      "value() && requires E to be copy and move constructible");
+        if (!has_val_)
+            throw bad_expected_access<std::remove_cv_t<E>>(*unex_ptr_);
+    }
+
+    // error() — shallow const: always returns E& regardless of const on expected
+    constexpr E& error() const noexcept {
+#if defined(BEMAN_EXPECTED_HARDENED)
+        if (has_val_)
+            BEMAN_EXPECTED_TRAP();
+#endif
+        return *unex_ptr_;
+    }
+
+    template <class G = std::remove_cv_t<E>>
+        requires(std::is_copy_constructible_v<std::remove_cv_t<E>> && std::is_convertible_v<G, std::remove_cv_t<E>>)
+    constexpr std::remove_cv_t<E> error_or(G&& def) const {
+        if (!has_val_)
+            return *unex_ptr_;
+        return static_cast<std::remove_cv_t<E>>(std::forward<G>(def));
+    }
+
+    // -------------------------------------------------------------------------
+    // Monadic operations — void value + E& error
+    // -------------------------------------------------------------------------
+
+    // and_then: F called with no args (void value); error propagates as E&
+    template <class F>
+    constexpr auto and_then(F&& f) & {
+        using U = std::remove_cvref_t<std::invoke_result_t<F>>;
+        static_assert(detail::is_expected_specialization<U>::value,
+                      "and_then: F must return a specialization of expected");
+        static_assert(std::is_same_v<typename U::error_type, E&>,
+                      "and_then: F must return expected with the same error_type");
+        if (has_val_)
+            return std::invoke(std::forward<F>(f));
+        return U(unexpect, *unex_ptr_);
+    }
+
+    template <class F>
+    constexpr auto and_then(F&& f) && {
+        using U = std::remove_cvref_t<std::invoke_result_t<F>>;
+        static_assert(detail::is_expected_specialization<U>::value,
+                      "and_then: F must return a specialization of expected");
+        static_assert(std::is_same_v<typename U::error_type, E&>,
+                      "and_then: F must return expected with the same error_type");
+        if (has_val_)
+            return std::invoke(std::forward<F>(f));
+        return U(unexpect, *unex_ptr_);
+    }
+
+    template <class F>
+    constexpr auto and_then(F&& f) const& {
+        using U = std::remove_cvref_t<std::invoke_result_t<F>>;
+        static_assert(detail::is_expected_specialization<U>::value,
+                      "and_then: F must return a specialization of expected");
+        static_assert(std::is_same_v<typename U::error_type, E&>,
+                      "and_then: F must return expected with the same error_type");
+        if (has_val_)
+            return std::invoke(std::forward<F>(f));
+        return U(unexpect, *unex_ptr_);
+    }
+
+    template <class F>
+    constexpr auto and_then(F&& f) const&& {
+        using U = std::remove_cvref_t<std::invoke_result_t<F>>;
+        static_assert(detail::is_expected_specialization<U>::value,
+                      "and_then: F must return a specialization of expected");
+        static_assert(std::is_same_v<typename U::error_type, E&>,
+                      "and_then: F must return expected with the same error_type");
+        if (has_val_)
+            return std::invoke(std::forward<F>(f));
+        return U(unexpect, *unex_ptr_);
+    }
+
+    // or_else: F receives E& (the referenced error); value propagates as void success
+    template <class F>
+    constexpr auto or_else(F&& f) & {
+        using G = std::remove_cvref_t<std::invoke_result_t<F, E&>>;
+        static_assert(detail::is_expected_specialization<G>::value,
+                      "or_else: F must return a specialization of expected");
+        static_assert(std::is_void_v<typename G::value_type>, "or_else: F must return expected with void value_type");
+        if (has_val_)
+            return G();
+        return std::invoke(std::forward<F>(f), *unex_ptr_);
+    }
+
+    template <class F>
+    constexpr auto or_else(F&& f) && {
+        using G = std::remove_cvref_t<std::invoke_result_t<F, E&>>;
+        static_assert(detail::is_expected_specialization<G>::value,
+                      "or_else: F must return a specialization of expected");
+        static_assert(std::is_void_v<typename G::value_type>, "or_else: F must return expected with void value_type");
+        if (has_val_)
+            return G();
+        return std::invoke(std::forward<F>(f), *unex_ptr_);
+    }
+
+    template <class F>
+    constexpr auto or_else(F&& f) const& {
+        using G = std::remove_cvref_t<std::invoke_result_t<F, E&>>;
+        static_assert(detail::is_expected_specialization<G>::value,
+                      "or_else: F must return a specialization of expected");
+        static_assert(std::is_void_v<typename G::value_type>, "or_else: F must return expected with void value_type");
+        if (has_val_)
+            return G();
+        return std::invoke(std::forward<F>(f), *unex_ptr_);
+    }
+
+    template <class F>
+    constexpr auto or_else(F&& f) const&& {
+        using G = std::remove_cvref_t<std::invoke_result_t<F, E&>>;
+        static_assert(detail::is_expected_specialization<G>::value,
+                      "or_else: F must return a specialization of expected");
+        static_assert(std::is_void_v<typename G::value_type>, "or_else: F must return expected with void value_type");
+        if (has_val_)
+            return G();
+        return std::invoke(std::forward<F>(f), *unex_ptr_);
+    }
+
+    // transform: F called with no args; error propagates as E&
+    template <class F>
+    constexpr auto transform(F&& f) & {
+        using U = std::remove_cv_t<std::invoke_result_t<F>>;
+        if constexpr (!std::is_void_v<U>) {
+            static_assert(!std::is_array_v<U>, "transform: U must not be an array type");
+            static_assert(!std::is_same_v<std::remove_cv_t<U>, std::in_place_t>,
+                          "transform: U must not be in_place_t");
+            static_assert(!std::is_same_v<std::remove_cv_t<U>, unexpect_t>, "transform: U must not be unexpect_t");
+            static_assert(!detail::is_unexpected_specialization<std::remove_cv_t<U>>::value,
+                          "transform: U must not be a specialization of unexpected");
+        }
+        if constexpr (std::is_void_v<U>) {
+            if (has_val_)
+                std::invoke(std::forward<F>(f));
+            if (has_val_)
+                return expected<void, E&>();
+            return expected<void, E&>(unexpect, *unex_ptr_);
+        } else {
+            if (has_val_)
+                return expected<U, E&>(std::invoke(std::forward<F>(f)));
+            return expected<U, E&>(unexpect, *unex_ptr_);
+        }
+    }
+
+    template <class F>
+    constexpr auto transform(F&& f) && {
+        using U = std::remove_cv_t<std::invoke_result_t<F>>;
+        if constexpr (!std::is_void_v<U>) {
+            static_assert(!std::is_array_v<U>, "transform: U must not be an array type");
+            static_assert(!std::is_same_v<std::remove_cv_t<U>, std::in_place_t>,
+                          "transform: U must not be in_place_t");
+            static_assert(!std::is_same_v<std::remove_cv_t<U>, unexpect_t>, "transform: U must not be unexpect_t");
+            static_assert(!detail::is_unexpected_specialization<std::remove_cv_t<U>>::value,
+                          "transform: U must not be a specialization of unexpected");
+        }
+        if constexpr (std::is_void_v<U>) {
+            if (has_val_)
+                std::invoke(std::forward<F>(f));
+            if (has_val_)
+                return expected<void, E&>();
+            return expected<void, E&>(unexpect, *unex_ptr_);
+        } else {
+            if (has_val_)
+                return expected<U, E&>(std::invoke(std::forward<F>(f)));
+            return expected<U, E&>(unexpect, *unex_ptr_);
+        }
+    }
+
+    template <class F>
+    constexpr auto transform(F&& f) const& {
+        using U = std::remove_cv_t<std::invoke_result_t<F>>;
+        if constexpr (!std::is_void_v<U>) {
+            static_assert(!std::is_array_v<U>, "transform: U must not be an array type");
+            static_assert(!std::is_same_v<std::remove_cv_t<U>, std::in_place_t>,
+                          "transform: U must not be in_place_t");
+            static_assert(!std::is_same_v<std::remove_cv_t<U>, unexpect_t>, "transform: U must not be unexpect_t");
+            static_assert(!detail::is_unexpected_specialization<std::remove_cv_t<U>>::value,
+                          "transform: U must not be a specialization of unexpected");
+        }
+        if constexpr (std::is_void_v<U>) {
+            if (has_val_)
+                std::invoke(std::forward<F>(f));
+            if (has_val_)
+                return expected<void, E&>();
+            return expected<void, E&>(unexpect, *unex_ptr_);
+        } else {
+            if (has_val_)
+                return expected<U, E&>(std::invoke(std::forward<F>(f)));
+            return expected<U, E&>(unexpect, *unex_ptr_);
+        }
+    }
+
+    template <class F>
+    constexpr auto transform(F&& f) const&& {
+        using U = std::remove_cv_t<std::invoke_result_t<F>>;
+        if constexpr (!std::is_void_v<U>) {
+            static_assert(!std::is_array_v<U>, "transform: U must not be an array type");
+            static_assert(!std::is_same_v<std::remove_cv_t<U>, std::in_place_t>,
+                          "transform: U must not be in_place_t");
+            static_assert(!std::is_same_v<std::remove_cv_t<U>, unexpect_t>, "transform: U must not be unexpect_t");
+            static_assert(!detail::is_unexpected_specialization<std::remove_cv_t<U>>::value,
+                          "transform: U must not be a specialization of unexpected");
+        }
+        if constexpr (std::is_void_v<U>) {
+            if (has_val_)
+                std::invoke(std::forward<F>(f));
+            if (has_val_)
+                return expected<void, E&>();
+            return expected<void, E&>(unexpect, *unex_ptr_);
+        } else {
+            if (has_val_)
+                return expected<U, E&>(std::invoke(std::forward<F>(f)));
+            return expected<U, E&>(unexpect, *unex_ptr_);
+        }
+    }
+
+    // transform_error: F receives E&; value propagates as void success
+    template <class F>
+    constexpr auto transform_error(F&& f) & {
+        using G = std::remove_cv_t<std::invoke_result_t<F, E&>>;
+        static_assert(std::is_object_v<G>, "transform_error: G must be an object type");
+        static_assert(!std::is_array_v<G>, "transform_error: G must not be an array type");
+        static_assert(std::is_same_v<G, std::remove_cv_t<G>>, "transform_error: G must not be cv-qualified");
+        static_assert(!detail::is_unexpected_specialization<G>::value,
+                      "transform_error: G must not be a specialization of unexpected");
+        if (has_val_)
+            return expected<void, G>();
+        return expected<void, G>(unexpect, std::invoke(std::forward<F>(f), *unex_ptr_));
+    }
+
+    template <class F>
+    constexpr auto transform_error(F&& f) && {
+        using G = std::remove_cv_t<std::invoke_result_t<F, E&>>;
+        static_assert(std::is_object_v<G>, "transform_error: G must be an object type");
+        static_assert(!std::is_array_v<G>, "transform_error: G must not be an array type");
+        static_assert(std::is_same_v<G, std::remove_cv_t<G>>, "transform_error: G must not be cv-qualified");
+        static_assert(!detail::is_unexpected_specialization<G>::value,
+                      "transform_error: G must not be a specialization of unexpected");
+        if (has_val_)
+            return expected<void, G>();
+        return expected<void, G>(unexpect, std::invoke(std::forward<F>(f), *unex_ptr_));
+    }
+
+    template <class F>
+    constexpr auto transform_error(F&& f) const& {
+        using G = std::remove_cv_t<std::invoke_result_t<F, E&>>;
+        static_assert(std::is_object_v<G>, "transform_error: G must be an object type");
+        static_assert(!std::is_array_v<G>, "transform_error: G must not be an array type");
+        static_assert(std::is_same_v<G, std::remove_cv_t<G>>, "transform_error: G must not be cv-qualified");
+        static_assert(!detail::is_unexpected_specialization<G>::value,
+                      "transform_error: G must not be a specialization of unexpected");
+        if (has_val_)
+            return expected<void, G>();
+        return expected<void, G>(unexpect, std::invoke(std::forward<F>(f), *unex_ptr_));
+    }
+
+    template <class F>
+    constexpr auto transform_error(F&& f) const&& {
+        using G = std::remove_cv_t<std::invoke_result_t<F, E&>>;
+        static_assert(std::is_object_v<G>, "transform_error: G must be an object type");
+        static_assert(!std::is_array_v<G>, "transform_error: G must not be an array type");
+        static_assert(std::is_same_v<G, std::remove_cv_t<G>>, "transform_error: G must not be cv-qualified");
+        static_assert(!detail::is_unexpected_specialization<G>::value,
+                      "transform_error: G must not be a specialization of unexpected");
+        if (has_val_)
+            return expected<void, G>();
+        return expected<void, G>(unexpect, std::invoke(std::forward<F>(f), *unex_ptr_));
+    }
+
+    // -------------------------------------------------------------------------
+    // Equality operators (hidden friends)
+    // -------------------------------------------------------------------------
+
+    template <class T2, class E2>
+        requires std::is_void_v<T2>
+    friend constexpr bool operator==(const expected& x, const expected<T2, E2>& y) {
+        if (x.has_value() != y.has_value())
+            return false;
+        if (x.has_value())
+            return true;
+        return x.error() == y.error();
+    }
+
+    template <class E2>
+    friend constexpr bool operator==(const expected& x, const unexpected<E2>& e) {
+        return !x.has_value() && static_cast<bool>(x.error() == e.error());
+    }
+
+  private:
+    E*   unex_ptr_;
+    bool has_val_;
+};
+
 } // namespace expected
 } // namespace beman
 

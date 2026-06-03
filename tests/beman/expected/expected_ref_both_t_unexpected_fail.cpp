@@ -3,7 +3,7 @@
 // EXPECT: "T must not be a specialization of unexpected"
 #include <beman/expected/expected.hpp>
 void test() {
-    beman::expected::unexpected<int>                                    u(1);
-    int                                                                 err = 0;
+    beman::expected::unexpected<int>                                   u(1);
+    int                                                                err = 0;
     beman::expected::expected<beman::expected::unexpected<int>&, int&> e(u);
 }

@@ -3,7 +3,7 @@
 // EXPECT: "E must not be an array type"
 #include <beman/expected/expected.hpp>
 void test() {
-    using arr = int[3];
-    int x     = 0;
+    using arr                               = int[3];
+    int                                   x = 0;
     beman::expected::expected<int&, arr&> e(x);
 }
