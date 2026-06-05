@@ -66,7 +66,7 @@ add_fail_test(unexpected_self_fail  unexpected_self_fail.cpp
 
 # Step 3 — expected<T,E> ill-formed T/E [expected.object.general]
 add_fail_test(expected_t_ref_fail   expected_t_ref_fail.cpp
-    "delete"
+    "no default constructor"
 )
 # Note: expected_e_ref_fail removed — expected<int, int&> is now valid via expected<T,E&>
 add_fail_test(expected_t_array_fail expected_t_array_fail.cpp
@@ -119,32 +119,32 @@ add_fail_test(expected_unexpected_value_type_fail expected_unexpected_value_type
 
 # Step 7 — expected<T&, E> reference specialization: constructor constraints
 add_fail_test(expected_ref_temporary_fail     expected_ref_temporary_fail.cpp
-    "no matching function|delete"
+    "binding a temporary to T& creates a dangling reference|no matching function"
 )
 add_fail_test(expected_ref_no_default_fail    expected_ref_no_default_fail.cpp
-    "delete"
+    "no default constructor"
 )
 add_fail_test(expected_ref_inplace_value_fail expected_ref_inplace_value_fail.cpp
-    "no matching function"
+    "no in_place value constructor"
 )
 
 # Step 8 — expected<T, E&> reference error: dangling prevention
 add_fail_test(expected_ref_e_temporary_error_fail expected_ref_e_temporary_error_fail.cpp
-    "delete|no matching function"
+    "cannot bind to non-const E&"
 )
 add_fail_test(expected_ref_e_const_lvalue_fail expected_ref_e_const_lvalue_fail.cpp
-    "no matching function|cannot bind"
+    "cannot bind to non-const E&"
 )
 
 # Step 8 — expected<T, E&>: no constructor or assignment from unexpected<G>
 # (would bind E& to storage inside the temporary unexpected — dangling)
 add_fail_test(expected_ref_e_construct_from_unexpected_fail
     expected_ref_e_construct_from_unexpected_fail.cpp
-    "conversion from|no matching function"
+    "no constructor from unexpected"
 )
 add_fail_test(expected_ref_e_assign_unexpected_fail
     expected_ref_e_assign_unexpected_fail.cpp
-    "no match for|no matching function"
+    "no assignment from unexpected"
 )
 
 # Step 7/8 parity — expected<T&,E> or_else value_type mandate (added in Step 8 review)
@@ -154,24 +154,24 @@ add_fail_test(expected_ref_or_else_wrong_value_type_fail expected_ref_or_else_wr
 
 # Step 9 — expected<T&, E&> dangling prevention and no-default constraint
 add_fail_test(expected_ref_both_temporary_val_fail expected_ref_both_temporary_val_fail.cpp
-    "delete|no matching function"
+    "binding a temporary to T& creates a dangling reference|no matching function"
 )
 add_fail_test(expected_ref_both_temporary_err_fail expected_ref_both_temporary_err_fail.cpp
-    "delete|no matching function"
+    "cannot bind to non-const E&"
 )
 add_fail_test(expected_ref_both_no_default_fail expected_ref_both_no_default_fail.cpp
-    "delete|no matching function"
+    "no default constructor"
 )
 
 # Step 9 — expected<T&, E&>: no constructor or assignment from unexpected<G>
 # (would bind E& to storage inside the temporary unexpected — dangling)
 add_fail_test(expected_ref_both_construct_from_unexpected_fail
     expected_ref_both_construct_from_unexpected_fail.cpp
-    "conversion from|no matching function"
+    "no constructor from unexpected"
 )
 add_fail_test(expected_ref_both_assign_unexpected_fail
     expected_ref_both_assign_unexpected_fail.cpp
-    "no match for|no matching function"
+    "no assignment from unexpected"
 )
 
 # Step 9 — expected<T&, E&>: or_else value_type mandate
@@ -182,7 +182,7 @@ add_fail_test(expected_ref_both_or_else_wrong_value_type_fail
 
 # Step 7 — expected<T&, E> Mandates: E constraints
 add_fail_test(expected_ref_e_ref_fail   expected_ref_e_ref_fail.cpp
-    "ambiguous|E must not be a reference"
+    "E must not be a reference"
 )
 add_fail_test(expected_ref_e_void_fail  expected_ref_e_void_fail.cpp
     "E must not be void"
@@ -263,7 +263,7 @@ add_fail_test(expected_ref_both_t_unexpected_fail
 )
 add_fail_test(expected_ref_both_inplace_value_fail
     expected_ref_both_inplace_value_fail.cpp
-    "no matching function"
+    "no in_place value constructor"
 )
 
 # Step 9 — expected<T&, E&> monadic mandates
@@ -279,15 +279,15 @@ add_fail_test(expected_ref_both_transform_error_ref_result_fail
 # Step 10 — expected<void, E&> dangling prevention and no value_or
 add_fail_test(expected_void_ref_e_temporary_fail
     expected_void_ref_e_temporary_fail.cpp
-    "no matching function|call to deleted"
+    "cannot bind to non-const E&"
 )
 add_fail_test(expected_void_ref_e_const_lvalue_fail
     expected_void_ref_e_const_lvalue_fail.cpp
-    "no matching function|call to deleted|cannot bind"
+    "cannot bind to non-const E&"
 )
 add_fail_test(expected_void_ref_e_no_value_or_fail
     expected_void_ref_e_no_value_or_fail.cpp
-    "no member named"
+    "no value_or for void"
 )
 
 # =============================================================================

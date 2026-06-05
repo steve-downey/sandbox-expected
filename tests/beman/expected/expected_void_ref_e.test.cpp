@@ -39,7 +39,7 @@ TEST_CASE("expected<void,E&>: default construct has value", "[expected_void_ref_
 }
 
 TEST_CASE("expected<void,E&>: construct from unexpect+ref binds E&", "[expected_void_ref_e]") {
-    int err = 42;
+    int                  err = 42;
     expected<void, int&> e(unexpect, err);
     REQUIRE(!e.has_value());
     CHECK(&e.error() == &err);
@@ -59,7 +59,7 @@ TEST_CASE("expected<void,E&>: copy construct from value state", "[expected_void_
 }
 
 TEST_CASE("expected<void,E&>: copy construct from error state", "[expected_void_ref_e]") {
-    int err = 5;
+    int                  err = 5;
     expected<void, int&> a(unexpect, err);
     expected<void, int&> b = a;
     REQUIRE(!b.has_value());
@@ -67,7 +67,7 @@ TEST_CASE("expected<void,E&>: copy construct from error state", "[expected_void_
 }
 
 TEST_CASE("expected<void,E&>: move construct copies pointer", "[expected_void_ref_e]") {
-    int err = 3;
+    int                  err = 3;
     expected<void, int&> a(unexpect, err);
     expected<void, int&> b = std::move(a);
     REQUIRE(!b.has_value());
@@ -75,7 +75,7 @@ TEST_CASE("expected<void,E&>: move construct copies pointer", "[expected_void_re
 }
 
 TEST_CASE("expected<void,E&>: convert from expected<void, G&>", "[expected_void_ref_e]") {
-    int err = 7;
+    int                  err = 7;
     expected<void, int&> src(unexpect, err);
     expected<void, int&> dst(src);
     REQUIRE(!dst.has_value());
@@ -86,29 +86,27 @@ TEST_CASE("expected<void,E&>: convert from expected<void, G&>", "[expected_void_
 // Error rebind semantics on assignment
 // ---------------------------------------------------------------------------
 
-TEST_CASE("expected<void,E&>: rebind error via copy assign from another expected",
-          "[expected_void_ref_e]") {
-    int e1 = 1, e2 = 2;
+TEST_CASE("expected<void,E&>: rebind error via copy assign from another expected", "[expected_void_ref_e]") {
+    int                  e1 = 1, e2 = 2;
     expected<void, int&> a(unexpect, e1);
     expected<void, int&> b(unexpect, e2);
     a = b;
     REQUIRE(!a.has_value());
     CHECK(&a.error() == &e2);
-    CHECK(e1 == 1);  // unchanged — rebind, not assign-through
+    CHECK(e1 == 1); // unchanged — rebind, not assign-through
 }
 
-TEST_CASE("expected<void,E&>: rebind does NOT assign through error reference",
-          "[expected_void_ref_e]") {
-    int e1 = 100, e2 = 200;
+TEST_CASE("expected<void,E&>: rebind does NOT assign through error reference", "[expected_void_ref_e]") {
+    int                  e1 = 100, e2 = 200;
     expected<void, int&> a(unexpect, e1);
     expected<void, int&> b(unexpect, e2);
     a = b;
-    CHECK(e1 == 100);  // e1 unchanged
+    CHECK(e1 == 100); // e1 unchanged
     CHECK(a.error() == 200);
 }
 
 TEST_CASE("expected<void,E&>: assign to value state rebinds error", "[expected_void_ref_e]") {
-    int err = 99;
+    int                  err = 99;
     expected<void, int&> e;
     e = expected<void, int&>(unexpect, err);
     REQUIRE(!e.has_value());
@@ -116,7 +114,7 @@ TEST_CASE("expected<void,E&>: assign to value state rebinds error", "[expected_v
 }
 
 TEST_CASE("expected<void,E&>: assign error state to value state", "[expected_void_ref_e]") {
-    int err = 99;
+    int                  err = 99;
     expected<void, int&> e(unexpect, err);
     e = expected<void, int&>();
     CHECK(e.has_value());
@@ -126,9 +124,8 @@ TEST_CASE("expected<void,E&>: assign error state to value state", "[expected_voi
 // Shallow const on error
 // ---------------------------------------------------------------------------
 
-TEST_CASE("expected<void,E&>: shallow const allows mutation of error referent",
-          "[expected_void_ref_e]") {
-    int err = 10;
+TEST_CASE("expected<void,E&>: shallow const allows mutation of error referent", "[expected_void_ref_e]") {
+    int                        err = 10;
     const expected<void, int&> e(unexpect, err);
     e.error() = 20;
     CHECK(err == 20);
@@ -139,7 +136,7 @@ TEST_CASE("expected<void,E&>: shallow const allows mutation of error referent",
 // ---------------------------------------------------------------------------
 
 TEST_CASE("expected<void,E&>: emplace from error state sets has_value", "[expected_void_ref_e]") {
-    int err = 5;
+    int                  err = 5;
     expected<void, int&> e(unexpect, err);
     e.emplace();
     CHECK(e.has_value());
@@ -177,8 +174,7 @@ TEST_CASE("expected<void,E&>: value() on success is no-op", "[expected_void_ref_
     e.value();
 }
 
-TEST_CASE("expected<void,E&>: value() throws bad_expected_access on error",
-          "[expected_void_ref_e]") {
+TEST_CASE("expected<void,E&>: value() throws bad_expected_access on error", "[expected_void_ref_e]") {
     int                  err = 7;
     expected<void, int&> e(unexpect, err);
     REQUIRE_THROWS_AS(e.value(), beman::expected::bad_expected_access<int>);
@@ -280,7 +276,7 @@ TEST_CASE("expected<void,E&>: equality with unexpected", "[expected_void_ref_e]"
 TEST_CASE("expected<void,E&>: and_then calls F with no args", "[expected_void_ref_e]") {
     expected<void, int&> e;
     int                  calls = 0;
-    auto                 r = e.and_then([&]() -> expected<int, int&> {
+    auto                 r     = e.and_then([&]() -> expected<int, int&> {
         ++calls;
         return 42;
     });
@@ -316,7 +312,7 @@ TEST_CASE("expected<void,E&>: or_else propagates E& to F", "[expected_void_ref_e
     int                  err = 5;
     expected<void, int&> e(unexpect, err);
     int*                 seen = nullptr;
-    auto                 r   = e.or_else([&](int& v) -> expected<void, int&> {
+    auto                 r    = e.or_else([&](int& v) -> expected<void, int&> {
         seen = &v;
         return expected<void, int&>(unexpect, v);
     });
@@ -353,7 +349,7 @@ TEST_CASE("expected<void,E&>: transform with void-returning F", "[expected_void_
 }
 
 TEST_CASE("expected<void,E&>: transform short-circuits on error", "[expected_void_ref_e]") {
-    int                  err    = 9;
+    int                  err = 9;
     expected<void, int&> e(unexpect, err);
     bool                 called = false;
     auto                 r      = e.transform([&]() -> int {
@@ -365,21 +361,22 @@ TEST_CASE("expected<void,E&>: transform short-circuits on error", "[expected_voi
     CHECK(&r.error() == &err);
 }
 
-TEST_CASE("expected<void,E&>: transform_error transforms E& to new type",
-          "[expected_void_ref_e]") {
+TEST_CASE("expected<void,E&>: transform_error transforms E& to new type", "[expected_void_ref_e]") {
     int                  err = 3;
     expected<void, int&> e(unexpect, err);
-    auto r = e.transform_error([](int& v) -> std::string { return std::to_string(v); });
+    auto                 r = e.transform_error([](int& v) -> std::string { return std::to_string(v); });
     static_assert(std::is_same_v<decltype(r), expected<void, std::string>>);
     REQUIRE(!r.has_value());
     CHECK(r.error() == "3");
 }
 
-TEST_CASE("expected<void,E&>: transform_error with value short-circuits",
-          "[expected_void_ref_e]") {
+TEST_CASE("expected<void,E&>: transform_error with value short-circuits", "[expected_void_ref_e]") {
     expected<void, int&> e;
     bool                 called = false;
-    auto r = e.transform_error([&](int&) -> std::string { called = true; return ""; });
+    auto                 r      = e.transform_error([&](int&) -> std::string {
+        called = true;
+        return "";
+    });
     CHECK(!called);
     CHECK(r.has_value());
 }
@@ -389,18 +386,18 @@ TEST_CASE("expected<void,E&>: transform_error with value short-circuits",
 // ---------------------------------------------------------------------------
 
 TEST_CASE("expected<void,E&>: monadic chaining happy path", "[expected_void_ref_e]") {
-    auto r = expected<void, int&>{}
-                 .and_then([]() -> expected<int, int&> { return 42; })
-                 .transform([](int v) { return v * 2; });
+    auto r = expected<void, int&>{}.and_then([]() -> expected<int, int&> { return 42; }).transform([](int v) {
+        return v * 2;
+    });
     REQUIRE(r.has_value());
     CHECK(*r == 84);
 }
 
 TEST_CASE("expected<void,E&>: monadic chaining error path", "[expected_void_ref_e]") {
-    int err = 0;
-    auto r  = expected<void, int&>(unexpect, err)
-                  .and_then([]() -> expected<int, int&> { return 0; })
-                  .transform_error([](int& v) -> std::string { return std::to_string(v); });
+    int  err = 0;
+    auto r   = expected<void, int&>(unexpect, err)
+                   .and_then([]() -> expected<int, int&> { return 0; })
+                   .transform_error([](int& v) -> std::string { return std::to_string(v); });
     REQUIRE(!r.has_value());
 }
 
