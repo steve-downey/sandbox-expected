@@ -3,8 +3,8 @@
 // EXPECT: "F must return expected with the same error_type"
 #include <beman/expected/expected.hpp>
 void test() {
-    int                                      x = 0;
-    beman::expected::expected<int&, int&>    e(x);
+    int                                   x = 0;
+    beman::expected::expected<int&, int&> e(x);
     // F returns expected<int&, int> but error_type must be int&
     e.and_then([](int& v) -> beman::expected::expected<int&, int> { return v; });
 }

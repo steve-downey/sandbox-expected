@@ -2,6 +2,4 @@
 // NEGATIVE: T must not be unexpect_t in expected<T, E&>
 // EXPECT: "T must not be unexpect_t"
 #include <beman/expected/expected.hpp>
-void test() {
-    beman::expected::expected<beman::expected::unexpect_t, int&> e{};
-}
+void test() { beman::expected::expected<beman::expected::unexpect_t, int&> e{}; }

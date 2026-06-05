@@ -4,6 +4,6 @@
 #include <beman/expected/expected.hpp>
 #include <utility>
 void test() {
-    int err = 0;
+    int                                   err = 0;
     beman::expected::expected<int&, int&> e(std::in_place, 42);
 }

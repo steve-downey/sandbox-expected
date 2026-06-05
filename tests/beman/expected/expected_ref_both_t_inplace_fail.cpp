@@ -4,7 +4,7 @@
 #include <beman/expected/expected.hpp>
 #include <utility>
 void test() {
-    std::in_place_t                              ip{};
-    int                                          err = 0;
+    std::in_place_t                                   ip{};
+    int                                               err = 0;
     beman::expected::expected<std::in_place_t&, int&> e(ip);
 }

@@ -89,4 +89,4 @@ Steps 7-10 are the reference specializations (the novel work in this proposal).
 - [x] Step 7: `expected<T&, E>` — pointer storage, rebind assignment, observers returning T&, value_or, monadic ops, dangling prevention
 - [x] Step 8: `expected<T, E&>` — union+pointer storage, error as E&, rebind error assignment, observers, monadic ops
 - [x] Step 9: `expected<T&, E&>` — both pointer storage, rebind both, observers, monadic ops
-- [ ] Step 10: `expected<void, E&>` — no value storage, error pointer, rebind error, observers, monadic ops
+- [x] Step 10: `expected<void, E&>` — no value storage, error pointer, rebind error, observers, monadic ops
