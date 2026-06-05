@@ -7,7 +7,7 @@ on:
 jobs:
   vcpkg-release:
     permissions: {}
-    uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-vcpkg-release.yml@1.7.2
+    uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-vcpkg-release.yml@1.7.3
     with:
       port_name: beman-expected
     secrets:
