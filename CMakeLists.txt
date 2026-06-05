@@ -32,12 +32,6 @@ if(BEMAN_EXPECTED_USE_MODULES)
     set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 endif()
 
-configure_file(
-    "${PROJECT_SOURCE_DIR}/include/beman/expected/config_generated.hpp.in"
-    "${PROJECT_BINARY_DIR}/include/beman/expected/config_generated.hpp"
-    @ONLY
-)
-
 # for find of beman_install_library and configure_build_telemetry
 include(infra/cmake/beman-install-library.cmake)
 include(infra/cmake/BuildTelemetryConfig.cmake)
@@ -54,21 +48,14 @@ if(BEMAN_EXPECTED_USE_MODULES)
         beman.expected
         PUBLIC
             FILE_SET CXX_MODULES
-            FILE_SET HEADERS
-                BASE_DIRS
-                    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                    "${CMAKE_CURRENT_BINARY_DIR}/include"
+            FILE_SET HEADERS BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
     )
     set_target_properties(beman.expected PROPERTIES CXX_MODULE_STD ON)
     target_compile_features(beman.expected PUBLIC cxx_std_23)
 else()
     target_sources(
         beman.expected
-        PUBLIC
-            FILE_SET HEADERS
-                BASE_DIRS
-                    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                    "${CMAKE_CURRENT_BINARY_DIR}/include"
+        PUBLIC FILE_SET HEADERS BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
     )
     set_target_properties(
         beman.expected

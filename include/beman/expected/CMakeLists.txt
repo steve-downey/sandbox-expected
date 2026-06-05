@@ -7,12 +7,7 @@ if(BEMAN_EXPECTED_USE_MODULES)
         PUBLIC
             FILE_SET CXX_MODULES FILES expected.cppm
             FILE_SET HEADERS
-                FILES
-                    config.hpp
-                    expected.hpp
-                    unexpected.hpp
-                    bad_expected_access.hpp
-                    "${PROJECT_BINARY_DIR}/include/beman/expected/config_generated.hpp"
+                FILES expected.hpp unexpected.hpp bad_expected_access.hpp
     )
 else()
     target_sources(
