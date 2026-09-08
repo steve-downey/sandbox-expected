@@ -1,0 +1,100 @@
+\rSec3[expected.bad]{Class template bad_expected_access}
+
+\indexlibrarymember{what}{bad_expected_access}%
+\begin{itemdecl}
+const char* what() const noexcept override;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+An implementation-defined ntbs, which during constant evaluation is encoded with the ordinary literal encoding (\iref{lex.ccon}).
+\end{itemdescr}
+
+\begin{codeblock}
+template<class E>
+class @\libglobal{bad_expected_access}@ : public bad_expected_access<void> {
+public:
+  BEMAN_EXPECTED_CONSTEXPR_EXCEPTION explicit bad_expected_access(E e);
+  BEMAN_EXPECTED_CONSTEXPR_EXCEPTION const char* what() const noexcept override;
+  constexpr E& error() & noexcept;
+  constexpr const E& error() const& noexcept;
+  constexpr E&& error() && noexcept;
+  constexpr const E&& error() const&& noexcept;
+
+private:
+  E @\exposidnc{unex}@; // exposition only
+};
+\end{codeblock}
+
+\begin{itemdescr}
+\pnum
+\remarks
+The class template \tcode{bad_expected_access} defines the type of objects thrown as exceptions to report the situation where an attempt is made to access the value of an \tcode{expected<T, E>} object for which \tcode{has_value()} is \tcode{false}.
+\end{itemdescr}
+
+\indexlibraryctor{bad_expected_access}%
+\begin{itemdecl}
+explicit bad_expected_access(E e);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes \exposid{unex} with \tcode{std::move(e)}.
+\end{itemdescr}
+
+\indexlibrarymember{what}{bad_expected_access}%
+\begin{itemdecl}
+const char* what() const noexcept override;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+An implementation-defined ntbs, which during constant evaluation is encoded with the ordinary literal encoding (\iref{lex.ccon}).
+\end{itemdescr}
+
+\indexlibrarymember{error}{bad_expected_access}%
+\begin{itemdecl}
+constexpr E& error() & noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\exposid{unex}.
+\end{itemdescr}
+
+\indexlibrarymember{error}{bad_expected_access}%
+\begin{itemdecl}
+constexpr const E& error() const& noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\exposid{unex}.
+\end{itemdescr}
+
+\indexlibrarymember{error}{bad_expected_access}%
+\begin{itemdecl}
+constexpr E&& error() && noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{std::move(unex)}.
+\end{itemdescr}
+
+\indexlibrarymember{error}{bad_expected_access}%
+\begin{itemdecl}
+constexpr const E&& error() const&& noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{std::move(unex)}.
+\end{itemdescr}

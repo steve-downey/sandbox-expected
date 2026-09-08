@@ -1,0 +1,356 @@
+\rSec3[expected.unexpected]{Class template unexpected}
+
+\rSec4[expected.un.general]{General}
+
+\begin{codeblock}
+template<class E>
+class @\libglobal{unexpected}@ {
+  // [expected.un.general] para 2: ill-formed instantiations
+
+public:
+  constexpr unexpected(const unexpected&) = default;
+  constexpr unexpected(unexpected&&) = default;
+
+  template<class Err = E>
+    requires(!is_same_v<remove_cvref_t<Err>, unexpected> &&
+             !is_same_v<remove_cvref_t<Err>, in_place_t> && is_constructible_v<E, Err>)
+  constexpr explicit unexpected(Err&& e) noexcept(is_nothrow_constructible_v<E, Err>);
+
+  template<class... Args>
+    requires is_constructible_v<E, Args...>
+  constexpr explicit unexpected(in_place_t, Args&&... args) noexcept(
+      is_nothrow_constructible_v<E, Args...>);
+
+  template<class U, class... Args>
+    requires is_constructible_v<E, initializer_list<U>&, Args...>
+  constexpr explicit unexpected(
+      in_place_t, initializer_list<U> il,
+      Args&&... args) noexcept(is_nothrow_constructible_v<E, initializer_list<U>&,
+                                                          Args...>);
+
+  constexpr unexpected& operator=(const unexpected&) = default;
+  constexpr unexpected& operator=(unexpected&&) = default;
+
+  constexpr const E& error() const& noexcept;
+  constexpr E& error() & noexcept;
+  constexpr const E&& error() const&& noexcept;
+  constexpr E&& error() && noexcept;
+
+  constexpr void swap(unexpected& other) noexcept(is_nothrow_swappable_v<E>);
+
+  template<class E2>
+  friend constexpr bool operator==(const unexpected& x, const unexpected<E2>& y);
+
+  friend constexpr void swap(unexpected& x, unexpected& y) noexcept(noexcept(x.swap(y)))
+    requires is_swappable_v<E>;
+
+private:
+  E @\exposidnc{unex}@; // exposition only
+};
+\end{codeblock}
+
+\begin{itemdescr}
+\pnum
+\mandates
+A program that instantiates the definition of \tcode{unexpected} for a non-object type other than an lvalue reference type, an array type, a specialization of \tcode{unexpected}, or a cv-qualified type is ill-formed.
+
+\pnum
+\remarks
+Subclause \iref{expected.unexpected} describes the class template \tcode{unexpected} that represents unexpected objects stored in \tcode{expected} objects.
+\end{itemdescr}
+
+\rSec4[expected.un.cons]{Constructors}
+
+\indexlibraryctor{unexpected}%
+\begin{itemdecl}
+template<class Err = E>
+  requires(!is_same_v<remove_cvref_t<Err>, unexpected> &&
+           !is_same_v<remove_cvref_t<Err>, in_place_t> && is_constructible_v<E, Err>)
+constexpr explicit unexpected(Err&& e) noexcept(is_nothrow_constructible_v<E, Err>);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints
+\begin{itemize}
+\item \tcode{is_same_v<remove_cvref_t<Err>, unexpected>} is \tcode{false}; and
+\item \tcode{is_same_v<remove_cvref_t<Err>, in_place_t>} is \tcode{false}; and
+\item \tcode{is_constructible_v<E, Err>} is \tcode{true}.
+\end{itemize}
+
+\pnum
+\effects
+Direct-non-list-initializes \tcode{unex} with \tcode{std::forward<Err>(e)}.
+
+\pnum
+\throws
+Any exception thrown by the initialization of \tcode{unex}.
+\end{itemdescr}
+
+\indexlibraryctor{unexpected}%
+\begin{itemdecl}
+template<class... Args>
+  requires is_constructible_v<E, Args...>
+constexpr explicit unexpected(in_place_t, Args&&... args) noexcept(
+    is_nothrow_constructible_v<E, Args...>);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints
+\tcode{is_constructible_v<E, Args...>} is \tcode{true}.
+
+\pnum
+\effects
+Direct-non-list-initializes \tcode{unex} with \tcode{std::forward<Args>(args)...}.
+
+\pnum
+\throws
+Any exception thrown by the initialization of \tcode{unex}.
+\end{itemdescr}
+
+\indexlibraryctor{unexpected}%
+\begin{itemdecl}
+template<class U, class... Args>
+  requires is_constructible_v<E, initializer_list<U>&, Args...>
+constexpr explicit unexpected(
+    in_place_t, initializer_list<U> il,
+    Args&&... args) noexcept(is_nothrow_constructible_v<E, initializer_list<U>&,
+                                                        Args...>);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints
+\tcode{is_constructible_v<E, initializer_list<U>&, Args...>} is \tcode{true}.
+
+\pnum
+\effects
+Direct-non-list-initializes \tcode{unex} with \tcode{il, std::forward<Args>(args)...}.
+
+\pnum
+\throws
+Any exception thrown by the initialization of \tcode{unex}.
+\end{itemdescr}
+
+\rSec4[expected.un.obs]{Observers}
+
+\indexlibrarymember{error}{unexpected}%
+\begin{itemdecl}
+constexpr const E& error() const& noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{unex}.
+\end{itemdescr}
+
+\indexlibrarymember{error}{unexpected}%
+\begin{itemdecl}
+constexpr E& error() & noexcept;
+\end{itemdecl}
+
+\indexlibrarymember{error}{unexpected}%
+\begin{itemdecl}
+constexpr const E&& error() const&& noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{std::move(unex)}.
+\end{itemdescr}
+
+\indexlibrarymember{error}{unexpected}%
+\begin{itemdecl}
+constexpr E&& error() && noexcept;
+\end{itemdecl}
+
+\rSec4[expected.un.swap]{Swap}
+
+\indexlibrarymember{swap}{unexpected}%
+\begin{itemdecl}
+constexpr void swap(unexpected& other) noexcept(is_nothrow_swappable_v<E>);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\mandates
+\tcode{is_swappable_v<E>} is \tcode{true}.
+
+\pnum
+\effects
+Equivalent to: \tcode{using std::swap; swap(unex, other.unex);}
+\end{itemdescr}
+
+\indexlibraryglobal{swap}%
+\begin{itemdecl}
+friend constexpr void swap(unexpected& x, unexpected& y) noexcept(noexcept(x.swap(y)));
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints
+\tcode{is_swappable_v<E>} is \tcode{true}.
+
+\pnum
+\effects
+Equivalent to \tcode{x.swap(y)}.
+\end{itemdescr}
+
+\rSec4[expected.un.eq]{Equality operator}
+
+\indexlibraryglobal{operator==}%
+\begin{itemdecl}
+template<class E2>
+friend constexpr bool operator==(const unexpected& x, const unexpected<E2>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\mandates
+The expression \tcode{x.error() == y.error()} is well-formed and its result is convertible to \tcode{bool}.
+
+\pnum
+\returns
+\tcode{x.error() == y.error()}.
+\end{itemdescr}
+
+\rSec4[expected.un.ref]{Partial specialization unexpected<E&>}
+
+\begin{codeblock}
+template<class E>
+class unexpected<E&> {
+public:
+  constexpr unexpected(const unexpected&) = default;
+  constexpr unexpected(unexpected&&) = default;
+  template<class G = E>
+    constexpr explicit unexpected(G&&) noexcept;
+  template<class G = E>
+    constexpr explicit unexpected(in_place_t, G&&) noexcept;
+
+  constexpr unexpected& operator=(const unexpected&) = default;
+  constexpr unexpected& operator=(unexpected&&) = default;
+
+  constexpr E& error() const noexcept;
+
+  constexpr void swap(unexpected& other) noexcept;
+
+  template<class E2>
+    friend constexpr bool operator==(const unexpected&, const unexpected<E2>&);
+
+  friend constexpr void swap(unexpected& x, unexpected& y) noexcept;
+
+private:
+  E* unex;              // exposition only
+};
+\end{codeblock}
+
+\begin{itemdescr}
+\pnum
+\mandates
+A program that instantiates the definition of \tcode{unexpected<E&>} for an array type or a specialization of \tcode{unexpected} is ill-formed.
+
+\pnum
+\remarks
+An object of type \tcode{unexpected<E&>} holds a pointer to an object of type \tcode{E}. The referenced object is not owned by the \tcode{unexpected<E&>} object. Unlike the primary template, \tcode{E} may be a cv-qualified type.
+\end{itemdescr}
+
+\indexlibraryctor{unexpected}%
+\begin{itemdecl}
+template<class G = E>
+  requires(!is_same_v<remove_cvref_t<G>, unexpected> &&
+           !is_same_v<remove_cvref_t<G>, in_place_t> && is_constructible_v<E&, G&&> &&
+           !reference_constructs_from_temporary_v<E&, G>)
+constexpr explicit unexpected(G&& e) noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints
+\begin{itemize}
+\item \tcode{is_same_v<remove_cvref_t<G>, unexpected>} is \tcode{false},
+\item \tcode{is_same_v<remove_cvref_t<G>, in_place_t>} is \tcode{false},
+\item \tcode{is_constructible_v<E&, G>} is \tcode{true}, and
+\item \tcode{reference_constructs_from_temporary_v<E&, G>} is \tcode{false}.
+\end{itemize}
+
+\pnum
+\effects
+Initializes \tcode{unex} with \tcode{addressof(static_cast<E&>(std::forward<G>(e)))}.
+
+\pnum
+\remarks
+A constructor for which \tcode{reference_constructs_from_temporary_v<E&, G>} is \tcode{true} — one that would bind \tcode{E&} to a temporary — is defined as deleted.
+\end{itemdescr}
+
+\indexlibraryctor{unexpected}%
+\begin{itemdecl}
+template<class G = E>
+  requires(is_constructible_v<E&, G&&> && !reference_constructs_from_temporary_v<E&, G>)
+constexpr explicit unexpected(in_place_t, G&& e) noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints
+\tcode{is_constructible_v<E&, G>} is \tcode{true} and \tcode{reference_constructs_from_temporary_v<E&, G>} is \tcode{false}.
+
+\pnum
+\effects
+Initializes \tcode{unex} with \tcode{addressof(static_cast<E&>(std::forward<G>(e)))}.
+\end{itemdescr}
+
+\indexlibrarymember{error}{unexpected}%
+\begin{itemdecl}
+constexpr E& error() const noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{*unex}.
+
+\pnum
+\remarks
+The reference returned is not \tcode{const}-qualified even when \tcode{*this} is \tcode{const}; the constness of the \tcode{unexpected<E&>} object does not propagate to the referenced object.
+\end{itemdescr}
+
+\indexlibrarymember{swap}{unexpected}%
+\begin{itemdecl}
+constexpr void swap(unexpected& other) noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Exchanges \tcode{unex} and \tcode{other.unex}.
+\end{itemdescr}
+
+\indexlibraryglobal{operator==}%
+\begin{itemdecl}
+template<class E2>
+friend constexpr bool operator==(const unexpected& x, const unexpected<E2>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\mandates
+The expression \tcode{x.error() == y.error()} is well-formed and its result is convertible to \tcode{bool}.
+
+\pnum
+\returns
+\tcode{x.error() == y.error()}.
+\end{itemdescr}
+
+\indexlibraryglobal{swap}%
+\begin{itemdecl}
+friend constexpr void swap(unexpected& x, unexpected& y) noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to \tcode{x.swap(y)}.
+\end{itemdescr}

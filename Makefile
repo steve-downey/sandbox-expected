@@ -157,6 +157,10 @@ env:
 papers:
 	$(MAKE) -C papers papers
 
+.PHONY: wording
+wording: ## Regenerate papers/wording/ from the annotated headers via specgen
+	papers/wording/generate.sh
+
 .DEFAULT: $(_build_path)/CMakeCache.txt ## Other targets passed through to cmake
 	$(CMAKE) --build $(_build_path)  --config $(CONFIG) --target $@ -- -k 0
 
