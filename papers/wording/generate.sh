@@ -4,18 +4,21 @@
 #
 # Regenerates the [expected] clause wording from the annotated headers in
 # include/beman/expected/, via specgen (https://github.com/steve-downey/specgen).
+# expected.hpp gathers unexpected.hpp and bad_expected_access.hpp into one
+# document (their #includes sit inside a \rSec2[expected.syn] ... END [expected.syn]
+# region), so a single specgen invocation on expected.hpp covers all three
+# headers' wording in one run.
 #
 # Produces:
-#   papers/wording/fragments/*.tex  - one fragment per rSec2 clause, for
+#   papers/wording/fragments/*.tex  - one fragment per top-level clause, for
 #                                      \input into a paper's own document.
 #   papers/wording/expected.tex     - all fragments concatenated in real
-#                                      standard clause order, wrapped in a
-#                                      single \rSec1[expected]{Expected
-#                                      objects}. This is the "wording only"
-#                                      file: plain generated prose, with no
-#                                      \input directives, suitable as the
-#                                      basis for a diff against the actual
-#                                      draft (github.com/cplusplus/draft)
+#                                      standard clause order. This is the
+#                                      "wording only" file: plain generated
+#                                      prose, with no \input directives,
+#                                      suitable as the basis for a diff
+#                                      against the actual draft
+#                                      (github.com/cplusplus/draft)
 #                                      source/utilities.tex.
 #
 # specgen must be on PATH. Run from anywhere; paths below are relative to
@@ -31,38 +34,28 @@ trap 'rm -rf "$work_dir"' EXIT
 
 mkdir -p "$fragments_dir"
 
-gen() {
-    local header="$1" outdir="$2"
-    mkdir -p "$outdir"
-    specgen generate "$include_dir/beman/expected/$header" \
-        --backend latex --validate --no-compile-commands \
-        --split "$outdir" \
-        -- -std=c++2c -I "$include_dir"
-}
-
-echo "Generating from unexpected.hpp..." >&2
-gen unexpected.hpp "$work_dir/unexpected"
-echo "Generating from bad_expected_access.hpp..." >&2
-gen bad_expected_access.hpp "$work_dir/bad"
-echo "Generating from expected.hpp..." >&2
-gen expected.hpp "$work_dir/expected"
+echo "Generating from expected.hpp (gathers unexpected.hpp, bad_expected_access.hpp)..." >&2
+specgen generate "$include_dir/beman/expected/expected.hpp" \
+    --backend latex --validate --no-compile-commands \
+    --split "$work_dir" \
+    -- -std=c++2c -I "$include_dir"
 
 # Map specgen's stable-name-derived filenames to the fragment names we keep.
-cp "$work_dir/unexpected/expected.unexpected.tex" "$fragments_dir/unexpected.tex"
-cp "$work_dir/bad/expected.bad.tex"               "$fragments_dir/bad.tex"
-cp "$work_dir/bad/expected.bad.void.tex"          "$fragments_dir/bad-void.tex"
-cp "$work_dir/expected/expected.expected.tex"     "$fragments_dir/object.tex"
-cp "$work_dir/expected/expected.void.tex"         "$fragments_dir/void.tex"
-cp "$work_dir/expected/expected.ref.tex"          "$fragments_dir/ref.tex"
+cp "$work_dir/expected.unexpected.tex" "$fragments_dir/unexpected.tex"
+cp "$work_dir/expected.bad.tex"        "$fragments_dir/bad.tex"
+cp "$work_dir/expected.bad.void.tex"   "$fragments_dir/bad-void.tex"
+cp "$work_dir/expected.expected.tex"   "$fragments_dir/object.tex"
+cp "$work_dir/expected.void.tex"       "$fragments_dir/void.tex"
+cp "$work_dir/expected.ref.tex"        "$fragments_dir/ref.tex"
 
-# The generic per-header "root" fragments (named after the longest common
-# stable-name prefix, e.g. expected.tex) hold exposition-only helper
-# declarations (is_unexpected_specialization, reinit_expected,
-# unexpect_dangles_v, converts_from_any_cvref) that live above any \rSec
-# marker in the header. They are not part of the standard's own wording
-# (the real draft states an equivalent helper, reinit-expected, inline in
-# [expected.object.assign]'s own intro instead) and are intentionally
-# omitted from the assembled clause below.
+# expected.syn.tex (the header synopsis, gathered from the two #includes) and
+# expected.detail.tex (a throwaway \rSec2 fencing off the exposition-only
+# helpers -- is_expected_specialization, reinit_expected, unexpect_dangles_v,
+# converts_from_any_cvref -- declared above [expected.expected] so they don't
+# bleed into [expected.bad]) are not part of the standard's own wording (the
+# real draft states an equivalent helper, reinit-expected, inline in
+# [expected.object.assign]'s own intro instead) and are intentionally omitted
+# from the assembled clause below.
 
 out="$here/expected.tex"
 {
