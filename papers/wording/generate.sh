@@ -77,9 +77,11 @@ out="$here/expected.tex"
     echo '% no \input directives. [expected.general] and [expected.syn] are prose,'
     echo '% not generated from any one declaration; see papers/expected-new.tex.'
     echo
+    sep=""
     for f in unexpected.tex bad.tex bad-void.tex object.tex void.tex ref.tex; do
+        printf '%s' "$sep"
         cat "$fragments_dir/$f"
-        echo
+        sep=$'\n'
     done
 } > "$out"
 
